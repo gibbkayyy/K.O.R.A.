@@ -3,15 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b0c0d">
+  <meta name="theme-color" content="#111214">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="K.O.R.A.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
   <title>K.O.R.A.</title>
   <style>
-    html, body { margin:0; width:100%; height:100%; overflow:hidden; background:#08090a; }
-    #koraFrame { width:100%; height:100%; border:0; display:block; }
+    html, body { margin:0; width:100%; height:100%; overflow:hidden; background:#111214; }
+    #koraFrame { width:100%; height:100%; border:0; display:block; background:#111214; }
+    #installFallback {
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      z-index:9999; display:none; max-width:min(92vw,520px);
+      padding:13px 16px; border:1px solid rgba(255,255,255,.16);
+      border-radius:12px; background:rgba(17,18,20,.96); color:#f4f5f3;
+      font:600 13px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+      text-align:center; box-shadow:0 12px 40px rgba(0,0,0,.45);
+      backdrop-filter:blur(18px); cursor:pointer;
+    }
   </style>
 </head>
 <body>
   <iframe id="koraFrame" src="/index.html" allow="camera; microphone" title="K.O.R.A."></iframe>
+  <button id="installFallback" type="button"></button>
+
+  <script>
+    let deferredInstallPrompt = null;
+    const fallback = document.getElementById('installFallback');
+
+    const showFallback = () => {
+      fallback.textContent = 'K.O.R.A. cannot show the automatic install prompt here. Use your browser menu and choose “Install app” or “Add to Home Screen”.';
+      fallback.style.display = 'block';
+      setTimeout(() => { fallback.style.display = 'none'; }, 10000);
+    };
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      fallback.style.display = 'none';
+    });
+
+    const requestInstall = async () => {
+      if (!deferredInstallPrompt) {
+        showFallback();
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      const result = await deferredInstallPrompt.userChoice.catch(() => null);
+      deferredInstallPrompt = null;
+      if (!result || result.outcome !== 'accepted') showFallback();
+    };
+
+    // The native prompt requires a user gesture. The first interaction with
+    // the app therefore becomes the gesture that triggers it when available.
+    window.addEventListener('click', requestInstall, { once: true, capture: true });
+    fallback.addEventListener('click', () => { fallback.style.display = 'none'; });
+  </script>
   <script src="/camera-fix.js" defer></script>
 </body>
 </html>
