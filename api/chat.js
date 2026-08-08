@@ -1,4 +1,4 @@
-const { askKora } = require("./_lib/aiClient");
+const { askKora } = require("./aiClient");
 
 module.exports = async function handler(req, res) {
   // Allow the frontend (on a different domain) to call this
