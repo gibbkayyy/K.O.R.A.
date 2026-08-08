@@ -10,7 +10,7 @@ app.use(express.json());
 let conversation = [];
 
 app.post("/api/chat", async (req, res) => {
-  const { message } = req.body;
+  const message = req.body.message;
 
   if (!message || typeof message !== "string") {
     return res.status(400).json({ error: "Expected a non-empty 'message' string." });
@@ -21,14 +21,14 @@ app.post("/api/chat", async (req, res) => {
   try {
     const reply = await askKora(conversation);
     conversation.push({ role: "assistant", content: reply });
-    res.json({ reply });
+    res.json({ reply: reply });
   } catch (err) {
     conversation.pop();
 
     if (err.type === "RATE_LIMITED") {
       return res.status(429).json({
         error: err.message,
-        retryAfter: err.retryAfter,
+        retryAfter: err.retryAfter
       });
     }
 
@@ -41,5 +41,5 @@ app.get("/api/health", (req, res) => res.json({ status: "Kora backend is running
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Kora backend listening on port ${PORT}`);
+  console.log("Kora backend listening on port " + PORT);
 });
