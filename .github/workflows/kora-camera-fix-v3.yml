@@ -1,0 +1,43 @@
+name: KORA camera fix v3
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[camera-v3]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch camera handling
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('public/index.html')
+          s=p.read_text(encoding='utf-8')
+          if 'KORA_CAMERA_V3' in s:
+              raise SystemExit(0)
+          s=s.replace('function isCameraCommand(\n  text\n) {', 'function isCameraCommand(text) {\n  const t = normalise(text).replace(/\\bhey\\s+kora\\b/g, "").replace(/\\bkora\\b/g, "").replace(/\\s+/g, " ").trim();\n  return t === "camera" || t === "open camera" || t === "open the camera" || t === "show camera" || t === "show the camera" || t.includes("open camera") || t.includes("open the camera") || t.includes("show camera") || t.includes("show the camera") || t.includes("do me a favour and open camera") || t.includes("do me a favour and open the camera") || t.includes("do me a favour and show camera") || t.includes("do me a favour and show the camera") || t.includes("do me a favor and open camera") || t.includes("do me a favor and open the camera") || t.includes("do me a favor and show camera") || t.includes("do me a favor and show the camera");\n}\n\nfunction isCameraAnalysisCommand(text) {\n  const t = normalise(text).replace(/\\bhey\\s+kora\\b/g, "").replace(/\\bkora\\b/g, "").replace(/\\s+/g, " ").trim();\n  return t.includes("look at this") || t.includes("look at that") || t.includes("what am i looking at") || t.includes("what is this") || t.includes("what's this") || t.includes("can you see this");\n}\n\nfunction isCameraCommand_UNUSED(text) {')
+          s=s.replace('if (\n  isCameraCommand(text)\n) {\n\n    await openCamera();\n\n    return;\n  }', 'if (isCameraAnalysisCommand(text)) {\n    await openCamera({announce:false, analyze:true});\n    return;\n  }\n\n  if (isCameraCommand(text)) {\n    await openCamera({announce:true, analyze:false});\n    return;\n  }')
+          s=s.replace('async function openCamera() {', 'async function openCamera(options = {}) {\n\n  const announce = options.announce !== false;\n  const analyze = options.analyze === true;')
+          old='''    transmission.textContent =\n      "Camera active, Sir. Ask me what you'd like me to identify.";'''
+          new='''    transmission.textContent = analyze\n      ? "Camera active. Analysing what I can see, Sir."\n      : "Camera active, Sir. Ask me what you'd like me to identify.";'''
+          s=s.replace(old,new,1)
+          old2='''    speakWithoutConfirmation(\n      "Camera active, Sir. What would you like me to look at?"\n    );'''
+          new2='''    if (analyze) {\n      const runAnalysis = async () => {\n        try { await cameraVideo.play(); } catch {}\n        if (cameraVideo.videoWidth) await analyseCamera();\n        else { transmission.textContent = "The camera is still starting, Sir. Please try again in a moment."; }\n      };\n      if (cameraVideo.readyState >= 2) await runAnalysis();\n      else await new Promise(resolve => { cameraVideo.addEventListener("loadeddata", resolve, {once:true}); setTimeout(resolve, 2000); });\n      if (cameraVideo.videoWidth) await runAnalysis();\n      return;\n    }\n    if (announce) speakWithoutConfirmation(\n      "Camera active, Sir. What would you like me to look at?"\n    );'''
+          s=s.replace(old2,new2,1)
+          s=s.replace('''  } catch {\n\n    transmission.textContent =\n      "Camera permission was not granted, Sir.";''','''  } catch (error) {\n\n    const msg = error?.name === "NotAllowedError" ? "Camera permission was blocked, Sir. Please allow camera access for K.O.R.A." : error?.name === "NotFoundError" ? "I couldn't find a camera on this device, Sir." : error?.name === "NotReadableError" ? "The camera is already being used by another app or tab, Sir." : "I couldn't start the camera, Sir.";\n\n    transmission.textContent = msg;''',1)
+          s=s.replace('''<!-- KORA_CAMERA_PATCH_V2 -->''','''<!-- KORA_CAMERA_PATCH_V2 -->''')
+          s += '\n<!-- KORA_CAMERA_V3 -->\n'
+          p.write_text(s,encoding='utf-8')
+      - name: Commit patched index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/index.html
+          git commit -m "fix KORA camera commands [camera-v3]" || exit 0
+          git push
