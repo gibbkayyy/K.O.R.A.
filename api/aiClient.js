@@ -1,117 +1,264 @@
+const GEMINI_MODEL = "gemini-3.1-flash-lite";
+
 const GEMINI_URL =
-"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent";
+  `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
-const KORA_SYSTEM_PROMPT =
+const SYSTEM_PROMPT = `
+You are K.O.R.A. — Knowledge, Operations, Reasoning & Assistance.
 
-"You are Kora, a fast, clean, reliable voice assistant, in the spirit of JARVIS but with your own identity. " +
+You are the user's personal AI assistant.
 
-"You are not JARVIS, ChatGPT, Siri, or Google Assistant - you are Kora. " +
+PERSONALITY:
+- Calm
+- Intelligent
+- Helpful
+- Natural
+- Concise
+- Slightly futuristic
+- Never overly robotic
 
-"Since your replies may be spoken aloud, keep them conversational and concise - avoid long lists, " +
+ADDRESS:
+Call the user "sir" naturally by default.
 
-"markdown formatting, or anything that only makes sense written down. " +
-"Speak the way a sharp, efficient assistant would speak out loud. Avoid sci-fi cliches like At once sir or Booting up.";
+IMPORTANT PHRASE RULE:
+Only say "As you wish, sir" when the user's request is clearly a
+"can you..." question.
 
-async function askKora(messages) {
+Do NOT automatically say "As you wish, sir" for:
+- normal questions
+- greetings
+- weather
+- date/time
+- news
+- statements
+- commands that aren't "can you..." questions
 
-return callGeminiWithRetry(messages, 1);
+DEFAULT LOCATION:
+Rothbury, UK.
 
-}
+MEMORY:
+The application can provide persistent memories stored locally on the user's
+device.
 
-async function callGeminiWithRetry(messages, attempt) {
+Use those memories as context when relevant.
 
-// Gemini's format is different from Groq/OpenAI-style APIs:
+Never invent memories.
 
-// - "role" is "user" or "model" (not "assistant")
+Never claim to have forgotten or deleted a memory.
 
-// - message text goes in a "parts" array
+If the user says "remember..." or asks you to remember something, acknowledge it.
 
-// - the system prompt is passed separately, not as a message
+The frontend is responsible for saving memories locally.
 
-const geminiContents = messages.map(function (m) {
+PRIVACY:
+Do not claim that you can access WhatsApp, TikTok, YouTube, contacts,
+messages, files, accounts, or other private services unless the application
+actually provides that integration and its data to you.
 
-return {
+Do not pretend to have permissions you don't have.
 
-role: m.role === "assistant" ? "model" : "user",
+CAMERA:
+If the application supplies an image from the camera, analyse that image.
 
-parts: [{ text: m.content }]
+Never claim to see something through the camera unless an image has actually
+been supplied.
 
-};
+VOICE:
+Your replies are spoken aloud.
 
-});
+Write naturally for speech.
 
-const response = await fetch(GEMINI_URL + "?key=" + process.env.GEMINI_API_KEY, {
+Avoid unnecessary markdown.
 
-method: "POST",
+Avoid long lists unless requested.
 
-headers: {
+Do not use fake robotic phrases such as:
+"Affirmative."
+"At once."
+"Booting sequence initiated."
+"Processing command."
 
-"Content-Type": "application/json"
+The frontend handles the startup greeting.
 
-},
-
-body: JSON.stringify({
-
-contents: geminiContents,
-
-systemInstruction: {
-
-parts: [{ text: KORA_SYSTEM_PROMPT }]
-
-}
-
-})
-
-});
-
-if (response.status === 429) {
-
-const retryAfter = 2;
-
-if (attempt === 1) {
-
-await sleep(retryAfter * 1000);
-
-return callGeminiWithRetry(messages, attempt + 1);
-
-}
-
-const err = new Error("Kora's hit its request limit for the moment. Try again shortly.");
-
-err.type = "RATE_LIMITED";
-
-err.retryAfter = retryAfter;
-
-throw err;
-
-}
-
-if (!response.ok) {
-
-const body = await response.text();
-
-const err = new Error("Gemini API error (" + response.status + "): " + body);
-
-err.type = "PROVIDER_ERROR";
-
-throw err;
-
-}
-
-const data = await response.json();
-
-return data.candidates[0].content.parts[0].text;
-
-}
+Be K.O.R.A.
+`;
 
 function sleep(ms) {
-
-return new Promise(function (resolve) {
-
-setTimeout(resolve, ms);
-
-});
-
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports = { askKora };
+async function askKora(messages, context = {}) {
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not configured.");
+  }
+
+  const memory =
+    typeof context.memory === "string"
+      ? context.memory
+      : "";
+
+  const location =
+    typeof context.location === "string" &&
+    context.location.trim()
+      ? context.location
+      : "Rothbury, UK";
+
+  const contextualPrompt = `
+CURRENT CONTEXT
+
+Default/current location:
+${location}
+
+PERSISTENT LOCAL MEMORY:
+${memory || "(No memories stored yet.)"}
+
+The memory above comes from the user's local device.
+Use it only when relevant.
+Do not invent additional memories.
+`;
+
+  const contents = messages.map(message => ({
+    role:
+      message.role === "assistant"
+        ? "model"
+        : "user",
+
+    parts: [
+      {
+        text: String(
+          message.content ??
+          message.text ??
+          ""
+        )
+      }
+    ]
+  }));
+
+  const payload = {
+    systemInstruction: {
+      parts: [
+        {
+          text:
+            SYSTEM_PROMPT +
+            "\n\n" +
+            contextualPrompt
+        }
+      ]
+    },
+
+    contents,
+
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 700
+    }
+  };
+
+  let lastError = null;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch(
+        `${GEMINI_URL}?key=${encodeURIComponent(apiKey)}`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const text = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = null;
+      }
+
+      if (response.status === 429) {
+        lastError =
+          new Error(
+            "K.O.R.A. has temporarily reached the Gemini request limit."
+          );
+
+        if (attempt === 0) {
+          await sleep(1500);
+          continue;
+        }
+
+        lastError.type = "RATE_LIMITED";
+        throw lastError;
+      }
+
+      if (!response.ok) {
+        const message =
+          data?.error?.message ||
+          text ||
+          `Gemini returned HTTP ${response.status}`;
+
+        throw new Error(message);
+      }
+
+      const candidate =
+        data?.candidates?.[0];
+
+      const parts =
+        candidate?.content?.parts || [];
+
+      const reply =
+        parts
+          .map(part => part?.text || "")
+          .join("")
+          .trim();
+
+      if (!reply) {
+        throw new Error(
+          "Gemini returned an empty response."
+        );
+      }
+
+      return {
+        text: reply,
+
+        usage: {
+          promptTokens:
+            data?.usageMetadata?.promptTokenCount || 0,
+
+          outputTokens:
+            data?.usageMetadata?.candidatesTokenCount || 0,
+
+          totalTokens:
+            data?.usageMetadata?.totalTokenCount || 0
+        }
+      };
+
+    } catch (error) {
+      lastError = error;
+
+      if (
+        error?.type === "RATE_LIMITED"
+      ) {
+        throw error;
+      }
+
+      if (attempt === 0) {
+        await sleep(500);
+      }
+    }
+  }
+
+  throw lastError ||
+    new Error("K.O.R.A. could not contact Gemini.");
+}
+
+module.exports = {
+  askKora
+};
