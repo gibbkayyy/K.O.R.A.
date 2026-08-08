@@ -4,227 +4,1338 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kora</title>
+
 <style>
   :root {
-    --charcoal-950: #16171a;
-    --charcoal-900: #1e2024;
-    --charcoal-800: #2a2d33;
-    --charcoal-600: #4a4e57;
-    --charcoal-400: #7a7f8a;
-    --white: #f5f6f8;
+    --bg: #050806;
+    --panel: rgba(9, 18, 13, 0.78);
+    --green: #42ff8a;
+    --green-soft: #20c968;
+    --green-dark: #0b6b39;
+    --text: #eafff1;
+    --muted: #71907d;
+    --line: rgba(66, 255, 138, 0.16);
   }
-  * { box-sizing: border-box; }
-  html, body {
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
     height: 100%;
     margin: 0;
-    background: var(--charcoal-950);
-    color: var(--white);
+  }
+
+  body {
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 45%, rgba(23, 145, 76, 0.12), transparent 30%),
+      radial-gradient(circle at 50% 50%, rgba(66, 255, 138, 0.045), transparent 55%),
+      var(--bg);
+    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-  body {
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.25;
+    background-image:
+      linear-gradient(rgba(66,255,138,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(66,255,138,0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle, black 15%, transparent 75%);
+  }
+
+  .app {
+    position: relative;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    padding: 24px;
   }
-  .title {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: var(--charcoal-400);
+
+  /* --------------------------------------------------
+     TOP BAR
+  -------------------------------------------------- */
+
+  .topbar {
+    height: 74px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(3, 8, 5, 0.62);
+    backdrop-filter: blur(16px);
+    z-index: 5;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-core {
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    border: 1px solid var(--green-soft);
+    box-shadow:
+      0 0 12px rgba(66,255,138,0.35),
+      inset 0 0 12px rgba(66,255,138,0.12);
+    display: grid;
+    place-items: center;
+  }
+
+  .brand-core::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 12px var(--green);
+  }
+
+  .brand-name {
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+  }
+
+  .brand-version {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    margin-left: 3px;
+  }
+
+  .system-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  .orb {
-    width: 140px;
-    height: 140px;
+
+  .system-dot {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--charcoal-800);
-    border: 1px solid var(--charcoal-600);
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+  }
+
+  /* --------------------------------------------------
+     MAIN
+  -------------------------------------------------- */
+
+  .main {
+    flex: 1;
+    min-height: 0;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hud-line {
+    position: absolute;
+    background: var(--line);
+  }
+
+  .hud-line.top {
+    width: 120px;
+    height: 1px;
+    top: 10%;
+    left: 8%;
+  }
+
+  .hud-line.right {
+    width: 1px;
+    height: 90px;
+    top: 13%;
+    right: 9%;
+  }
+
+  .hud-line.bottom {
+    width: 150px;
+    height: 1px;
+    bottom: 12%;
+    right: 7%;
+  }
+
+  .hud-label {
+    position: absolute;
+    color: rgba(113, 144, 125, 0.5);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hud-label.one {
+    top: calc(10% + 8px);
+    left: 8%;
+  }
+
+  .hud-label.two {
+    top: 13%;
+    right: calc(9% + 10px);
+  }
+
+  .hud-label.three {
+    bottom: calc(12% + 8px);
+    right: 7%;
+  }
+
+  /* --------------------------------------------------
+     KORA CORE
+  -------------------------------------------------- */
+
+  .core-area {
+    position: relative;
+    width: min(560px, 82vw);
+    height: min(560px, 65vh);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .ring.one {
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(66,255,138,0.16);
+    animation: rotate 22s linear infinite;
+  }
+
+  .ring.two {
+    width: 350px;
+    height: 350px;
+    border: 1px dashed rgba(66,255,138,0.11);
+    animation: rotateReverse 30s linear infinite;
+  }
+
+  .ring.three {
+    width: 405px;
+    height: 405px;
+    border: 1px solid rgba(66,255,138,0.07);
+  }
+
+  .ring.one::before,
+  .ring.one::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 12px var(--green);
+  }
+
+  .ring.one::before {
+    top: 21px;
+    left: 50%;
+  }
+
+  .ring.one::after {
+    bottom: 34px;
+    right: 22px;
+  }
+
+  @keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes rotateReverse {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+
+  .core-button {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    border: 1px solid rgba(66,255,138,0.7);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%,
+        rgba(66,255,138,0.25) 0%,
+        rgba(19,104,57,0.16) 28%,
+        rgba(4,16,9,0.96) 65%);
+    box-shadow:
+      0 0 25px rgba(66,255,138,0.16),
+      0 0 75px rgba(66,255,138,0.08),
+      inset 0 0 35px rgba(66,255,138,0.12);
     cursor: pointer;
-    transition: transform 120ms ease, border-color 120ms ease;
+    transition: 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
   }
-  .orb:hover { border-color: var(--white); }
-  .orb.listening {
-    animation: pulse 1.4s infinite ease-in-out;
-    border-color: var(--white);
+
+  .core-button:hover {
+    transform: scale(1.025);
+    box-shadow:
+      0 0 35px rgba(66,255,138,0.23),
+      0 0 90px rgba(66,255,138,0.1),
+      inset 0 0 40px rgba(66,255,138,0.16);
   }
-  .orb.speaking {
-    animation: pulse 0.8s infinite ease-in-out;
-    border-color: var(--white);
+
+  .core-inner {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    border: 1px solid rgba(66,255,138,0.45);
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle, rgba(66,255,138,0.13), transparent 68%);
+    box-shadow: inset 0 0 25px rgba(66,255,138,0.08);
   }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
+
+  .core-symbol {
+    width: 47px;
+    height: 47px;
+    border-radius: 50%;
+    border: 2px solid var(--green);
+    position: relative;
+    box-shadow: 0 0 15px rgba(66,255,138,0.4);
   }
-  .mic-icon {
-    width: 40px;
-    height: 40px;
-    fill: var(--white);
+
+  .core-symbol::before,
+  .core-symbol::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
   }
-  .status {
-    font-size: 14px;
-    color: var(--charcoal-400);
-    min-height: 20px;
+
+  .core-symbol::before {
+    width: 20px;
+    height: 20px;
+    background: var(--green);
+    box-shadow: 0 0 18px var(--green);
+  }
+
+  .core-symbol::after {
+    width: 8px;
+    height: 8px;
+    background: #eafff1;
+  }
+
+  /* --------------------------------------------------
+     STATES
+  -------------------------------------------------- */
+
+  .listening .core-button {
+    animation: listeningPulse 1.6s ease-in-out infinite;
+    border-color: var(--green);
+  }
+
+  .listening .ring.one {
+    animation-duration: 8s;
+  }
+
+  .listening .ring.two {
+    animation-duration: 12s;
+  }
+
+  .thinking .core-button {
+    animation: thinkingPulse 1s ease-in-out infinite;
+  }
+
+  .speaking .core-button {
+    animation: speakingPulse 0.65s ease-in-out infinite;
+  }
+
+  .speaking .core-symbol::before {
+    animation: voicePulse 0.22s ease-in-out infinite alternate;
+  }
+
+  @keyframes listeningPulse {
+    0%, 100% {
+      box-shadow:
+        0 0 25px rgba(66,255,138,0.2),
+        0 0 75px rgba(66,255,138,0.08),
+        inset 0 0 35px rgba(66,255,138,0.12);
+    }
+
+    50% {
+      box-shadow:
+        0 0 40px rgba(66,255,138,0.4),
+        0 0 110px rgba(66,255,138,0.15),
+        inset 0 0 45px rgba(66,255,138,0.2);
+    }
+  }
+
+  @keyframes thinkingPulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+
+    50% {
+      transform: scale(1.035);
+      filter: brightness(1.18);
+    }
+  }
+
+  @keyframes speakingPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.055);
+    }
+  }
+
+  @keyframes voicePulse {
+    from {
+      transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    to {
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+  }
+
+  .state-text {
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
     text-align: center;
-    max-width: 480px;
+    pointer-events: none;
   }
-  .transcript {
-    font-size: 17px;
-    text-align: center;
-    max-width: 560px;
-    min-height: 26px;
-    line-height: 1.5;
-  }
-  .error {
-    color: var(--charcoal-400);
+
+  .state-main {
     font-size: 13px;
-    border: 1px solid var(--charcoal-800);
-    border-radius: 999px;
-    padding: 8px 16px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green);
+    text-shadow: 0 0 12px rgba(66,255,138,0.25);
+  }
+
+  .state-sub {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* --------------------------------------------------
+     CONVERSATION PANEL
+  -------------------------------------------------- */
+
+  .conversation {
+    position: absolute;
+    left: 28px;
+    bottom: 28px;
+    width: min(390px, calc(100vw - 56px));
+    max-height: 190px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    backdrop-filter: blur(18px);
+    overflow: hidden;
+    opacity: 0.92;
+  }
+
+  .conversation-title {
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .conversation-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #ccebd8;
+    max-height: 125px;
+    overflow-y: auto;
+  }
+
+  .conversation-text::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .conversation-text::-webkit-scrollbar-thumb {
+    background: var(--green-dark);
+    border-radius: 10px;
+  }
+
+  /* --------------------------------------------------
+     BOTTOM STATUS
+  -------------------------------------------------- */
+
+  .bottom {
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(3,8,5,0.55);
+    backdrop-filter: blur(14px);
+  }
+
+  .mic-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mic-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  .error {
+    position: fixed;
+    top: 88px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    max-width: 90%;
+    padding: 10px 16px;
+    border: 1px solid rgba(66,255,138,0.18);
+    border-radius: 10px;
+    background: rgba(5,12,8,0.94);
+    color: #a8c5b2;
+    font-size: 12px;
     display: none;
+    text-align: center;
+  }
+
+  @media (max-width: 700px) {
+    .topbar {
+      padding: 0 18px;
+    }
+
+    .system-status {
+      display: none;
+    }
+
+    .core-area {
+      height: 58vh;
+    }
+
+    .ring.one {
+      width: 250px;
+      height: 250px;
+    }
+
+    .ring.two {
+      width: 290px;
+      height: 290px;
+    }
+
+    .ring.three {
+      width: 330px;
+      height: 330px;
+    }
+
+    .core-button {
+      width: 160px;
+      height: 160px;
+    }
+
+    .core-inner {
+      width: 95px;
+      height: 95px;
+    }
+
+    .conversation {
+      left: 14px;
+      bottom: 14px;
+      width: calc(100vw - 28px);
+      max-height: 125px;
+    }
+
+    .conversation-text {
+      max-height: 70px;
+    }
+
+    .hud {
+      display: none;
+    }
   }
 </style>
 </head>
+
 <body>
 
-  <div class="title">Kora</div>
-  <div class="orb" id="orb">
-    <svg class="mic-icon" viewBox="0 0 24 24">
-      <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
-      <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2h-3v-2.08A7 7 0 0 0 19 11z"/>
-    </svg>
-  </div>
-  <div class="status" id="status">Tap to talk to Kora</div>
-  <div class="transcript" id="transcript"></div>
-  <div class="error" id="error"></div>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-core"></div>
+
+      <div>
+        <div class="brand-name">KORA</div>
+        <span class="brand-version">AI ASSISTANT</span>
+      </div>
+    </div>
+
+    <div class="system-status">
+      <span class="system-dot"></span>
+      SYSTEM ONLINE
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="hud">
+      <div class="hud-line top"></div>
+      <div class="hud-label one">KORA // CORE</div>
+
+      <div class="hud-line right"></div>
+      <div class="hud-label two">VOICE LINK</div>
+
+      <div class="hud-line bottom"></div>
+      <div class="hud-label three">ONLINE</div>
+    </div>
+
+    <section class="core-area" id="coreArea">
+
+      <div class="ring one"></div>
+      <div class="ring two"></div>
+      <div class="ring three"></div>
+
+      <button class="core-button" id="coreButton" aria-label="Talk to Kora">
+        <div class="core-inner">
+          <div class="core-symbol"></div>
+        </div>
+      </button>
+
+      <div class="state-text">
+        <div class="state-main" id="stateMain">INITIALISING</div>
+        <div class="state-sub" id="stateSub">
+          Preparing voice interface
+        </div>
+      </div>
+
+    </section>
+
+    <div class="conversation">
+      <div class="conversation-title">Latest transmission</div>
+      <div class="conversation-text" id="conversationText">
+        Kora is ready.
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bottom">
+    <div class="mic-status">
+      <span class="mic-dot"></span>
+      <span id="micStatus">MICROPHONE READY</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="error" id="error"></div>
 
 <script>
-  // ------------------------------------------------------------------
-  // Kora's brain lives at the same domain now (Vercel serves both the
-  // frontend and the /api functions), so we can just call /api/chat
-  // with a relative path - no separate backend URL needed.
-  // ------------------------------------------------------------------
   const CHAT_ENDPOINT = "/api/chat";
 
-  const orb = document.getElementById("orb");
-  const statusEl = document.getElementById("status");
-  const transcriptEl = document.getElementById("transcript");
+  const app = document.getElementById("app");
+  const coreButton = document.getElementById("coreButton");
+  const stateMain = document.getElementById("stateMain");
+  const stateSub = document.getElementById("stateSub");
+  const conversationText = document.getElementById("conversationText");
+  const micStatus = document.getElementById("micStatus");
   const errorEl = document.getElementById("error");
 
   let conversation = [];
-  let isListening = false;
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let recognitionSupported = false;
 
-  if (!SpeechRecognition) {
-    statusEl.textContent = "Your browser doesn't support voice input. Try Chrome.";
-  }
+  let shouldKeepListening = true;
+  let recognitionRunning = false;
+  let koraIsSpeaking = false;
+  let processingRequest = false;
 
-  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-  if (recognition) {
-    recognition.lang = "en-US";
+  let selectedVoice = null;
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  /*
+   * --------------------------------------------------
+   * SPEECH RECOGNITION
+   * --------------------------------------------------
+   */
+
+  if (SpeechRecognition) {
+    recognitionSupported = true;
+
+    recognition = new SpeechRecognition();
+
+    recognition.lang = "en-GB";
+
+    /*
+     * Continuous mode means Kora doesn't intentionally
+     * stop after one sentence.
+     */
+    recognition.continuous = true;
+
+    /*
+     * We only need the final result because sending
+     * partial results to the AI would cause duplicate
+     * requests.
+     */
     recognition.interimResults = false;
+
     recognition.maxAlternatives = 1;
+  } else {
+    setState(
+      "BROWSER LIMIT",
+      "Voice input is not supported here"
+    );
+
+    micStatus.textContent = "VOICE INPUT UNAVAILABLE";
   }
 
-  orb.addEventListener("click", function () {
-    if (!recognition) return;
-    if (isListening) return;
-    startListening();
-  });
+  /*
+   * --------------------------------------------------
+   * VOICE SELECTION
+   * --------------------------------------------------
+   */
+
+  function chooseVoice() {
+    if (!window.speechSynthesis) return;
+
+    const voices = window.speechSynthesis.getVoices();
+
+    if (!voices.length) return;
+
+    /*
+     * Prefer English voices.
+     */
+    const englishVoices = voices.filter(function (voice) {
+      return /^en(-|_)/i.test(voice.lang);
+    });
+
+    /*
+     * Look for names that commonly identify
+     * female-sounding system voices.
+     */
+    const femaleHints = [
+      "female",
+      "samantha",
+      "karen",
+      "victoria",
+      "moira",
+      "fiona",
+      "susan",
+      "zira",
+      "aria",
+      "libby",
+      "sonia",
+      "jenny",
+      "serena"
+    ];
+
+    const femaleVoice = englishVoices.find(function (voice) {
+      const name = voice.name.toLowerCase();
+
+      return femaleHints.some(function (hint) {
+        return name.includes(hint);
+      });
+    });
+
+    if (femaleVoice) {
+      selectedVoice = femaleVoice;
+      return;
+    }
+
+    /*
+     * If the device doesn't expose a recognisable
+     * female voice, use a good English voice instead.
+     */
+    selectedVoice =
+      englishVoices.find(function (voice) {
+        return /GB|UK/i.test(voice.lang);
+      }) ||
+      englishVoices[0] ||
+      voices[0];
+  }
+
+  chooseVoice();
+
+  if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = chooseVoice;
+  }
+
+  /*
+   * --------------------------------------------------
+   * STATE
+   * --------------------------------------------------
+   */
+
+  function setState(main, sub) {
+    stateMain.textContent = main;
+    stateSub.textContent = sub;
+
+    app.classList.remove(
+      "listening",
+      "thinking",
+      "speaking"
+    );
+
+    if (main === "LISTENING") {
+      app.classList.add("listening");
+    }
+
+    if (main === "THINKING") {
+      app.classList.add("thinking");
+    }
+
+    if (main === "SPEAKING") {
+      app.classList.add("speaking");
+    }
+  }
+
+  /*
+   * --------------------------------------------------
+   * START MICROPHONE
+   * --------------------------------------------------
+   */
 
   function startListening() {
-    isListening = true;
-    orb.classList.add("listening");
-    statusEl.textContent = "Listening...";
-    errorEl.style.display = "none";
-    recognition.start();
+    if (!recognitionSupported) return;
+
+    /*
+     * Never start the microphone while Kora is speaking.
+     * This is the main anti-loop protection.
+     */
+    if (koraIsSpeaking) return;
+
+    if (recognitionRunning) return;
+
+    try {
+      recognition.start();
+
+      recognitionRunning = true;
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+      micStatus.textContent = "MICROPHONE ACTIVE";
+
+      hideError();
+
+    } catch (error) {
+      /*
+       * SpeechRecognition throws if start() is called
+       * while it is already starting/running.
+       */
+      recognitionRunning = false;
+    }
   }
 
+  /*
+   * --------------------------------------------------
+   * STOP MICROPHONE
+   * --------------------------------------------------
+   */
+
+  function stopListening() {
+    if (!recognition) return;
+
+    try {
+      recognition.stop();
+    } catch (error) {
+      // Nothing to do.
+    }
+
+    recognitionRunning = false;
+  }
+
+  /*
+   * --------------------------------------------------
+   * RESTART MICROPHONE
+   * --------------------------------------------------
+   */
+
+  function restartListening() {
+    if (!shouldKeepListening) return;
+
+    if (koraIsSpeaking) return;
+
+    if (processingRequest) return;
+
+    setTimeout(function () {
+      if (!shouldKeepListening) return;
+      if (koraIsSpeaking) return;
+      if (processingRequest) return;
+
+      startListening();
+    }, 250);
+  }
+
+  /*
+   * --------------------------------------------------
+   * RECOGNITION EVENTS
+   * --------------------------------------------------
+   */
+
   if (recognition) {
+
+    recognition.onstart = function () {
+      recognitionRunning = true;
+
+      if (!koraIsSpeaking) {
+        setState(
+          "LISTENING",
+          "Kora is listening"
+        );
+
+        micStatus.textContent = "MICROPHONE ACTIVE";
+      }
+    };
+
     recognition.onresult = function (event) {
-      const heard = event.results[0][0].transcript;
-      transcriptEl.textContent = heard;
+
+      /*
+       * Ignore anything that somehow arrives while
+       * Kora is speaking.
+       */
+      if (koraIsSpeaking) return;
+
+      const result =
+        event.results[event.results.length - 1];
+
+      if (!result || !result.isFinal) return;
+
+      const heard =
+        result[0].transcript.trim();
+
+      if (!heard) return;
+
+      /*
+       * Stop recognition while Kora thinks and speaks.
+       * This prevents her own voice from becoming input.
+       */
+      stopListening();
+
       sendToKora(heard);
     };
 
     recognition.onerror = function (event) {
-      isListening = false;
-      orb.classList.remove("listening");
-      statusEl.textContent = "Tap to talk to Kora";
-      showError("Didn't catch that (" + event.error + "). Try again.");
-    };
 
-    recognition.onend = function () {
-      isListening = false;
-      orb.classList.remove("listening");
-    };
-  }
+      recognitionRunning = false;
 
-  async function sendToKora(userText) {
-    statusEl.textContent = "Thinking...";
-    conversation.push({ role: "user", content: userText });
-
-    try {
-      const res = await fetch(CHAT_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: conversation })
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        conversation.pop();
-        showError(
-          res.status === 429
-            ? "Kora's thinking cap is cooling down - try again in a moment."
-            : (data.error || "Something went wrong.")
-        );
-        statusEl.textContent = "Tap to talk to Kora";
+      /*
+       * These aren't really errors that should scare
+       * the user. Chrome can produce them when the
+       * microphone naturally stops.
+       */
+      if (
+        event.error === "no-speech" ||
+        event.error === "aborted"
+      ) {
+        restartListening();
         return;
       }
 
-      conversation.push({ role: "assistant", content: data.reply });
-      transcriptEl.textContent = data.reply;
-      speak(data.reply);
-    } catch (err) {
+      if (event.error === "not-allowed") {
+
+        shouldKeepListening = false;
+
+        setState(
+          "MICROPHONE BLOCKED",
+          "Allow microphone access to use Kora"
+        );
+
+        micStatus.textContent =
+          "MICROPHONE PERMISSION REQUIRED";
+
+        showError(
+          "Kora needs microphone permission to listen."
+        );
+
+        return;
+      }
+
+      showError(
+        "Voice input issue: " + event.error
+      );
+
+      restartListening();
+    };
+
+    recognition.onend = function () {
+
+      recognitionRunning = false;
+
+      /*
+       * Chrome can end SpeechRecognition by itself.
+       * Automatically restart it so Kora remains
+       * hands-free.
+       */
+      if (
+        shouldKeepListening &&
+        !koraIsSpeaking &&
+        !processingRequest
+      ) {
+        restartListening();
+      }
+    };
+  }
+
+  /*
+   * --------------------------------------------------
+   * SEND TO KORA
+   * --------------------------------------------------
+   */
+
+  async function sendToKora(userText) {
+
+    processingRequest = true;
+
+    setState(
+      "THINKING",
+      "Kora is processing"
+    );
+
+    micStatus.textContent =
+      "VOICE LINK PAUSED";
+
+    conversation.push({
+      role: "user",
+      content: userText
+    });
+
+    conversationText.textContent =
+      userText;
+
+    try {
+
+      const response = await fetch(
+        CHAT_ENDPOINT,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            messages: conversation
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+
+        conversation.pop();
+
+        showError(
+          response.status === 429
+            ? "Kora is temporarily rate limited. Try again shortly."
+            : (data.error || "Something went wrong.")
+        );
+
+        processingRequest = false;
+
+        setState(
+          "LISTENING",
+          "Kora is listening"
+        );
+
+        restartListening();
+
+        return;
+      }
+
+      const reply =
+        data.reply || "I'm sorry, I didn't get a response.";
+
+      conversation.push({
+        role: "assistant",
+        content: reply
+      });
+
+      conversationText.textContent =
+        reply;
+
+      speak(reply);
+
+    } catch (error) {
+
       conversation.pop();
-      showError("Couldn't reach Kora. Check your connection.");
-      statusEl.textContent = "Tap to talk to Kora";
+
+      processingRequest = false;
+
+      showError(
+        "Couldn't reach Kora. Check your connection."
+      );
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+      restartListening();
     }
   }
 
+  /*
+   * --------------------------------------------------
+   * SPEAK
+   * --------------------------------------------------
+   */
+
   function speak(text) {
+
     if (!window.speechSynthesis) {
-      statusEl.textContent = "Tap to talk to Kora";
+
+      processingRequest = false;
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+      restartListening();
+
       return;
     }
 
-    orb.classList.add("speaking");
-    statusEl.textContent = "Speaking...";
+    /*
+     * HARD ANTI-LOOP PROTECTION:
+     *
+     * Stop speech recognition before Kora speaks.
+     */
+    shouldKeepListening = true;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.02;
-    utterance.pitch = 1.0;
+    stopListening();
 
-    utterance.onend = function () {
-      orb.classList.remove("speaking");
-      statusEl.textContent = "Tap to talk to Kora";
+    koraIsSpeaking = true;
+
+    setState(
+      "SPEAKING",
+      "Kora is responding"
+    );
+
+    micStatus.textContent =
+      "VOICE OUTPUT ACTIVE";
+
+    /*
+     * Cancel anything previously queued.
+     */
+    window.speechSynthesis.cancel();
+
+    chooseVoice();
+
+    const utterance =
+      new SpeechSynthesisUtterance(text);
+
+    /*
+     * Calm, natural delivery.
+     */
+    utterance.rate = 0.91;
+    utterance.pitch = 1.04;
+    utterance.volume = 1.0;
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+
+    utterance.onstart = function () {
+
+      koraIsSpeaking = true;
+
+      setState(
+        "SPEAKING",
+        "Kora is responding"
+      );
     };
 
-    window.speechSynthesis.speak(utterance);
+    utterance.onend = function () {
+
+      koraIsSpeaking = false;
+      processingRequest = false;
+
+      /*
+       * Small delay after speech finishes.
+       * This gives the microphone time to settle
+       * before it starts listening again.
+       */
+      setTimeout(function () {
+
+        if (!shouldKeepListening) return;
+
+        setState(
+          "LISTENING",
+          "Kora is listening"
+        );
+
+        micStatus.textContent =
+          "MICROPHONE ACTIVE";
+
+        startListening();
+
+      }, 350);
+    };
+
+    utterance.onerror = function () {
+
+      koraIsSpeaking = false;
+      processingRequest = false;
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+      micStatus.textContent =
+        "MICROPHONE ACTIVE";
+
+      restartListening();
+    };
+
+    window.speechSynthesis.speak(
+      utterance
+    );
   }
 
+  /*
+   * --------------------------------------------------
+   * USER CLICK
+   * --------------------------------------------------
+   */
+
+  coreButton.addEventListener(
+    "click",
+    function () {
+
+      /*
+       * Clicking the core is also useful for granting
+       * microphone permission on the first launch.
+       */
+      if (!recognitionSupported) return;
+
+      if (koraIsSpeaking) {
+
+        /*
+         * Allow the user to stop Kora speaking.
+         */
+        window.speechSynthesis.cancel();
+
+        koraIsSpeaking = false;
+        processingRequest = false;
+
+        setState(
+          "LISTENING",
+          "Kora is listening"
+        );
+
+        startListening();
+
+        return;
+      }
+
+      if (!recognitionRunning) {
+        startListening();
+      }
+    }
+  );
+
+  /*
+   * --------------------------------------------------
+   * ERROR UI
+   * --------------------------------------------------
+   */
+
   function showError(message) {
+
     errorEl.textContent = message;
-    errorEl.style.display = "inline-block";
+    errorEl.style.display = "block";
+
+    setTimeout(function () {
+      hideError();
+    }, 5000);
   }
+
+  function hideError() {
+    errorEl.style.display = "none";
+  }
+
+  /*
+   * --------------------------------------------------
+   * INITIALISE
+   * --------------------------------------------------
+   */
+
+  if (recognitionSupported) {
+
+    setState(
+      "READY",
+      "Click the core once to enable Kora"
+    );
+
+    /*
+     * We intentionally wait for the first click
+     * because browsers require user interaction for
+     * microphone permission.
+     */
+    micStatus.textContent =
+      "MICROPHONE READY";
+
+  } else {
+
+    setState(
+      "VOICE UNAVAILABLE",
+      "Use a browser with voice input support"
+    );
+
+    micStatus.textContent =
+      "VOICE INPUT UNAVAILABLE";
+  }
+
 </script>
 
 </body>
