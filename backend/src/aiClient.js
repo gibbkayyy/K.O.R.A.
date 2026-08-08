@@ -50,3 +50,15 @@ async function callGroqWithRetry(messages, attempt) {
     const body = await response.text();
     const err = new Error("Groq API error (" + response.status + "): " + body);
     err.type = "PROVIDER_ERROR";
+    throw err;
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
+function sleep(ms) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, ms);
+  });
+}
