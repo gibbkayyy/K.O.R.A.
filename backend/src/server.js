@@ -40,6 +40,6 @@ app.post("/api/chat", async (req, res) => {
 app.get("/api/health", (req, res) => res.json({ status: "Kora backend is running" }));
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log("Kora backend listening on port " + PORT);
 });
