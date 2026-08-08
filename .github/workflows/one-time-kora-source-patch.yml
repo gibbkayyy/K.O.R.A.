@@ -1,0 +1,253 @@
+name: One-time KORA source patch
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[kora-source-patched]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch index.html
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('public/index.html')
+          text = path.read_text(encoding='utf-8')
+
+          if 'KORA_SOURCE_PATCH_V2' in text:
+              print('Already patched')
+              raise SystemExit(0)
+
+          # Bigger core/orb without changing the surrounding layout.
+          css = r'''
+
+/* KORA_SOURCE_PATCH_V2: larger primary K.O.R.A. core */
+.core {
+  width: 620px !important;
+  height: 620px !important;
+}
+
+.orb {
+  width: 260px !important;
+  height: 260px !important;
+}
+
+.ring-a { width: 330px !important; height: 330px !important; }
+.ring-b { width: 405px !important; height: 405px !important; }
+.ring-c { width: 480px !important; height: 480px !important; }
+
+.orb-name {
+  font-size: 27px !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+.app.listening .orb-name,
+.app.thinking .orb-name,
+.app.speaking .orb-name {
+  animation: koraTextStable .7s ease 0s forwards !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+@keyframes koraTextStable {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (max-width: 700px) {
+  .core { width: 440px !important; height: 440px !important; }
+  .orb { width: 220px !important; height: 220px !important; }
+  .ring-a { width: 280px !important; height: 280px !important; }
+  .ring-b { width: 340px !important; height: 340px !important; }
+  .ring-c { width: 400px !important; height: 400px !important; }
+  .orb-name { font-size: 23px !important; }
+}
+'''
+          if '</style>' not in text:
+              raise SystemExit('Could not find closing style tag')
+          text = text.replace('</style>', css + '\n</style>', 1)
+
+          def replace_function(src, name, replacement):
+              pattern = rf'function {re.escape(name)}\\(\\s*text\\s*\\)\\s*\\{{.*?\\n\\}}'
+              out, count = re.subn(pattern, replacement, src, count=1, flags=re.S)
+              if count != 1:
+                  raise SystemExit(f'Could not find {name}')
+              return out
+
+          open_fn = r'''function isCameraOpenCommand(
+  text
+) {
+  const t = normalise(stripWakeWord(text)).replace(/\s+/g, ' ').trim();
+
+  const openPhrases = [
+    'camera',
+    'open camera',
+    'open the camera',
+    'show camera',
+    'show the camera',
+    'use camera',
+    'use the camera',
+    'turn on camera',
+    'turn on the camera',
+    'activate camera',
+    'activate the camera',
+    'start camera',
+    'start the camera',
+    'bring up camera',
+    'bring up the camera',
+    'bring up the camera feed',
+    'look at the camera',
+    'look through the camera',
+    'hey kora open camera',
+    'hey kora open the camera',
+    'kora open camera',
+    'kora open the camera',
+    'do me a favour and open camera',
+    'do me a favour and open the camera',
+    'do me a favour and show camera',
+    'do me a favour and show the camera',
+    'do me a favor and open camera',
+    'do me a favor and open the camera',
+    'do me a favor and show camera',
+    'do me a favor and show the camera'
+  ];
+
+  return openPhrases.some(phrase => t === phrase || t.includes(phrase));
+}'''
+
+          analyse_fn = r'''function isCameraAnalyseCommand(
+  text
+) {
+  const t = normalise(stripWakeWord(text)).replace(/\s+/g, ' ').trim();
+
+  const directPhrases = [
+    'analyse',
+    'analyze',
+    'analyse image',
+    'analyze image',
+    'analyse the image',
+    'analyze the image',
+    'analyse camera',
+    'analyze camera',
+    'analyse the camera',
+    'analyze the camera',
+    'look at this',
+    'look at that',
+    'look again',
+    'analyse this',
+    'analyse that',
+    'analyse again',
+    'analyze this',
+    'analyze that',
+    'analyze again',
+    'what can you see',
+    'tell me what you can see',
+    'what do you see',
+    'what am i looking at',
+    'what am i seeing',
+    'what is this',
+    "what's this",
+    'scan this',
+    'scan that',
+    'scan the camera',
+    'identify this',
+    'identify that',
+    'identify the image',
+    'identify the camera',
+    'describe this',
+    'describe what you see',
+    'can you see this',
+    'can you see that'
+  ];
+
+  if (directPhrases.some(phrase => t === phrase || t.includes(phrase))) {
+    return true;
+  }
+
+  const cameraWords = ['camera', 'image', 'picture', 'photo', 'frame', 'view', 'screen'];
+  const actionWords = ['analyse', 'analyze', 'scan', 'identify', 'describe', 'recognise', 'recognize', 'inspect', 'examine', 'see', 'look'];
+
+  const hasCameraContext = cameraWords.some(word => t.includes(word));
+  const hasAction = actionWords.some(word => t.includes(word));
+
+  return hasCameraContext && hasAction && !isCameraOpenCommand(text);
+}'''
+
+          text = replace_function(text, 'isCameraOpenCommand', open_fn)
+          text = replace_function(text, 'isCameraAnalyseCommand', analyse_fn)
+
+          # Persist the conversation locally so a refresh does not erase KORA's memory.
+          marker = 'let messages = [];'
+          memory_code = r'''let messages = [];
+
+const KORA_MEMORY_KEY = "kora_conversation_memory_v2";
+
+try {
+  const storedMemory =
+    JSON.parse(localStorage.getItem(KORA_MEMORY_KEY) || "[]");
+
+  if (Array.isArray(storedMemory)) {
+    messages = storedMemory
+      .filter(message =>
+        message &&
+        (message.role === "user" || message.role === "assistant") &&
+        typeof message.content === "string"
+      )
+      .slice(-1000);
+  }
+} catch {}
+
+function saveConversationMemory() {
+  try {
+    localStorage.setItem(
+      KORA_MEMORY_KEY,
+      JSON.stringify(messages.slice(-1000))
+    );
+  } catch {}
+}'''
+          if marker not in text:
+              raise SystemExit('Could not find messages declaration')
+          text = text.replace(marker, memory_code, 1)
+
+          # Save after each chat turn; the existing backend still receives its normal recent context.
+          chat_start = text.index('async function sendToKora(')
+          chat_end = text.index('/* =====================================================\n   USAGE', chat_start)
+          chat = text[chat_start:chat_end]
+          if 'saveConversationMemory();' not in chat:
+              needle = '''    messages.push({
+
+      role: "assistant",
+
+      content: reply
+
+    });'''
+              if needle not in chat:
+                  raise SystemExit('Could not find assistant message push')
+              chat = chat.replace(needle, needle + '\n\n    saveConversationMemory();', 1)
+              text = text[:chat_start] + chat + text[chat_end:]
+
+          # Make the normal chat prompt understand that supplied vision data is real application data.
+          old = '''Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, camera, microphone, files, or other private services unless the application has explicitly provided the required data.\n\nIf the user asks about capabilities that require permission, explain what permission or integration is needed.'''
+          new = '''Do not claim to access hardware directly. The application may explicitly supply a camera image to the vision backend. When an image has been supplied, analyse that image normally and never claim that you cannot access the camera.'''
+          text = text.replace(old, new, 1)
+
+          text += '\n<!-- KORA_SOURCE_PATCH_V2 -->\n'
+          path.write_text(text, encoding='utf-8')
+          print('KORA index.html patched successfully')
+
+      - name: Commit source and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/one-time-kora-source-patch.yml
+          git add public/index.html .github/workflows/one-time-kora-source-patch.yml
+          git commit -m "Apply KORA source fixes [kora-source-patched]"
+          git push
