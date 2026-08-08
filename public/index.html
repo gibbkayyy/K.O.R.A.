@@ -762,29 +762,41 @@ body {
 
 @keyframes thinkPulse {
   0%,100% {
-    transform:
-      translate(-50%,-50%)
-      scale(1);
+    box-shadow:
+      inset 0 0 35px
+      rgba(255,255,255,.04),
+
+      0 0 35px
+      rgba(255,255,255,.06);
   }
 
   50% {
-    transform:
-      translate(-50%,-50%)
-      scale(1.045);
+    box-shadow:
+      inset 0 0 48px
+      rgba(255,255,255,.09),
+
+      0 0 70px
+      rgba(255,255,255,.15);
   }
 }
 
 @keyframes speakPulse {
   0%,100% {
-    transform:
-      translate(-50%,-50%)
-      scale(1);
+    box-shadow:
+      inset 0 0 35px
+      rgba(255,255,255,.04),
+
+      0 0 35px
+      rgba(255,255,255,.06);
   }
 
   50% {
-    transform:
-      translate(-50%,-50%)
-      scale(1.065);
+    box-shadow:
+      inset 0 0 50px
+      rgba(255,255,255,.11),
+
+      0 0 80px
+      rgba(255,255,255,.18);
   }
 }
 
@@ -2594,54 +2606,85 @@ function removeTarget(
 
 
 /* =====================================================
-   VISION COMMAND
+   WAKE WORD STRIPPING
 ===================================================== */
 
-function isCameraCommand(
+function stripWakeWord(
+  text
+) {
+
+  return text
+    .replace(
+      /^(hey |ok |okay )?kora[,]?\s*(do me a favou?r and\s*)?/i,
+      ""
+    )
+    .trim();
+}
+
+
+/* =====================================================
+   VISION COMMANDS
+===================================================== */
+
+function isCameraOpenCommand(
   text
 ) {
 
   const t =
-    normalise(text);
+    normalise(
+      stripWakeWord(text)
+    );
 
 
-  return (
+  const openPhrases = [
 
-    t.includes(
-      "look at this"
-    ) ||
+    "camera",
+    "open camera",
+    "open the camera",
+    "show camera",
+    "show the camera",
+    "use the camera",
+    "turn on the camera",
+    "turn on camera"
+  ];
 
-    t.includes(
-      "look through the camera"
-    ) ||
 
-    t.includes(
-      "use the camera"
-    ) ||
+  return openPhrases.includes(t);
+}
 
-    t.includes(
-      "open the camera"
-    ) ||
 
-    t.includes(
-      "what am i looking at"
-    ) ||
+function isCameraAnalyseCommand(
+  text
+) {
 
-    t.includes(
-      "what is this"
-    ) ||
+  const t =
+    normalise(
+      stripWakeWord(text)
+    );
 
-    t.includes(
-      "what's this"
-    ) ||
 
-    t.includes(
-      "can you see this"
-    ) ||
+  const analysePhrases = [
 
-    t.includes(
-      "look at that"
-    )
+    "look at this",
+    "look at that",
+    "look through the camera",
+    "what am i looking at",
+    "what is this",
+    "what's this",
+    "can you see this",
+    "look again",
+    "analyse this",
+    "analyze this",
+    "analyse again",
+    "analyze again",
+    "what do you see",
+    "scan this"
+  ];
+
+
+  return analysePhrases.some(
+    phrase =>
+      t.includes(phrase)
   );
 }
 
@@ -2725,11 +2768,29 @@ async function handleCommand(
 
 
   /*
-   * Camera.
+   * Vision: "look at this" / follow-up analyse commands.
+   * Opens the camera silently if needed, captures a frame,
+   * and describes it. If the camera is already open, this
+   * just re-analyses without reopening or re-announcing.
    */
 
   if (
-    isCameraCommand(text)
+    isCameraAnalyseCommand(text)
+  ) {
+
+    await handleVisionRequest();
+
+    return;
+  }
+
+
+  /*
+   * Camera: plain "open camera" style commands.
+   * Opens with the spoken announcement, no automatic capture.
+   */
+
+  if (
+    isCameraOpenCommand(text)
   ) {
 
     await openCamera();
@@ -3431,7 +3492,30 @@ infoClose.addEventListener(
    CAMERA
 ===================================================== */
 
-async function openCamera() {
+async function openCamera(
+  options
+) {
+
+  const silent =
+    Boolean(
+      options &&
+      options.silent
+    );
+
+
+  /*
+   * Already open - nothing to do, just report success
+   * so callers like handleVisionRequest can proceed straight
+   * to analysing instead of reopening.
+   */
+
+  if (
+    cameraStream
+  ) {
+
+    return true;
+  }
+
 
   if (
     !navigator.mediaDevices ||
@@ -3445,7 +3529,7 @@ async function openCamera() {
       "Camera access isn't available in this browser, Sir."
     );
 
-    return;
+    return false;
   }
 
 
@@ -3490,19 +3574,27 @@ async function openCamera() {
     );
 
 
-    transmission.textContent =
-      "Camera active, Sir. Ask me what you'd like me to identify.";
-
-
     setState(
       "VISION ACTIVE",
       "Kora can see through the camera"
     );
 
 
-    speakWithoutConfirmation(
-      "Camera active, Sir. What would you like me to look at?"
-    );
+    if (
+      !silent
+    ) {
+
+      transmission.textContent =
+        "Camera active, Sir. Ask me what you'd like me to identify.";
+
+
+      speakWithoutConfirmation(
+        "Camera active, Sir. What would you like me to look at?"
+      );
+    }
+
+
+    return true;
 
   } catch {
 
@@ -3515,7 +3607,50 @@ async function openCamera() {
 
 
     restartListening();
+
+
+    return false;
   }
+}
+
+
+/* =====================================================
+   VISION REQUEST (open-if-needed + capture + analyse)
+===================================================== */
+
+async function handleVisionRequest() {
+
+  const ready =
+    await openCamera({
+      silent: true
+    });
+
+
+  if (
+    !ready
+  ) {
+    return;
+  }
+
+
+  /*
+   * Give the video element a brief moment to start
+   * rendering frames if the camera just opened, so the
+   * first capture isn't a blank frame.
+   */
+
+  if (
+    !cameraVideo.videoWidth
+  ) {
+
+    await new Promise(
+      resolve =>
+        setTimeout(resolve, 350)
+    );
+  }
+
+
+  await captureAndAnalyse();
 }
 
 
@@ -3584,11 +3719,11 @@ cameraClose.addEventListener(
 
 cameraSnap.addEventListener(
   "click",
-  analyseCamera
+  captureAndAnalyse
 );
 
 
-async function analyseCamera() {
+async function captureAndAnalyse() {
 
   if (
     !cameraVideo.videoWidth
@@ -3698,6 +3833,19 @@ async function analyseCamera() {
     speak(
       "I couldn't analyse that image, Sir."
     );
+
+  } finally {
+
+    /*
+     * The camera stays open after analysing (per spec) -
+     * speak()/finishSpeaking() will move the state to
+     * LISTENING once Kora finishes talking, so this just
+     * makes sure the mic-state label isn't left stuck on
+     * "VISION PROCESSING" if speak() is still in flight.
+     */
+
+    micState.textContent =
+      "MICROPHONE ACTIVE";
   }
 }
 
@@ -4039,6 +4187,23 @@ async function speak(
 
   try {
 
+    /*
+     * Cap how long we'll wait on the third-party voice.
+     * If it hasn't responded in time, abort and drop
+     * straight to the instant browser voice below instead
+     * of leaving Kora silent while it keeps waiting.
+     */
+
+    const controller =
+      new AbortController();
+
+    const timeout =
+      setTimeout(
+        () => controller.abort(),
+        2500
+      );
+
+
     const response =
       await fetch(
         TTS_ENDPOINT,
@@ -4053,9 +4218,17 @@ async function speak(
 
           body: JSON.stringify({
             text
-          })
+          }),
+
+          signal:
+            controller.signal
         }
       );
+
+
+    clearTimeout(
+      timeout
+    );
 
 
     if (
