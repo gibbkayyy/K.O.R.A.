@@ -1,985 +1,1348 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>K.O.R.A.</title>
 
 <style>
-  :root {
-    --bg: #101112;
-    --charcoal: #17191a;
-    --panel: rgba(27, 29, 30, 0.88);
-    --white: #f4f5f2;
-    --soft-white: #d7dad7;
-    --muted: #858b88;
-    --green: #54d98b;
-    --green-soft: rgba(84, 217, 139, 0.22);
-    --line: rgba(255, 255, 255, 0.09);
+:root {
+  --background: #0c0d0e;
+  --background-light: #141516;
+  --charcoal: #1b1d1f;
+  --panel: rgba(24, 26, 28, 0.94);
+
+  --white: #f5f5f3;
+  --white-soft: #dfe1df;
+  --grey: #a4a7a5;
+  --grey-dark: #686c6a;
+
+  --grid: rgba(190, 194, 191, 0.13);
+  --grid-glow: rgba(220, 224, 221, 0.08);
+
+  --border: rgba(255, 255, 255, 0.12);
+}
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+
+  color: var(--white);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(255,255,255,0.065),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255,255,255,0.025),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      #08090a,
+      #151719 50%,
+      #090a0b
+    );
+}
+
+/* =====================================================
+   GLOWING SQUARE GRID
+===================================================== */
+
+.background-grid {
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  animation:
+    gridAppear
+    1.8s
+    ease
+    0.5s
+    forwards;
+}
+
+@keyframes gridAppear {
+  to {
+    opacity: 1;
+  }
+}
+
+.grid {
+  position: absolute;
+
+  inset: -20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      22,
+      minmax(18px, 1fr)
+    );
+
+  grid-template-rows:
+    repeat(
+      14,
+      minmax(18px, 1fr)
+    );
+
+  gap: 14px;
+
+  transform:
+    perspective(700px)
+    rotateX(1deg);
+
+  opacity: 0.7;
+}
+
+.square {
+  border:
+    1px solid var(--grid);
+
+  background:
+    rgba(180, 184, 182, 0.025);
+
+  box-shadow:
+    0 0 8px var(--grid-glow);
+
+  transition:
+    opacity 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.square:nth-child(7n) {
+  box-shadow:
+    0 0 13px
+    rgba(220,224,221,0.11);
+}
+
+.square:nth-child(11n) {
+  opacity: 0.45;
+}
+
+.square:nth-child(17n) {
+  opacity: 0.3;
+}
+
+.square:nth-child(23n) {
+  box-shadow:
+    0 0 18px
+    rgba(220,224,221,0.07);
+}
+
+/* =====================================================
+   APP
+===================================================== */
+
+.app {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  opacity: 0;
+
+  animation:
+    appAppear
+    1s
+    ease
+    forwards;
+}
+
+@keyframes appAppear {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
   }
 
-  * {
-    box-sizing: border-box;
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.topbar {
+  height: 74px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding:
+    0 30px;
+
+  border-bottom:
+    1px solid var(--border);
+
+  background:
+    rgba(10,11,12,0.76);
+
+  backdrop-filter:
+    blur(20px);
+
+  z-index: 10;
+
+  opacity: 0;
+
+  animation:
+    headerAppear
+    0.9s
+    ease
+    0.9s
+    forwards;
+}
+
+@keyframes headerAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
   }
 
-  html,
-  body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(255,255,255,0.55);
+
+  display: grid;
+  place-items: center;
+
+  box-shadow:
+    0 0 14px
+    rgba(255,255,255,0.07);
+}
+
+.brand-mark::after {
+  content: "";
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,0.9);
+
+  box-shadow:
+    0 0 10px
+    rgba(255,255,255,0.6);
+}
+
+.brand-name {
+  font-size: 17px;
+
+  font-weight: 650;
+
+  letter-spacing:
+    0.18em;
+}
+
+.brand-sub {
+  margin-left: 7px;
+
+  color:
+    var(--grey);
+
+  font-size: 9px;
+
+  letter-spacing:
+    0.14em;
+}
+
+.system {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  color:
+    var(--grey);
+
+  font-size: 9px;
+
+  letter-spacing:
+    0.15em;
+}
+
+.system-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background:
+    #e5e7e5;
+
+  box-shadow:
+    0 0 8px
+    rgba(255,255,255,0.65);
+}
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main {
+  position: relative;
+
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =====================================================
+   CORE AREA
+===================================================== */
+
+.core-area {
+  position: absolute;
+
+  width: 540px;
+  height: 540px;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  transition:
+    left 1s cubic-bezier(.16,1,.3,1),
+    top 1s cubic-bezier(.16,1,.3,1),
+    transform 1s cubic-bezier(.16,1,.3,1);
+}
+
+/* =====================================================
+   INFORMATION MODE
+===================================================== */
+
+.core-area.info-mode {
+  left: auto;
+  top: auto;
+
+  right: 42px;
+  bottom: 22px;
+
+  transform:
+    translate(0,0)
+    scale(0.52);
+}
+
+.core-area.info-mode .ring {
+  opacity: 0.4;
+}
+
+/* =====================================================
+   RINGS
+===================================================== */
+
+.ring {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity: 0;
+}
+
+.ring-one {
+  width: 275px;
+  height: 275px;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.15);
+
+  animation:
+    ringIn
+    1s
+    ease
+    1.15s
+    forwards,
+    rotateOne
+    25s
+    linear
+    2s
+    infinite;
+}
+
+.ring-two {
+  width: 325px;
+  height: 325px;
+
+  border:
+    1px dashed
+    rgba(255,255,255,0.09);
+
+  animation:
+    ringIn
+    1s
+    ease
+    1.3s
+    forwards,
+    rotateTwo
+    30s
+    linear
+    2s
+    infinite;
+}
+
+.ring-three {
+  width: 380px;
+  height: 380px;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.045);
+
+  animation:
+    ringIn
+    1s
+    ease
+    1.45s
+    forwards;
+}
+
+@keyframes ringIn {
+  from {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      scale(0.75);
   }
 
-  body {
-    overflow: hidden;
-    background:
-      radial-gradient(
-        circle at 50% 45%,
-        rgba(255, 255, 255, 0.055),
-        transparent 28%
-      ),
-      linear-gradient(
-        135deg,
-        #0d0e0f,
-        #17191a 52%,
-        #0c0d0e
-      );
-
-    color: var(--white);
-    font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      Arial,
-      sans-serif;
+  to {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(1);
   }
+}
 
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-
-    background:
-      linear-gradient(
-        rgba(255,255,255,0.018) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        rgba(255,255,255,0.018) 1px,
-        transparent 1px
-      );
-
-    background-size: 46px 46px;
-
-    mask-image:
-      radial-gradient(
-        circle,
-        black 15%,
-        transparent 78%
-      );
+@keyframes rotateOne {
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(360deg);
   }
+}
 
-  /* ==================================================
-     APP
-  ================================================== */
+@keyframes rotateTwo {
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(-360deg);
+  }
+}
 
-  .app {
-    width: 100%;
-    height: 100%;
-    position: relative;
+/* =====================================================
+   ORB
+===================================================== */
 
-    display: flex;
-    flex-direction: column;
+.orb {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 24px;
+  height: 24px;
+
+  transform:
+    translate(-50%, -50%)
+    scale(0.25);
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.8);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,0.15),
+      rgba(25,27,29,0.97)
+    );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  z-index: 5;
+
+  box-shadow:
+    0 0 0
+    rgba(255,255,255,0);
+
+  animation:
+    orbBoot
+    1.45s
+    cubic-bezier(.16,1,.3,1)
+    0.35s
+    forwards;
+
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease;
+}
+
+@keyframes orbBoot {
+
+  0% {
+    width: 20px;
+    height: 20px;
 
     opacity: 0;
-    transform: scale(1.015);
 
-    animation:
-      appReveal 1.1s ease forwards;
+    transform:
+      translate(-50%, -50%)
+      scale(0.2);
   }
 
-  @keyframes appReveal {
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+  45% {
+    opacity: 1;
   }
 
-  /* ==================================================
-     TOP BAR
-  ================================================== */
+  100% {
+    width: 180px;
+    height: 180px;
 
-  .topbar {
-    height: 72px;
+    opacity: 1;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 30px;
-
-    border-bottom:
-      1px solid var(--line);
-
-    background:
-      rgba(14, 15, 16, 0.72);
-
-    backdrop-filter:
-      blur(18px);
-
-    opacity: 0;
-
-    animation:
-      fadeDown 0.9s ease 1.1s forwards;
-  }
-
-  @keyframes fadeDown {
-    from {
-      opacity: 0;
-      transform: translateY(-12px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .brand-mark {
-    width: 28px;
-    height: 28px;
-
-    border-radius: 50%;
-
-    border:
-      1px solid rgba(255,255,255,0.45);
-
-    display: grid;
-    place-items: center;
-  }
-
-  .brand-mark::after {
-    content: "";
-
-    width: 7px;
-    height: 7px;
-
-    border-radius: 50%;
-
-    background: var(--green);
+    transform:
+      translate(-50%, -50%)
+      scale(1);
 
     box-shadow:
-      0 0 10px var(--green);
+      0 0 35px
+      rgba(255,255,255,0.09),
+
+      0 0 100px
+      rgba(255,255,255,0.035),
+
+      inset 0 0 40px
+      rgba(255,255,255,0.055);
+  }
+}
+
+.orb:hover {
+  border-color:
+    rgba(255,255,255,0.98);
+
+  box-shadow:
+    0 0 45px
+    rgba(255,255,255,0.13),
+
+    0 0 100px
+    rgba(255,255,255,0.04);
+}
+
+/* =====================================================
+   ORB INNER
+===================================================== */
+
+.orb-inner {
+  width: 116px;
+  height: 116px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.14);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+
+  animation:
+    innerIn
+    .8s
+    ease
+    1.3s
+    forwards;
+}
+
+@keyframes innerIn {
+  from {
+    opacity: 0;
+    transform: scale(.7);
   }
 
-  .brand-name {
-    font-size: 17px;
-    font-weight: 650;
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-    letter-spacing: 0.18em;
+/* =====================================================
+   ORB SYMBOL
+===================================================== */
+
+.orb-symbol {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.65);
+
+  box-shadow:
+    inset 0 0 18px
+    rgba(255,255,255,0.06),
+
+    0 0 14px
+    rgba(255,255,255,0.06);
+}
+
+/* =====================================================
+   K.O.R.A. TEXT
+===================================================== */
+
+.orb-name {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  color:
+    #ffffff;
+
+  font-size: 19px;
+
+  font-weight: 500;
+
+  letter-spacing:
+    0.18em;
+
+  white-space: nowrap;
+
+  opacity: 0;
+
+  text-shadow:
+    0 1px 12px
+    rgba(255,255,255,0.24);
+
+  animation:
+    orbTextIn
+    .9s
+    ease
+    1.75s
+    forwards;
+}
+
+@keyframes orbTextIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.9);
   }
 
-  .brand-sub {
-    color: var(--muted);
+  to {
+    opacity: 1;
 
-    font-size: 9px;
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
 
-    letter-spacing: 0.16em;
+/* =====================================================
+   STATUS
+===================================================== */
 
-    margin-left: 5px;
+.status {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 35px;
+
+  text-align: center;
+
+  opacity: 0;
+
+  animation:
+    statusIn
+    .8s
+    ease
+    2s
+    forwards;
+}
+
+@keyframes statusIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-main {
+  color:
+    var(--white);
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  letter-spacing:
+    .22em;
+
+  text-transform:
+    uppercase;
+}
+
+.status-sub {
+  margin-top: 8px;
+
+  color:
+    var(--grey);
+
+  font-size: 10px;
+
+  letter-spacing:
+    .1em;
+}
+
+/* =====================================================
+   STATES
+===================================================== */
+
+.listening .orb {
+  animation:
+    listeningPulse
+    1.7s
+    ease-in-out
+    infinite;
+}
+
+.thinking .orb {
+  animation:
+    thinkingPulse
+    .8s
+    ease-in-out
+    infinite;
+}
+
+.speaking .orb {
+  animation:
+    speakingPulse
+    .55s
+    ease-in-out
+    infinite;
+}
+
+@keyframes listeningPulse {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 30px
+      rgba(255,255,255,0.08),
+
+      0 0 80px
+      rgba(255,255,255,0.025),
+
+      inset 0 0 35px
+      rgba(255,255,255,0.04);
+  }
+
+  50% {
+    box-shadow:
+      0 0 48px
+      rgba(255,255,255,0.16),
+
+      0 0 110px
+      rgba(255,255,255,0.045),
+
+      inset 0 0 45px
+      rgba(255,255,255,0.07);
+  }
+}
+
+@keyframes thinkingPulse {
+
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      scale(1.045);
+  }
+}
+
+@keyframes speakingPulse {
+
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      scale(1.06);
+  }
+}
+
+/* =====================================================
+   LATEST TRANSMISSION
+===================================================== */
+
+.translation {
+  position: absolute;
+
+  left: 28px;
+  bottom: 28px;
+
+  width:
+    min(410px, calc(100vw - 56px));
+
+  padding:
+    17px 19px;
+
+  background:
+    var(--panel);
+
+  border:
+    1px solid
+    rgba(255,255,255,0.13);
+
+  border-radius: 14px;
+
+  backdrop-filter:
+    blur(20px);
+
+  box-shadow:
+    0 15px 50px
+    rgba(0,0,0,0.28);
+
+  opacity: 0;
+
+  animation:
+    translationIn
+    .8s
+    ease
+    2.2s
+    forwards;
+
+  z-index: 8;
+}
+
+@keyframes translationIn {
+  from {
+    opacity: 0;
+    transform:
+      translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0);
+  }
+}
+
+.translation-title {
+  color:
+    #bfc3c1;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing:
+    .17em;
+
+  text-transform:
+    uppercase;
+
+  margin-bottom: 10px;
+}
+
+.translation-text {
+  color:
+    #f0f1ef;
+
+  font-size: 14px;
+
+  line-height: 1.55;
+
+  min-height: 22px;
+
+  max-height: 90px;
+
+  overflow-y: auto;
+}
+
+/* =====================================================
+   INFORMATION PANEL
+===================================================== */
+
+.info-panel {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width:
+    min(600px, calc(100vw - 40px));
+
+  transform:
+    translate(-50%, -50%)
+    translateY(25px)
+    scale(.96);
+
+  padding:
+    28px;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.14);
+
+  border-radius: 20px;
+
+  background:
+    rgba(22,24,26,0.96);
+
+  backdrop-filter:
+    blur(24px);
+
+  box-shadow:
+    0 30px 100px
+    rgba(0,0,0,.45);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  z-index: 20;
+
+  transition:
+    opacity .65s ease,
+    transform .75s cubic-bezier(.16,1,.3,1);
+}
+
+.info-panel.visible {
+  opacity: 1;
+
+  transform:
+    translate(-50%, -50%)
+    translateY(0)
+    scale(1);
+
+  pointer-events: auto;
+}
+
+.info-kicker {
+  color:
+    var(--grey);
+
+  font-size: 9px;
+
+  letter-spacing:
+    .2em;
+
+  text-transform:
+    uppercase;
+
+  margin-bottom: 10px;
+}
+
+.info-title {
+  color:
+    white;
+
+  font-size: 30px;
+
+  font-weight: 500;
+
+  letter-spacing:
+    .04em;
+
+  margin-bottom: 22px;
+}
+
+.info-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 12px;
+}
+
+.info-card {
+  padding:
+    17px;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.09);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255,255,255,0.025);
+}
+
+.info-label {
+  color:
+    var(--grey);
+
+  font-size: 9px;
+
+  letter-spacing:
+    .14em;
+
+  text-transform:
+    uppercase;
+
+  margin-bottom: 8px;
+}
+
+.info-value {
+  color:
+    #ffffff;
+
+  font-size: 20px;
+
+  font-weight: 500;
+}
+
+.info-description {
+  margin-top: 22px;
+
+  color:
+    var(--white-soft);
+
+  font-size: 13px;
+
+  line-height: 1.55;
+}
+
+.info-close {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  width: 32px;
+  height: 32px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.025);
+
+  color:
+    white;
+
+  cursor: pointer;
+
+  font-size: 16px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-top:
+    1px solid
+    var(--border);
+
+  background:
+    rgba(10,11,12,.76);
+
+  backdrop-filter:
+    blur(18px);
+
+  color:
+    var(--grey);
+
+  font-size: 9px;
+
+  letter-spacing:
+    .14em;
+
+  opacity: 0;
+
+  animation:
+    footerIn
+    .8s
+    ease
+    1.4s
+    forwards;
+}
+
+@keyframes footerIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mic-status {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.mic-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background:
+    #dedfdd;
+
+  box-shadow:
+    0 0 8px
+    rgba(255,255,255,.55);
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error {
+  position: fixed;
+
+  top: 88px;
+  left: 50%;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 100;
+
+  padding:
+    10px 16px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  border-radius: 10px;
+
+  background:
+    rgba(18,19,20,.97);
+
+  color:
+    white;
+
+  font-size: 11px;
+
+  display: none;
+
+  max-width: 90%;
+
+  text-align: center;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .topbar {
+    padding:
+      0 18px;
   }
 
   .system {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    color: var(--muted);
-
-    font-size: 9px;
-
-    letter-spacing: 0.15em;
+    display: none;
   }
 
-  .system-dot {
-    width: 6px;
-    height: 6px;
+  .grid {
+    grid-template-columns:
+      repeat(13, 1fr);
 
-    border-radius: 50%;
+    grid-template-rows:
+      repeat(18, 1fr);
 
-    background: var(--green);
-
-    box-shadow:
-      0 0 9px var(--green);
+    gap: 10px;
   }
-
-  /* ==================================================
-     MAIN
-  ================================================== */
-
-  .main {
-    flex: 1;
-
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* ==================================================
-     CORE AREA
-  ================================================== */
 
   .core-area {
-    position: relative;
-
-    width: 520px;
-    height: 520px;
-
-    max-width: 90vw;
-    max-height: 65vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* ==================================================
-     CORE RINGS
-  ================================================== */
-
-  .ring {
-    position: absolute;
-
-    border-radius: 50%;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    animation:
-      ringAppear 1s ease 1.2s forwards;
-  }
-
-  @keyframes ringAppear {
-    to {
-      opacity: 1;
-    }
+    width: 400px;
+    height: 400px;
   }
 
   .ring-one {
-    width: 275px;
-    height: 275px;
-
-    border:
-      1px solid rgba(255,255,255,0.13);
-
-    animation:
-      ringAppear 1s ease 1.2s forwards,
-      slowRotate 24s linear 2.2s infinite;
+    width: 240px;
+    height: 240px;
   }
 
   .ring-two {
-    width: 325px;
-    height: 325px;
-
-    border:
-      1px dashed rgba(255,255,255,0.075);
-
-    animation:
-      ringAppear 1s ease 1.4s forwards,
-      slowRotateReverse 30s linear 2.4s infinite;
+    width: 285px;
+    height: 285px;
   }
 
   .ring-three {
-    width: 380px;
-    height: 380px;
-
-    border:
-      1px solid rgba(255,255,255,0.045);
-
-    animation:
-      ringAppear 1s ease 1.6s forwards;
+    width: 330px;
+    height: 330px;
   }
-
-  @keyframes slowRotate {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes slowRotateReverse {
-    to {
-      transform: rotate(-360deg);
-    }
-  }
-
-  .ring-one::before,
-  .ring-one::after {
-    content: "";
-
-    position: absolute;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: var(--green);
-
-    box-shadow:
-      0 0 10px var(--green);
-  }
-
-  .ring-one::before {
-    top: 18px;
-    left: 50%;
-  }
-
-  .ring-one::after {
-    bottom: 30px;
-    right: 23px;
-  }
-
-  /* ==================================================
-     CORE
-  ================================================== */
-
-  .core {
-    position: relative;
-
-    width: 24px;
-    height: 24px;
-
-    border-radius: 50%;
-
-    border:
-      1px solid rgba(255,255,255,0.7);
-
-    background:
-      radial-gradient(
-        circle,
-        rgba(255,255,255,0.13),
-        rgba(30,32,33,0.96)
-      );
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-
-    z-index: 5;
-
-    box-shadow:
-      0 0 0 rgba(255,255,255,0);
-
-    animation:
-      coreBoot 1.45s
-      cubic-bezier(0.16,1,0.3,1)
-      0.35s
-      forwards;
-
-    transition:
-      box-shadow 0.35s ease,
-      transform 0.35s ease,
-      border-color 0.35s ease;
-  }
-
-  @keyframes coreBoot {
-    0% {
-      width: 24px;
-      height: 24px;
-
-      opacity: 0;
-
-      transform: scale(0.4);
-    }
-
-    45% {
-      opacity: 1;
-    }
-
-    100% {
-      width: 178px;
-      height: 178px;
-
-      opacity: 1;
-
-      transform: scale(1);
-
-      box-shadow:
-        0 0 30px rgba(255,255,255,0.08),
-        0 0 80px rgba(255,255,255,0.035),
-        inset 0 0 35px rgba(255,255,255,0.045);
-    }
-  }
-
-  .core:hover {
-    transform: scale(1.025);
-
-    border-color:
-      rgba(255,255,255,0.95);
-
-    box-shadow:
-      0 0 38px rgba(255,255,255,0.1),
-      0 0 90px rgba(255,255,255,0.035);
-  }
-
-  .core-inner {
-    width: 112px;
-    height: 112px;
-
-    border-radius: 50%;
-
-    border:
-      1px solid rgba(255,255,255,0.13);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    opacity: 0;
-
-    animation:
-      innerAppear 0.9s ease 1.2s forwards;
-  }
-
-  @keyframes innerAppear {
-    from {
-      opacity: 0;
-      transform: scale(0.75);
-    }
-
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .core-symbol {
-    width: 46px;
-    height: 46px;
-
-    border-radius: 50%;
-
-    border:
-      2px solid var(--green);
-
-    position: relative;
-
-    box-shadow:
-      0 0 15px rgba(84,217,139,0.28);
-  }
-
-  .core-symbol::before {
-    content: "";
-
-    position: absolute;
-
-    width: 17px;
-    height: 17px;
-
-    top: 50%;
-    left: 50%;
-
-    transform:
-      translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background: var(--green);
-
-    box-shadow:
-      0 0 18px var(--green);
-  }
-
-  .core-symbol::after {
-    content: "";
-
-    position: absolute;
-
-    width: 6px;
-    height: 6px;
-
-    top: 50%;
-    left: 50%;
-
-    transform:
-      translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background: white;
-  }
-
-  /* ==================================================
-     K.O.R.A. TEXT
-  ================================================== */
-
-  .core-name {
-    position: absolute;
-
-    bottom: 32px;
-
-    left: 50%;
-
-    transform:
-      translateX(-50%)
-      translateY(8px);
-
-    font-size: 10px;
-
-    letter-spacing: 0.42em;
-
-    font-weight: 600;
-
-    color: rgba(255,255,255,0.9);
-
-    white-space: nowrap;
-
-    opacity: 0;
-
-    animation:
-      textFadeIn
-      1s
-      ease
-      1.7s
-      forwards;
-  }
-
-  @keyframes textFadeIn {
-    from {
-      opacity: 0;
-      transform:
-        translateX(-50%)
-        translateY(8px);
-    }
-
-    to {
-      opacity: 1;
-      transform:
-        translateX(-50%)
-        translateY(0);
-    }
-  }
-
-  /* ==================================================
-     STATUS
-  ================================================== */
-
-  .status {
-    position: absolute;
-
-    bottom: 4px;
-
-    left: 0;
-    right: 0;
-
-    text-align: center;
-
-    opacity: 0;
-
-    animation:
-      textFadeIn
-      0.9s
-      ease
-      2.05s
-      forwards;
-  }
-
-  .status-main {
-    font-size: 12px;
-
-    letter-spacing: 0.23em;
-
-    text-transform: uppercase;
-
-    color: var(--soft-white);
-  }
-
-  .status-sub {
-    margin-top: 8px;
-
-    font-size: 9px;
-
-    letter-spacing: 0.12em;
-
-    color: var(--muted);
-  }
-
-  /* ==================================================
-     LISTENING / THINKING / SPEAKING
-  ================================================== */
-
-  .listening .core {
-    border-color: var(--green);
-
-    box-shadow:
-      0 0 32px rgba(84,217,139,0.14),
-      0 0 80px rgba(84,217,139,0.045),
-      inset 0 0 35px rgba(84,217,139,0.06);
-  }
-
-  .listening .core-symbol {
-    animation:
-      listeningPulse
-      1.5s
-      ease-in-out
-      infinite;
-  }
-
-  .thinking .core {
-    animation:
-      thinkingPulse
-      0.9s
-      ease-in-out
-      infinite;
-  }
-
-  .speaking .core {
-    animation:
-      speakingPulse
-      0.7s
-      ease-in-out
-      infinite;
-  }
-
-  .speaking .core-symbol::before {
-    animation:
-      voicePulse
-      0.22s
-      ease-in-out
-      infinite alternate;
-  }
-
-  @keyframes listeningPulse {
-    0%,100% {
-      box-shadow:
-        0 0 28px rgba(84,217,139,0.12),
-        0 0 70px rgba(84,217,139,0.04);
-    }
-
-    50% {
-      box-shadow:
-        0 0 45px rgba(84,217,139,0.23),
-        0 0 100px rgba(84,217,139,0.08);
-    }
-  }
-
-  @keyframes thinkingPulse {
-    0%,100% {
-      transform: scale(1);
-    }
-
-    50% {
-      transform: scale(1.035);
-    }
-  }
-
-  @keyframes speakingPulse {
-    0%,100% {
-      transform: scale(1);
-    }
-
-    50% {
-      transform: scale(1.045);
-    }
-  }
-
-  @keyframes voicePulse {
-    from {
-      transform:
-        translate(-50%, -50%)
-        scale(0.8);
-    }
-
-    to {
-      transform:
-        translate(-50%, -50%)
-        scale(1.2);
-    }
-  }
-
-  /* ==================================================
-     LATEST TRANSLATION
-  ================================================== */
 
   .translation {
-    position: absolute;
+    left: 14px;
+    bottom: 14px;
 
-    left: 28px;
-    bottom: 28px;
-
-    width: min(390px, calc(100vw - 56px));
-
-    padding: 16px 18px;
-
-    border:
-      1px solid var(--line);
-
-    border-radius: 14px;
-
-    background:
-      var(--panel);
-
-    backdrop-filter:
-      blur(18px);
-
-    opacity: 0;
-
-    animation:
-      translationAppear
-      0.9s
-      ease
-      2.2s
-      forwards;
+    width:
+      calc(100vw - 28px);
   }
 
-  @keyframes translationAppear {
-    from {
-      opacity: 0;
-      transform:
-        translateY(12px);
-    }
+  .info-panel {
+    width:
+      calc(100vw - 28px);
 
-    to {
-      opacity: 1;
-      transform:
-        translateY(0);
-    }
+    padding:
+      22px;
   }
 
-  .translation-title {
-    color: var(--muted);
-
-    font-size: 9px;
-
-    letter-spacing: 0.16em;
-
-    text-transform: uppercase;
-
-    margin-bottom: 9px;
+  .info-title {
+    font-size: 25px;
   }
 
-  .translation-text {
-    color: var(--soft-white);
-
-    font-size: 13px;
-
-    line-height: 1.5;
-
-    max-height: 90px;
-
-    overflow-y: auto;
+  .info-grid {
+    grid-template-columns:
+      1fr;
   }
-
-  /* ==================================================
-     FOOTER
-  ================================================== */
 
   .footer {
-    height: 54px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-top:
-      1px solid var(--line);
-
-    background:
-      rgba(13,14,15,0.72);
-
-    backdrop-filter:
-      blur(18px);
-
-    color: var(--muted);
-
-    font-size: 9px;
-
-    letter-spacing: 0.13em;
-
-    opacity: 0;
-
-    animation:
-      fadeUp
-      0.9s
-      ease
-      1.4s
-      forwards;
+    height: 48px;
   }
-
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform:
-        translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform:
-        translateY(0);
-    }
-  }
-
-  .mic {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .mic-dot {
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background: var(--green);
-
-    box-shadow:
-      0 0 8px var(--green);
-  }
-
-  /* ==================================================
-     ERROR
-  ================================================== */
-
-  .error {
-    position: fixed;
-
-    top: 88px;
-    left: 50%;
-
-    transform:
-      translateX(-50%);
-
-    z-index: 20;
-
-    width: max-content;
-    max-width: 90%;
-
-    padding: 10px 16px;
-
-    border:
-      1px solid rgba(255,255,255,0.1);
-
-    border-radius: 10px;
-
-    background:
-      rgba(18,19,20,0.96);
-
-    color: var(--soft-white);
-
-    font-size: 11px;
-
-    display: none;
-
-    text-align: center;
-  }
-
-  /* ==================================================
-     MOBILE
-  ================================================== */
-
-  @media (max-width: 700px) {
-
-    .topbar {
-      padding: 0 18px;
-    }
-
-    .system {
-      display: none;
-    }
-
-    .core-area {
-      width: 100%;
-      height: 58vh;
-    }
-
-    .ring-one {
-      width: 240px;
-      height: 240px;
-    }
-
-    .ring-two {
-      width: 285px;
-      height: 285px;
-    }
-
-    .ring-three {
-      width: 330px;
-      height: 330px;
-    }
-
-    @keyframes coreBoot {
-      0% {
-        width: 20px;
-        height: 20px;
-
-        opacity: 0;
-
-        transform: scale(0.4);
-      }
-
-      45% {
-        opacity: 1;
-      }
-
-      100% {
-        width: 150px;
-        height: 150px;
-
-        opacity: 1;
-
-        transform: scale(1);
-
-        box-shadow:
-          0 0 28px rgba(255,255,255,0.08),
-          0 0 70px rgba(255,255,255,0.035),
-          inset 0 0 30px rgba(255,255,255,0.045);
-      }
-    }
-
-    .core-inner {
-      width: 95px;
-      height: 95px;
-    }
-
-    .translation {
-      left: 14px;
-      bottom: 14px;
-
-      width:
-        calc(100vw - 28px);
-
-      padding: 13px 15px;
-    }
-
-    .translation-text {
-      max-height: 60px;
-    }
-
-    .footer {
-      height: 48px;
-    }
-  }
+}
 </style>
 </head>
 
 <body>
 
+<!-- ===================================================
+     BACKGROUND GRID
+=================================================== -->
+
+<div class="background-grid">
+  <div class="grid" id="grid"></div>
+</div>
+
+
 <div class="app" id="app">
+
+  <!-- =================================================
+       HEADER
+  ================================================== -->
 
   <header class="topbar">
 
@@ -988,18 +1351,33 @@
       <div class="brand-mark"></div>
 
       <div>
-        <span class="brand-name">K.O.R.A.</span>
-        <span class="brand-sub">AI ASSISTANT</span>
+
+        <span class="brand-name">
+          K.O.R.A.
+        </span>
+
+        <span class="brand-sub">
+          AI ASSISTANT
+        </span>
+
       </div>
 
     </div>
 
     <div class="system">
+
       <span class="system-dot"></span>
+
       SYSTEM ONLINE
+
     </div>
 
   </header>
+
+
+  <!-- =================================================
+       MAIN
+  ================================================== -->
 
   <main class="main">
 
@@ -1012,23 +1390,25 @@
       <div class="ring ring-two"></div>
       <div class="ring ring-three"></div>
 
+
       <button
-        class="core"
-        id="core"
+        class="orb"
+        id="orb"
         aria-label="Talk to Kora"
       >
 
-        <div class="core-inner">
+        <div class="orb-inner">
 
-          <div class="core-symbol"></div>
+          <div class="orb-symbol"></div>
 
         </div>
 
-        <div class="core-name">
+        <div class="orb-name">
           K.O.R.A.
         </div>
 
       </button>
+
 
       <div class="status">
 
@@ -1043,33 +1423,86 @@
           class="status-sub"
           id="statusSub"
         >
-          Preparing voice interface
+          Preparing systems
         </div>
 
       </div>
 
     </section>
 
+
+    <!-- =================================================
+         LATEST TRANSMISSION
+    ================================================== -->
+
     <div class="translation">
 
       <div class="translation-title">
-        Latest transmission
+        Latest Transmission
       </div>
 
       <div
         class="translation-text"
         id="translationText"
       >
-        Kora is preparing.
+        Initialising Kora...
       </div>
 
     </div>
 
+
+    <!-- =================================================
+         INFORMATION PANEL
+    ================================================== -->
+
+    <section
+      class="info-panel"
+      id="infoPanel"
+    >
+
+      <button
+        class="info-close"
+        id="infoClose"
+      >
+        ×
+      </button>
+
+      <div
+        class="info-kicker"
+        id="infoKicker"
+      >
+        K.O.R.A. DATA
+      </div>
+
+      <div
+        class="info-title"
+        id="infoTitle"
+      >
+        Information
+      </div>
+
+      <div
+        class="info-grid"
+        id="infoGrid"
+      ></div>
+
+      <div
+        class="info-description"
+        id="infoDescription"
+      ></div>
+
+    </section>
+
   </main>
+
+
+  <!-- =================================================
+       FOOTER
+  ================================================== -->
 
   <footer class="footer">
 
-    <div class="mic">
+    <div class="mic-status">
 
       <span class="mic-dot"></span>
 
@@ -1083,634 +1516,1294 @@
 
 </div>
 
+
 <div
   class="error"
   id="error"
 ></div>
 
+
 <script>
 
-  const CHAT_ENDPOINT = "/api/chat";
+/* =====================================================
+   CONFIGURATION
+===================================================== */
 
-  const app =
-    document.getElementById("app");
+const CHAT_ENDPOINT = "/api/chat";
 
-  const core =
-    document.getElementById("core");
+const DEFAULT_LOCATION =
+  "Rothbury, Northumberland, United Kingdom";
 
-  const statusMain =
-    document.getElementById("statusMain");
 
-  const statusSub =
-    document.getElementById("statusSub");
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
-  const translationText =
-    document.getElementById("translationText");
+const grid =
+  document.getElementById("grid");
 
-  const micStatus =
-    document.getElementById("micStatus");
+const app =
+  document.getElementById("app");
 
-  const errorElement =
-    document.getElementById("error");
+const coreArea =
+  document.getElementById("coreArea");
 
+const orb =
+  document.getElementById("orb");
 
-  /* ==================================================
-     STATE
-  ================================================== */
+const statusMain =
+  document.getElementById("statusMain");
 
-  let messages = [];
+const statusSub =
+  document.getElementById("statusSub");
 
-  let recognition = null;
+const translationText =
+  document.getElementById("translationText");
 
-  let recognitionRunning = false;
+const micStatus =
+  document.getElementById("micStatus");
 
-  let processing = false;
+const errorElement =
+  document.getElementById("error");
 
-  let koraSpeaking = false;
+const infoPanel =
+  document.getElementById("infoPanel");
 
-  let keepListening = true;
+const infoClose =
+  document.getElementById("infoClose");
 
-  let selectedVoice = null;
+const infoKicker =
+  document.getElementById("infoKicker");
 
+const infoTitle =
+  document.getElementById("infoTitle");
 
-  /* ==================================================
-     SPEECH RECOGNITION
-  ================================================== */
+const infoGrid =
+  document.getElementById("infoGrid");
 
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+const infoDescription =
+  document.getElementById("infoDescription");
 
-  const recognitionSupported =
-    !!SpeechRecognition;
 
+/* =====================================================
+   CREATE BACKGROUND SQUARES
+===================================================== */
 
-  if (recognitionSupported) {
+for (let i = 0; i < 308; i++) {
 
-    recognition =
-      new SpeechRecognition();
+  const square =
+    document.createElement("div");
 
-    recognition.lang =
-      "en-GB";
+  square.className =
+    "square";
 
-    recognition.continuous =
-      true;
+  grid.appendChild(square);
+}
 
-    recognition.interimResults =
-      false;
 
-    recognition.maxAlternatives =
-      1;
+/* =====================================================
+   STATE
+===================================================== */
 
+let messages = [];
 
-    recognition.onstart =
-      function () {
+let recognition = null;
 
-        recognitionRunning =
-          true;
+let recognitionRunning =
+  false;
 
-        if (!koraSpeaking) {
+let processing =
+  false;
 
-          setState(
-            "LISTENING",
-            "Kora is listening"
-          );
+let koraSpeaking =
+  false;
 
-          micStatus.textContent =
-            "MICROPHONE ACTIVE";
-        }
-      };
+let keepListening =
+  true;
 
+let selectedVoice =
+  null;
 
-    recognition.onresult =
-      function (event) {
+let currentInfoType =
+  null;
 
-        if (koraSpeaking) {
-          return;
-        }
 
-        const result =
-          event.results[
-            event.results.length - 1
-          ];
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
 
-        if (!result || !result.isFinal) {
-          return;
-        }
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
 
-        const text =
-          result[0]
-            .transcript
-            .trim();
+const recognitionSupported =
+  !!SpeechRecognition;
 
-        if (!text) {
-          return;
-        }
 
-        stopListening();
+if (recognitionSupported) {
 
-        sendToKora(text);
-      };
+  recognition =
+    new SpeechRecognition();
 
+  recognition.lang =
+    "en-GB";
 
-    recognition.onerror =
-      function (event) {
+  recognition.continuous =
+    true;
 
-        recognitionRunning =
-          false;
+  recognition.interimResults =
+    false;
 
-        if (
-          event.error ===
-            "no-speech" ||
-          event.error ===
-            "aborted"
-        ) {
+  recognition.maxAlternatives =
+    1;
 
-          restartListening();
 
-          return;
-        }
-
-        if (
-          event.error ===
-          "not-allowed"
-        ) {
-
-          keepListening =
-            false;
-
-          setState(
-            "MICROPHONE BLOCKED",
-            "Allow microphone access for Kora"
-          );
-
-          micStatus.textContent =
-            "MICROPHONE PERMISSION REQUIRED";
-
-          showError(
-            "Kora needs microphone permission."
-          );
-
-          return;
-        }
-
-        restartListening();
-      };
-
-
-    recognition.onend =
-      function () {
-
-        recognitionRunning =
-          false;
-
-        if (
-          keepListening &&
-          !koraSpeaking &&
-          !processing
-        ) {
-
-          restartListening();
-        }
-      };
-
-  } else {
-
-    setState(
-      "VOICE UNAVAILABLE",
-      "Use a supported browser"
-    );
-
-    micStatus.textContent =
-      "VOICE INPUT UNAVAILABLE";
-  }
-
-
-  /* ==================================================
-     VOICE SELECTION
-  ================================================== */
-
-  function chooseVoice() {
-
-    if (
-      !window.speechSynthesis
-    ) {
-      return;
-    }
-
-    const voices =
-      window.speechSynthesis
-        .getVoices();
-
-    if (!voices.length) {
-      return;
-    }
-
-
-    const english =
-      voices.filter(
-        function (voice) {
-
-          return /^en(-|_)/i
-            .test(voice.lang);
-        }
-      );
-
-
-    /*
-     * Prefer natural/neural-style voices.
-     * Different operating systems expose
-     * different names, so we use several
-     * possibilities.
-     */
-
-    const preferredNames = [
-
-      "Microsoft Jenny",
-      "Microsoft Aria",
-      "Microsoft Sonia",
-      "Microsoft Libby",
-      "Microsoft Zira",
-
-      "Google UK English Female",
-      "Google US English",
-
-      "Samantha",
-      "Karen",
-      "Victoria",
-      "Moira",
-      "Fiona",
-      "Serena",
-      "Ava",
-      "Allison",
-      "Emma",
-      "Joanna",
-      "Jenny",
-      "Aria"
-    ];
-
-
-    for (
-      const preferred
-      of preferredNames
-    ) {
-
-      const match =
-        english.find(
-          function (voice) {
-
-            return voice.name
-              .toLowerCase()
-              .includes(
-                preferred.toLowerCase()
-              );
-          }
-        );
-
-      if (match) {
-
-        selectedVoice =
-          match;
-
-        return;
-      }
-    }
-
-
-    /*
-     * Next, look for female markers.
-     */
-
-    const femaleMarkers = [
-
-      "female",
-      "woman",
-      "samantha",
-      "karen",
-      "victoria",
-      "moira",
-      "fiona",
-      "serena",
-      "jenny",
-      "aria",
-      "libby",
-      "sonia",
-      "zira",
-      "susan"
-    ];
-
-
-    const female =
-      english.find(
-        function (voice) {
-
-          const name =
-            voice.name
-              .toLowerCase();
-
-          return femaleMarkers.some(
-            function (marker) {
-
-              return name.includes(
-                marker
-              );
-            }
-          );
-        }
-      );
-
-
-    if (female) {
-
-      selectedVoice =
-        female;
-
-      return;
-    }
-
-
-    /*
-     * Prefer British English.
-     */
-
-    const british =
-      english.find(
-        function (voice) {
-
-          return /GB|UK/i
-            .test(voice.lang);
-        }
-      );
-
-
-    selectedVoice =
-      british ||
-      english[0] ||
-      voices[0];
-  }
-
-
-  chooseVoice();
-
-
-  if (
-    window.speechSynthesis
-  ) {
-
-    window.speechSynthesis
-      .onvoiceschanged =
-      chooseVoice;
-  }
-
-
-  /* ==================================================
-     STATE
-  ================================================== */
-
-  function setState(
-    main,
-    sub
-  ) {
-
-    statusMain.textContent =
-      main;
-
-    statusSub.textContent =
-      sub;
-
-    app.classList.remove(
-      "listening",
-      "thinking",
-      "speaking"
-    );
-
-
-    if (main === "LISTENING") {
-
-      app.classList.add(
-        "listening"
-      );
-    }
-
-
-    if (main === "THINKING") {
-
-      app.classList.add(
-        "thinking"
-      );
-    }
-
-
-    if (main === "SPEAKING") {
-
-      app.classList.add(
-        "speaking"
-      );
-    }
-  }
-
-
-  /* ==================================================
-     MICROPHONE
-  ================================================== */
-
-  function startListening() {
-
-    if (
-      !recognitionSupported ||
-      !recognition
-    ) {
-      return;
-    }
-
-    if (koraSpeaking) {
-      return;
-    }
-
-    if (processing) {
-      return;
-    }
-
-    if (recognitionRunning) {
-      return;
-    }
-
-
-    try {
-
-      recognition.start();
+  recognition.onstart =
+    function () {
 
       recognitionRunning =
         true;
 
-    } catch (error) {
-
-      recognitionRunning =
-        false;
-    }
-  }
-
-
-  function stopListening() {
-
-    if (!recognition) {
-      return;
-    }
-
-
-    try {
-
-      recognition.stop();
-
-    } catch (error) {
-      // Already stopped.
-    }
-
-
-    recognitionRunning =
-      false;
-  }
-
-
-  function restartListening() {
-
-    if (!keepListening) {
-      return;
-    }
-
-    if (koraSpeaking) {
-      return;
-    }
-
-    if (processing) {
-      return;
-    }
-
-
-    setTimeout(
-      function () {
-
-        if (
-          keepListening &&
-          !koraSpeaking &&
-          !processing &&
-          !recognitionRunning
-        ) {
-
-          startListening();
-        }
-
-      },
-      300
-    );
-  }
-
-
-  /* ==================================================
-     TALK TO KORA
-  ================================================== */
-
-  async function sendToKora(
-    text
-  ) {
-
-    processing =
-      true;
-
-
-    setState(
-      "THINKING",
-      "Kora is processing"
-    );
-
-
-    micStatus.textContent =
-      "VOICE LINK PAUSED";
-
-
-    messages.push({
-
-      role: "user",
-
-      content: text
-    });
-
-
-    translationText.textContent =
-      text;
-
-
-    try {
-
-      const response =
-        await fetch(
-          CHAT_ENDPOINT,
-          {
-
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body:
-              JSON.stringify({
-                messages
-              })
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        messages.pop();
-
-        processing =
-          false;
-
-        showError(
-          data.error ||
-          "Kora couldn't respond."
-        );
+      if (!koraSpeaking) {
 
         setState(
           "LISTENING",
           "Kora is listening"
         );
 
+        micStatus.textContent =
+          "MICROPHONE ACTIVE";
+      }
+    };
+
+
+  recognition.onresult =
+    function (event) {
+
+      /*
+       * Kora must NEVER process
+       * her own voice.
+       */
+
+      if (koraSpeaking) {
+        return;
+      }
+
+      const result =
+        event.results[
+          event.results.length - 1
+        ];
+
+      if (
+        !result ||
+        !result.isFinal
+      ) {
+        return;
+      }
+
+      const text =
+        result[0]
+          .transcript
+          .trim();
+
+      if (!text) {
+        return;
+      }
+
+
+      stopListening();
+
+      handleVoiceCommand(text);
+    };
+
+
+  recognition.onerror =
+    function (event) {
+
+      recognitionRunning =
+        false;
+
+      if (
+        event.error ===
+          "no-speech" ||
+        event.error ===
+          "aborted"
+      ) {
+
         restartListening();
 
         return;
       }
 
 
-      const reply =
-        data.reply ||
-        "I'm sorry, I didn't get that.";
+      if (
+        event.error ===
+        "not-allowed"
+      ) {
+
+        keepListening =
+          false;
+
+        setState(
+          "MICROPHONE BLOCKED",
+          "Allow microphone access for Kora"
+        );
+
+        micStatus.textContent =
+          "MICROPHONE PERMISSION REQUIRED";
+
+        showError(
+          "Kora needs microphone permission."
+        );
+
+        return;
+      }
 
 
-      messages.push({
+      restartListening();
+    };
 
-        role:
-          "assistant",
+
+  recognition.onend =
+    function () {
+
+      recognitionRunning =
+        false;
+
+      if (
+        keepListening &&
+        !koraSpeaking &&
+        !processing
+      ) {
+
+        restartListening();
+      }
+    };
+
+} else {
+
+  setState(
+    "VOICE UNAVAILABLE",
+    "Use a supported browser"
+  );
+
+  micStatus.textContent =
+    "VOICE INPUT UNAVAILABLE";
+}
+
+
+/* =====================================================
+   VOICE SELECTION
+===================================================== */
+
+function chooseVoice() {
+
+  if (
+    !window.speechSynthesis
+  ) {
+    return;
+  }
+
+
+  const voices =
+    window.speechSynthesis
+      .getVoices();
+
+
+  if (!voices.length) {
+    return;
+  }
+
+
+  const english =
+    voices.filter(
+      voice =>
+        /^en(-|_)/i
+          .test(voice.lang)
+    );
+
+
+  /*
+   * Prefer the more natural voices
+   * that Chrome/Windows/macOS commonly expose.
+   */
+
+  const preferred = [
+
+    "Microsoft Jenny Online",
+    "Microsoft Jenny",
+    "Microsoft Aria Online",
+    "Microsoft Aria",
+    "Microsoft Sonia",
+    "Microsoft Libby",
+    "Microsoft Zira",
+
+    "Google UK English Female",
+    "Google US English Female",
+
+    "Samantha",
+    "Karen",
+    "Victoria",
+    "Moira",
+    "Fiona",
+    "Serena",
+    "Jenny",
+    "Aria"
+  ];
+
+
+  for (
+    const name
+    of preferred
+  ) {
+
+    const match =
+      english.find(
+        voice =>
+          voice.name
+            .toLowerCase()
+            .includes(
+              name.toLowerCase()
+            )
+      );
+
+
+    if (match) {
+
+      selectedVoice =
+        match;
+
+      return;
+    }
+  }
+
+
+  /*
+   * Female markers.
+   */
+
+  const femaleMarkers = [
+
+    "female",
+    "samantha",
+    "karen",
+    "victoria",
+    "moira",
+    "fiona",
+    "serena",
+    "jenny",
+    "aria",
+    "libby",
+    "sonia",
+    "zira"
+  ];
+
+
+  const female =
+    english.find(
+      voice => {
+
+        const name =
+          voice.name
+            .toLowerCase();
+
+        return femaleMarkers
+          .some(
+            marker =>
+              name.includes(marker)
+          );
+      }
+    );
+
+
+  if (female) {
+
+    selectedVoice =
+      female;
+
+    return;
+  }
+
+
+  const british =
+    english.find(
+      voice =>
+        /GB|UK/i
+          .test(voice.lang)
+    );
+
+
+  selectedVoice =
+    british ||
+    english[0] ||
+    voices[0];
+}
+
+
+chooseVoice();
+
+
+if (
+  window.speechSynthesis
+) {
+
+  window.speechSynthesis
+    .onvoiceschanged =
+    chooseVoice;
+}
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+function setState(
+  main,
+  sub
+) {
+
+  statusMain.textContent =
+    main;
+
+  statusSub.textContent =
+    sub;
+
+
+  app.classList.remove(
+    "listening",
+    "thinking",
+    "speaking"
+  );
+
+
+  if (
+    main === "LISTENING"
+  ) {
+
+    app.classList.add(
+      "listening"
+    );
+  }
+
+
+  if (
+    main === "THINKING"
+  ) {
+
+    app.classList.add(
+      "thinking"
+    );
+  }
+
+
+  if (
+    main === "SPEAKING"
+  ) {
+
+    app.classList.add(
+      "speaking"
+    );
+  }
+}
+
+
+/* =====================================================
+   MICROPHONE
+===================================================== */
+
+function startListening() {
+
+  if (
+    !recognitionSupported ||
+    !recognition
+  ) {
+    return;
+  }
+
+
+  if (
+    koraSpeaking ||
+    processing ||
+    recognitionRunning
+  ) {
+    return;
+  }
+
+
+  try {
+
+    recognition.start();
+
+    recognitionRunning =
+      true;
+
+  } catch (error) {
+
+    recognitionRunning =
+      false;
+  }
+}
+
+
+function stopListening() {
+
+  if (!recognition) {
+    return;
+  }
+
+
+  try {
+
+    recognition.stop();
+
+  } catch (error) {
+    // Already stopped.
+  }
+
+
+  recognitionRunning =
+    false;
+}
+
+
+function restartListening() {
+
+  if (!keepListening) {
+    return;
+  }
+
+  if (
+    koraSpeaking ||
+    processing
+  ) {
+    return;
+  }
+
+
+  setTimeout(
+    function () {
+
+      if (
+        keepListening &&
+        !koraSpeaking &&
+        !processing &&
+        !recognitionRunning
+      ) {
+
+        startListening();
+      }
+
+    },
+    180
+  );
+}
+
+
+/* =====================================================
+   COMMAND DETECTION
+===================================================== */
+
+function normalise(text) {
+
+  return text
+    .toLowerCase()
+    .replace(/[?!,.]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+function isDateTimeCommand(text) {
+
+  const t =
+    normalise(text);
+
+
+  return (
+
+    t.includes("date and time") ||
+
+    t.includes("date & time") ||
+
+    t.includes("show me the date") ||
+
+    t.includes("show me the time") ||
+
+    t.includes("show me date and time") ||
+
+    t.includes("pull up the date") ||
+
+    t.includes("pull up the time") ||
+
+    t.includes("pull up date and time") ||
+
+    t.includes("what is the date") ||
+
+    t.includes("what's the date") ||
+
+    t.includes("what is the time") ||
+
+    t.includes("what's the time") ||
+
+    t.includes("what time is it") ||
+
+    t === "date" ||
+
+    t === "time"
+  );
+}
+
+
+function isWeatherCommand(text) {
+
+  const t =
+    normalise(text);
+
+
+  return (
+
+    t.includes("weather") ||
+
+    t.includes("forecast") ||
+
+    t.includes("temperature")
+  );
+}
+
+
+/* =====================================================
+   HANDLE VOICE COMMAND
+===================================================== */
+
+async function handleVoiceCommand(
+  text
+) {
+
+  if (
+    isDateTimeCommand(text)
+  ) {
+
+    showDateTime();
+
+    return;
+  }
+
+
+  if (
+    isWeatherCommand(text)
+  ) {
+
+    const location =
+      extractWeatherLocation(text);
+
+    await showWeather(
+      location
+    );
+
+    return;
+  }
+
+
+  sendToKora(text);
+}
+
+
+/* =====================================================
+   WEATHER LOCATION
+===================================================== */
+
+function extractWeatherLocation(
+  text
+) {
+
+  const lower =
+    text.toLowerCase();
+
+
+  const patterns = [
+
+    /weather in (.+)$/i,
+
+    /weather for (.+)$/i,
+
+    /forecast in (.+)$/i,
+
+    /forecast for (.+)$/i,
+
+    /temperature in (.+)$/i,
+
+    /temperature for (.+)$/i,
+
+    /weather at (.+)$/i,
+
+    /forecast at (.+)$/i
+  ];
+
+
+  for (
+    const pattern
+    of patterns
+  ) {
+
+    const match =
+      lower.match(pattern);
+
+
+    if (
+      match &&
+      match[1]
+    ) {
+
+      return cleanLocation(
+        match[1]
+      );
+    }
+  }
+
+
+  return DEFAULT_LOCATION;
+}
+
+
+function cleanLocation(
+  location
+) {
+
+  return location
+    .replace(
+      /\b(today|tonight|tomorrow)\b/gi,
+      ""
+    )
+    .trim();
+}
+
+
+/* =====================================================
+   DATE + TIME
+===================================================== */
+
+function showDateTime() {
+
+  currentInfoType =
+    "datetime";
+
+
+  const now =
+    new Date();
+
+
+  const date =
+    now.toLocaleDateString(
+      "en-GB",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }
+    );
+
+
+  const time =
+    now.toLocaleTimeString(
+      "en-GB",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }
+    );
+
+
+  infoKicker.textContent =
+    "K.O.R.A. TEMPORAL DATA";
+
+
+  infoTitle.textContent =
+    "Date & Time";
+
+
+  infoGrid.innerHTML = `
+
+    <div class="info-card">
+
+      <div class="info-label">
+        Date
+      </div>
+
+      <div class="info-value">
+        ${date}
+      </div>
+
+    </div>
+
+
+    <div class="info-card">
+
+      <div class="info-label">
+        Current Time
+      </div>
+
+      <div class="info-value">
+        ${time}
+      </div>
+
+    </div>
+
+  `;
+
+
+  infoDescription.textContent =
+    "Would you like me to read it out to you?";
+
+
+  openInfoPanel();
+
+
+  translationText.textContent =
+    "As you wish, Sir. I have pulled up the current date and time.";
+
+
+  speak(
+    "As you wish, Sir. I have pulled up the current date and time. Would you like me to read it out to you?"
+  );
+}
+
+
+/* =====================================================
+   WEATHER
+===================================================== */
+
+async function showWeather(
+  location
+) {
+
+  currentInfoType =
+    "weather";
+
+
+  setState(
+    "THINKING",
+    "Retrieving weather data"
+  );
+
+
+  translationText.textContent =
+    "As you wish, Sir. Retrieving the weather."
+
+
+  try {
+
+    const geoResponse =
+      await fetch(
+        "https://geocoding-api.open-meteo.com/v1/search?name=" +
+        encodeURIComponent(location) +
+        "&count=1&language=en&format=json"
+      );
+
+
+    const geo =
+      await geoResponse.json();
+
+
+    if (
+      !geo.results ||
+      !geo.results.length
+    ) {
+
+      throw new Error(
+        "Location not found"
+      );
+    }
+
+
+    const place =
+      geo.results[0];
+
+
+    const latitude =
+      place.latitude;
+
+    const longitude =
+      place.longitude;
+
+
+    const weatherResponse =
+      await fetch(
+        "https://api.open-meteo.com/v1/forecast?" +
+        "latitude=" +
+        latitude +
+        "&longitude=" +
+        longitude +
+        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m" +
+        "&timezone=auto"
+      );
+
+
+    const weather =
+      await weatherResponse.json();
+
+
+    const current =
+      weather.current;
+
+
+    const description =
+      weatherDescription(
+        current.weather_code
+      );
+
+
+    const actualTemp =
+      Math.round(
+        current.temperature_2m
+      );
+
+
+    const feels =
+      Math.round(
+        current.apparent_temperature
+      );
+
+
+    const wind =
+      Math.round(
+        current.wind_speed_10m
+      );
+
+
+    infoKicker.textContent =
+      "K.O.R.A. WEATHER DATA";
+
+
+    infoTitle.textContent =
+      place.name;
+
+
+    infoGrid.innerHTML = `
+
+      <div class="info-card">
+
+        <div class="info-label">
+          Conditions
+        </div>
+
+        <div class="info-value">
+          ${description}
+        </div>
+
+      </div>
+
+
+      <div class="info-card">
+
+        <div class="info-label">
+          Temperature
+        </div>
+
+        <div class="info-value">
+          ${actualTemp}°C
+        </div>
+
+      </div>
+
+
+      <div class="info-card">
+
+        <div class="info-label">
+          Feels Like
+        </div>
+
+        <div class="info-value">
+          ${feels}°C
+        </div>
+
+      </div>
+
+
+      <div class="info-card">
+
+        <div class="info-label">
+          Wind
+        </div>
+
+        <div class="info-value">
+          ${wind} km/h
+        </div>
+
+      </div>
+
+    `;
+
+
+    infoDescription.textContent =
+      "Would you like me to read it out to you?";
+
+
+    openInfoPanel();
+
+
+    const spokenLocation =
+      place.name;
+
+
+    const spoken =
+      `As you wish, Sir. The weather in ${spokenLocation} is ${description}, with a temperature of ${actualTemp} degrees Celsius and feels like ${feels} degrees. Would you like me to read it out to you?`;
+
+
+    translationText.textContent =
+      `As you wish, Sir. Weather retrieved for ${spokenLocation}.`;
+
+
+    speak(spoken);
+
+  } catch (error) {
+
+    processing =
+      false;
+
+    setState(
+      "LISTENING",
+      "Kora is listening"
+    );
+
+    showError(
+      "I couldn't retrieve the weather for that location, Sir."
+    );
+
+    restartListening();
+  }
+}
+
+
+/* =====================================================
+   WEATHER DESCRIPTIONS
+===================================================== */
+
+function weatherDescription(
+  code
+) {
+
+  const descriptions = {
+
+    0:
+      "Clear skies",
+
+    1:
+      "Mainly clear",
+
+    2:
+      "Partly cloudy",
+
+    3:
+      "Overcast",
+
+    45:
+      "Foggy",
+
+    48:
+      "Foggy",
+
+    51:
+      "Light drizzle",
+
+    53:
+      "Drizzle",
+
+    55:
+      "Heavy drizzle",
+
+    61:
+      "Light rain",
+
+    63:
+      "Rain",
+
+    65:
+      "Heavy rain",
+
+    71:
+      "Light snow",
+
+    73:
+      "Snow",
+
+    75:
+      "Heavy snow",
+
+    80:
+      "Rain showers",
+
+    81:
+      "Rain showers",
+
+    82:
+      "Heavy rain showers",
+
+    95:
+      "Thunderstorm",
+
+    96:
+      "Thunderstorm with hail",
+
+    99:
+      "Thunderstorm with hail"
+  };
+
+
+  return (
+    descriptions[code] ||
+    "Variable conditions"
+  );
+}
+
+
+/* =====================================================
+   INFORMATION PANEL
+===================================================== */
+
+function openInfoPanel() {
+
+  coreArea.classList.add(
+    "info-mode"
+  );
+
+
+  setTimeout(
+    function () {
+
+      infoPanel.classList.add(
+        "visible"
+      );
+
+    },
+    280
+  );
+}
+
+
+function closeInfoPanel() {
+
+  infoPanel.classList.remove(
+    "visible"
+  );
+
+
+  setTimeout(
+    function () {
+
+      coreArea.classList.remove(
+        "info-mode"
+      );
+
+      currentInfoType =
+        null;
+
+    },
+    350
+  );
+
+
+  setState(
+    "LISTENING",
+    "Kora is listening"
+  );
+
+
+  restartListening();
+}
+
+
+infoClose.addEventListener(
+  "click",
+  closeInfoPanel
+);
+
+
+/* =====================================================
+   SEND TO GEMINI / KORA
+===================================================== */
+
+async function sendToKora(
+  text
+) {
+
+  processing =
+    true;
+
+
+  setState(
+    "THINKING",
+    "Kora is processing"
+  );
+
+
+  micStatus.textContent =
+    "VOICE LINK PAUSED";
+
+
+  messages.push({
+
+    role: "user",
+
+    content:
+      text
+  });
+
+
+  translationText.textContent =
+    text;
+
+
+  try {
+
+    /*
+     * This instruction is included with
+     * every conversation so Kora keeps
+     * the Sir/JARVIS-style personality.
+     */
+
+    const requestMessages = [
+
+      {
+        role: "system",
 
         content:
-          reply
-      });
+          "You are K.O.R.A., a calm, intelligent, polite AI assistant. Address the user as Sir by default. Use concise, natural responses. Occasionally use phrases such as 'As you wish, Sir' when appropriate, but do not overuse them. Never claim to have performed an action you cannot actually perform."
+      },
+
+      ...messages
+
+    ];
 
 
-      translationText.textContent =
-        reply;
+    const response =
+      await fetch(
+        CHAT_ENDPOINT,
+        {
+
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              messages:
+                requestMessages
+            })
+        }
+      );
 
 
-      speak(reply);
+    const data =
+      await response.json();
 
-    } catch (error) {
+
+    if (!response.ok) {
 
       messages.pop();
 
@@ -1718,36 +2811,16 @@
         false;
 
       showError(
-        "Unable to connect to Kora."
+        data.error ||
+        "Kora couldn't respond, Sir."
       );
+
 
       setState(
         "LISTENING",
         "Kora is listening"
       );
 
-      restartListening();
-    }
-  }
-
-
-  /* ==================================================
-     KORA VOICE
-  ================================================== */
-
-  function speak(text) {
-
-    if (
-      !window.speechSynthesis
-    ) {
-
-      processing =
-        false;
-
-      setState(
-        "LISTENING",
-        "Kora is listening"
-      );
 
       restartListening();
 
@@ -1755,255 +2828,392 @@
     }
 
 
-    /*
-     * ABSOLUTE ANTI-LOOP:
-     *
-     * Recognition is stopped BEFORE speech begins.
-     */
-
-    stopListening();
+    const reply =
+      data.reply ||
+      "I'm sorry, Sir. I didn't receive a response.";
 
 
-    koraSpeaking =
-      true;
+    messages.push({
+
+      role:
+        "assistant",
+
+      content:
+        reply
+    });
 
 
-    setState(
-      "SPEAKING",
-      "Kora is responding"
+    translationText.textContent =
+      reply;
+
+
+    speak(reply);
+
+  } catch (error) {
+
+    messages.pop();
+
+    processing =
+      false;
+
+    showError(
+      "I couldn't connect to Kora, Sir."
     );
 
 
-    micStatus.textContent =
-      "VOICE OUTPUT ACTIVE";
+    setState(
+      "LISTENING",
+      "Kora is listening"
+    );
 
 
-    window.speechSynthesis.cancel();
+    restartListening();
+  }
+}
 
 
-    chooseVoice();
+/* =====================================================
+   SPEECH OUTPUT
+===================================================== */
 
+function speak(
+  text
+) {
 
-    const utterance =
-      new SpeechSynthesisUtterance(
-        text
-      );
+  if (
+    !window.speechSynthesis
+  ) {
 
+    processing =
+      false;
 
-    /*
-     * Calm, natural delivery.
-     */
+    setState(
+      "LISTENING",
+      "Kora is listening"
+    );
 
-    utterance.rate =
-      0.88;
+    restartListening();
 
-    utterance.pitch =
-      1.0;
-
-    utterance.volume =
-      1.0;
-
-
-    if (selectedVoice) {
-
-      utterance.voice =
-        selectedVoice;
-    }
-
-
-    utterance.onstart =
-      function () {
-
-        koraSpeaking =
-          true;
-      };
-
-
-    utterance.onend =
-      function () {
-
-        koraSpeaking =
-          false;
-
-        processing =
-          false;
-
-
-        setTimeout(
-          function () {
-
-            if (
-              !keepListening
-            ) {
-              return;
-            }
-
-
-            setState(
-              "LISTENING",
-              "Kora is listening"
-            );
-
-
-            micStatus.textContent =
-              "MICROPHONE ACTIVE";
-
-
-            startListening();
-
-          },
-          450
-        );
-      };
-
-
-    utterance.onerror =
-      function () {
-
-        koraSpeaking =
-          false;
-
-        processing =
-          false;
-
-
-        setState(
-          "LISTENING",
-          "Kora is listening"
-        );
-
-
-        micStatus.textContent =
-          "MICROPHONE ACTIVE";
-
-
-        restartListening();
-      };
-
-
-    window.speechSynthesis
-      .speak(
-        utterance
-      );
+    return;
   }
 
 
-  /* ==================================================
-     CORE BUTTON
-  ================================================== */
+  /*
+   * IMPORTANT:
+   * Stop recognition before speaking.
+   * This prevents Kora hearing herself.
+   */
 
-  core.addEventListener(
-    "click",
-    function () {
-
-      if (
-        !recognitionSupported
-      ) {
-        return;
-      }
+  stopListening();
 
 
-      /*
-       * If Kora is speaking,
-       * clicking the core stops her.
-       */
-
-      if (koraSpeaking) {
-
-        window.speechSynthesis
-          .cancel();
+  koraSpeaking =
+    true;
 
 
-        koraSpeaking =
-          false;
-
-        processing =
-          false;
-
-
-        setState(
-          "LISTENING",
-          "Kora is listening"
-        );
-
-
-        startListening();
-
-        return;
-      }
-
-
-      /*
-       * First click grants microphone
-       * permission and starts Kora.
-       */
-
-      if (
-        !recognitionRunning
-      ) {
-
-        keepListening =
-          true;
-
-        startListening();
-      }
-    }
+  setState(
+    "SPEAKING",
+    "Kora is responding"
   );
 
 
-  /* ==================================================
-     ERROR
-  ================================================== */
-
-  function showError(
-    message
-  ) {
-
-    errorElement.textContent =
-      message;
-
-    errorElement.style.display =
-      "block";
+  micStatus.textContent =
+    "VOICE OUTPUT ACTIVE";
 
 
-    setTimeout(
-      function () {
+  /*
+   * Clear anything waiting in the
+   * browser speech queue.
+   */
 
-        errorElement.style.display =
-          "none";
+  window.speechSynthesis.cancel();
 
-      },
-      5000
+
+  chooseVoice();
+
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
     );
-  }
 
 
-  /* ==================================================
-     STARTUP
-  ================================================== */
+  /*
+   * Faster response.
+   *
+   * The browser speech engine itself
+   * controls the actual startup latency.
+   */
+
+  utterance.rate =
+    0.96;
+
+  utterance.pitch =
+    1.02;
+
+  utterance.volume =
+    1;
+
 
   if (
-    recognitionSupported
+    selectedVoice
   ) {
 
-    setState(
-      "READY",
-      "Click the core once to activate Kora"
-    );
-
-    micStatus.textContent =
-      "MICROPHONE READY";
-
-  } else {
-
-    setState(
-      "VOICE UNAVAILABLE",
-      "Use Chrome or another supported browser"
-    );
-
-    micStatus.textContent =
-      "VOICE INPUT UNAVAILABLE";
+    utterance.voice =
+      selectedVoice;
   }
+
+
+  utterance.onstart =
+    function () {
+
+      koraSpeaking =
+        true;
+    };
+
+
+  utterance.onend =
+    function () {
+
+      koraSpeaking =
+        false;
+
+      processing =
+        false;
+
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+
+      micStatus.textContent =
+        "MICROPHONE ACTIVE";
+
+
+      /*
+       * Tiny delay gives the speakers
+       * time to stop before the mic
+       * becomes active again.
+       */
+
+      setTimeout(
+        function () {
+
+          if (
+            keepListening
+          ) {
+
+            startListening();
+          }
+
+        },
+        120
+      );
+    };
+
+
+  utterance.onerror =
+    function () {
+
+      koraSpeaking =
+        false;
+
+      processing =
+        false;
+
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+
+      micStatus.textContent =
+        "MICROPHONE ACTIVE";
+
+
+      restartListening();
+    };
+
+
+  /*
+   * Speak immediately.
+   */
+
+  window.speechSynthesis.speak(
+    utterance
+  );
+}
+
+
+/* =====================================================
+   CORE CLICK
+===================================================== */
+
+orb.addEventListener(
+  "click",
+  function () {
+
+    if (
+      !recognitionSupported
+    ) {
+      return;
+    }
+
+
+    if (
+      koraSpeaking
+    ) {
+
+      window.speechSynthesis
+        .cancel();
+
+
+      koraSpeaking =
+        false;
+
+      processing =
+        false;
+
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+
+      startListening();
+
+      return;
+    }
+
+
+    if (
+      !recognitionRunning
+    ) {
+
+      keepListening =
+        true;
+
+      startListening();
+    }
+
+  }
+);
+
+
+/* =====================================================
+   STARTUP GREETING
+===================================================== */
+
+function startupKora() {
+
+  setState(
+    "ONLINE",
+    "All systems operational"
+  );
+
+
+  translationText.textContent =
+    "All Systems Online, Sir.";
+
+
+  /*
+   * Browsers can block automatic speech
+   * until the user has interacted with
+   * the page.
+   *
+   * We attempt it immediately.
+   */
+
+  speak(
+    "All Systems Online, Sir."
+  );
+
+
+  /*
+   * If the browser blocks automatic
+   * speech, the first click on the orb
+   * activates the microphone and speech
+   * can then operate normally.
+   */
+
+  setTimeout(
+    function () {
+
+      if (
+        !koraSpeaking &&
+        !processing
+      ) {
+
+        setState(
+          "READY",
+          "Click the core to activate Kora"
+        );
+      }
+
+    },
+    2500
+  );
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(
+  message
+) {
+
+  errorElement.textContent =
+    message;
+
+  errorElement.style.display =
+    "block";
+
+
+  setTimeout(
+    function () {
+
+      errorElement.style.display =
+        "none";
+
+    },
+    5000
+  );
+}
+
+
+/* =====================================================
+   INITIALISE
+===================================================== */
+
+setState(
+  "INITIALISING",
+  "Booting K.O.R.A. systems"
+);
+
+
+micStatus.textContent =
+  "SYSTEM INITIALISING";
+
+
+/*
+ * Give the boot animation time to
+ * establish itself before greeting.
+ */
+
+setTimeout(
+  function () {
+
+    startupKora();
+
+  },
+  1900
+);
 
 </script>
 
