@@ -1,38 +1,105 @@
 const { askKora } = require("./aiClient");
 
 module.exports = async function handler(req, res) {
-  // Allow the frontend (on a different domain) to call this
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "*"
+  );
+
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "POST, OPTIONS"
+  );
+
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type"
+  );
 
   if (req.method === "OPTIONS") {
-    res.status(200).end();
-    return;
+    return res.status(204).end();
   }
 
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Only POST is allowed." });
-    return;
-  }
-
-  const messages = req.body.messages;
-
-  if (!Array.isArray(messages) || messages.length === 0) {
-    res.status(400).json({ error: "Expected a non-empty 'messages' array." });
-    return;
+    return res.status(405).json({
+      error: "Method not allowed."
+    });
   }
 
   try {
-    const reply = await askKora(messages);
-    res.status(200).json({ reply: reply });
-  } catch (err) {
-    if (err.type === "RATE_LIMITED") {
-      res.status(429).json({ error: err.message, retryAfter: err.retryAfter });
-      return;
+    const body = req.body || {};
+
+    if (
+      !Array.isArray(body.messages) ||
+      body.messages.length === 0
+    ) {
+      return res.status(400).json({
+        error: "No conversation messages were provided."
+      });
     }
 
-    console.error("Kora backend error:", err);
-    res.status(500).json({ error: "Something went wrong talking to Kora's brain." });
+    const messages =
+      body.messages
+        .slice(-30)
+        .map(message => ({
+          role:
+            message.role === "assistant"
+              ? "assistant"
+              : "user",
+
+          content:
+            String(
+              message.content ??
+              message.text ??
+              ""
+            ).slice(0, 12000)
+        }));
+
+    const memory =
+      typeof body.memory === "string"
+        ? body.memory.slice(0, 20000)
+        : "";
+
+    const location =
+      typeof body.location === "string"
+        ? body.location.slice(0, 200)
+        : "Rothbury, UK";
+
+    const result =
+      await askKora(
+        messages,
+        {
+          memory,
+          location
+        }
+      );
+
+    return res.status(200).json({
+      reply: result.text,
+
+      usage: result.usage
+    });
+
+  } catch (error) {
+
+    console.error(
+      "K.O.R.A. API error:",
+      error
+    );
+
+    if (
+      error?.type === "RATE_LIMITED"
+    ) {
+      return res.status(429).json({
+        error:
+          "K.O.R.A. has temporarily reached the Gemini request limit."
+      });
+    }
+
+    return res.status(500).json({
+      error:
+        "K.O.R.A. could not reach her AI service."
+    });
   }
 };
