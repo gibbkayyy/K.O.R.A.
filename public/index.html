@@ -14,6 +14,8 @@
 <meta name="apple-mobile-web-app-title" content="K.O.R.A.">
 
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23070809' stroke='%23f4f5f3' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffffff' filter='drop-shadow(0 0 8px rgba(255,255,255,0.8))'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23070809' stroke='%23f4f5f3' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffffff' filter='drop-shadow(0 0 8px rgba(255,255,255,0.8))'/%3E%3C/svg%3E">
 
 <title>K.O.R.A.</title>
 
@@ -260,6 +262,7 @@ body {
   display: grid;
   place-items: center;
 
+  background: radial-gradient(circle at 50% 45%, rgba(255,255,255,.15), rgba(15,17,19,.95));
   box-shadow:
     0 0 14px
     rgba(255,255,255,.07);
@@ -268,16 +271,16 @@ body {
 .brand-core::after {
   content: "";
 
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 
   border-radius: 50%;
 
   background: white;
 
   box-shadow:
-    0 0 9px
-    rgba(255,255,255,.7);
+    0 0 10px
+    rgba(255,255,255,.8);
 }
 
 .brand-text {
@@ -326,53 +329,6 @@ body {
   box-shadow:
     0 0 9px
     rgba(255,255,255,.65);
-}
-
-.usage {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.usage-item {
-  min-width: 76px;
-
-  padding:
-    7px 9px;
-
-  border:
-    1px solid var(--line);
-
-  border-radius: 8px;
-
-  background:
-    rgba(255,255,255,.025);
-
-  text-align: center;
-}
-
-.usage-label {
-  display: block;
-
-  color: var(--dim);
-
-  font-size: 7px;
-
-  letter-spacing: .12em;
-
-  text-transform: uppercase;
-}
-
-.usage-value {
-  display: block;
-
-  margin-top: 2px;
-
-  color: var(--soft);
-
-  font-size: 10px;
-
-  font-weight: 600;
 }
 
 /* =====================================================
@@ -532,7 +488,7 @@ body {
 }
 
 /* =====================================================
-   ORB
+   ORB (TEASER LOGO DESIGN)
 ===================================================== */
 
 .orb {
@@ -551,17 +507,17 @@ body {
     scale(.08);
 
   border:
-    1px solid
-    rgba(255,255,255,.72);
+    2px solid
+    rgba(255,255,255,.85);
 
   border-radius: 50%;
 
   background:
     radial-gradient(
       circle at 50% 45%,
-      rgba(255,255,255,.11),
-      rgba(25,27,29,.96) 48%,
-      rgba(8,9,10,.98)
+      rgba(255,255,255,.16),
+      rgba(15,17,19,.97) 50%,
+      rgba(7,8,9,.99)
     );
 
   color: white;
@@ -569,16 +525,17 @@ body {
   cursor: pointer;
 
   box-shadow:
-    inset 0 0 35px
-    rgba(255,255,255,.035),
+    inset 0 0 40px
+    rgba(255,255,255,.05),
 
-    0 0 35px
-    rgba(255,255,255,.06);
+    0 0 40px
+    rgba(255,255,255,.1);
 
   z-index: 10;
 
   animation:
-    orbBoot 1.5s var(--ease) .35s forwards;
+    orbBoot 1.5s var(--ease) .35s forwards,
+    logoGlow 4s ease-in-out infinite alternate;
 
   outline: none;
 }
@@ -617,16 +574,27 @@ body {
   }
 }
 
+@keyframes logoGlow {
+  0% {
+    border-color: rgba(255,255,255,.7);
+    box-shadow: inset 0 0 35px rgba(255,255,255,.04), 0 0 35px rgba(255,255,255,.08);
+  }
+  100% {
+    border-color: rgba(255,255,255,.98);
+    box-shadow: inset 0 0 55px rgba(255,255,255,.12), 0 0 65px rgba(255,255,255,.22);
+  }
+}
+
 .orb:hover {
   border-color:
-    rgba(255,255,255,.95);
+    rgba(255,255,255,1);
 
   box-shadow:
-    inset 0 0 40px
-    rgba(255,255,255,.06),
+    inset 0 0 50px
+    rgba(255,255,255,.1),
 
-    0 0 50px
-    rgba(255,255,255,.12);
+    0 0 70px
+    rgba(255,255,255,.2);
 }
 
 .orb::before {
@@ -634,13 +602,13 @@ body {
 
   position: absolute;
 
-  inset: 12px;
+  inset: 16px;
 
   border-radius: 50%;
 
   border:
     1px solid
-    rgba(255,255,255,.07);
+    rgba(255,255,255,.12);
 }
 
 .orb::after {
@@ -648,8 +616,8 @@ body {
 
   position: absolute;
 
-  width: 65px;
-  height: 65px;
+  width: 50px;
+  height: 50px;
 
   left: 50%;
   top: 50%;
@@ -659,13 +627,11 @@ body {
 
   border-radius: 50%;
 
-  border:
-    1px solid
-    rgba(255,255,255,.13);
+  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,.2) 70%, transparent 100%);
 
   box-shadow:
-    inset 0 0 20px
-    rgba(255,255,255,.04);
+    0 0 22px
+    rgba(255,255,255,.75);
 }
 
 /* =====================================================
@@ -676,26 +642,26 @@ body {
   position: absolute;
 
   left: 50%;
-  top: 50%;
+  top: 72%;
 
   transform:
-    translate(-50%, -50%);
+    translateX(-50%);
 
   z-index: 20;
 
   white-space: nowrap;
 
-  font-size: 19px;
+  font-size: 14px;
 
-  font-weight: 500;
+  font-weight: 550;
 
-  letter-spacing: .18em;
+  letter-spacing: .25em;
 
-  color: white;
+  color: var(--soft);
 
   text-shadow:
-    0 0 14px
-    rgba(255,255,255,.25);
+    0 0 10px
+    rgba(255,255,255,.2);
 
   opacity: 0;
 
@@ -708,7 +674,7 @@ body {
     opacity: 0;
 
     transform:
-      translate(-50%, -50%)
+      translateX(-50%)
       scale(.82);
   }
 
@@ -716,7 +682,7 @@ body {
     opacity: 1;
 
     transform:
-      translate(-50%, -50%)
+      translateX(-50%)
       scale(1);
   }
 }
@@ -727,76 +693,79 @@ body {
 
 .app.listening .orb {
   animation:
+    logoGlow 4s ease-in-out infinite alternate,
     listenPulse 1.8s ease-in-out infinite;
 }
 
 .app.thinking .orb {
   animation:
+    logoGlow 4s ease-in-out infinite alternate,
     thinkPulse .8s ease-in-out infinite;
 }
 
 .app.speaking .orb {
   animation:
+    logoGlow 4s ease-in-out infinite alternate,
     speakPulse .55s ease-in-out infinite;
 }
 
 @keyframes listenPulse {
   0%,100% {
     box-shadow:
-      inset 0 0 35px
-      rgba(255,255,255,.04),
+      inset 0 0 40px
+      rgba(255,255,255,.05),
 
-      0 0 35px
-      rgba(255,255,255,.06);
+      0 0 40px
+      rgba(255,255,255,.1);
   }
 
   50% {
     box-shadow:
-      inset 0 0 45px
-      rgba(255,255,255,.08),
+      inset 0 0 55px
+      rgba(255,255,255,.12),
 
-      0 0 65px
-      rgba(255,255,255,.13);
+      0 0 75px
+      rgba(255,255,255,.2);
   }
 }
 
 @keyframes thinkPulse {
   0%,100% {
     box-shadow:
-      inset 0 0 35px
-      rgba(255,255,255,.04),
+      inset 0 0 40px
+      rgba(255,255,255,.05),
 
-      0 0 35px
-      rgba(255,255,255,.06);
+      0 0 40px
+      rgba(255,255,255,.1);
   }
 
   50% {
     box-shadow:
-      inset 0 0 48px
-      rgba(255,255,255,.09),
+      inset 0 0 60px
+      rgba(255,255,255,.15),
 
-      0 0 70px
-      rgba(255,255,255,.15);
+      0 0 85px
+      rgba(255,255,255,.25);
   }
 }
 
 @keyframes speakPulse {
   0%,100% {
     box-shadow:
-      inset 0 0 35px
-      rgba(255,255,255,.04),
+      inset 0 0 40px
+      rgba(255,255,255,.05),
 
-      0 0 35px
-      rgba(255,255,255,.06);
+      0 0 40px
+      rgba(255,255,255,.1);
   }
 
   50% {
     box-shadow:
-      inset 0 0 50px
-      rgba(255,255,255,.11),
+      inset 0 0 65px
+      rgba(255,255,255,.18),
 
-      0 0 80px
-      rgba(255,255,255,.18);
+      0 0 95px
+      rgba(255,255,255,.3);
   }
 }
 
@@ -1424,25 +1393,6 @@ body {
     font-size: 14px;
   }
 
-  .usage {
-    gap: 5px;
-  }
-
-  .usage-item {
-    min-width: 61px;
-
-    padding:
-      6px 7px;
-  }
-
-  .usage-label {
-    font-size: 6px;
-  }
-
-  .usage-value {
-    font-size: 9px;
-  }
-
   .core {
     width: 360px;
     height: 360px;
@@ -1469,7 +1419,7 @@ body {
   }
 
   .orb-name {
-    font-size: 17px;
+    font-size: 13px;
   }
 
   .transmission {
@@ -1572,42 +1522,6 @@ body.standalone .install-button {
 
 
     <div class="top-right">
-
-      <div class="usage">
-
-        <div class="usage-item">
-
-          <span class="usage-label">
-            Tokens
-          </span>
-
-          <span
-            class="usage-value"
-            id="tokensRemaining"
-          >
-            —
-          </span>
-
-        </div>
-
-
-        <div class="usage-item">
-
-          <span class="usage-label">
-            Requests
-          </span>
-
-          <span
-            class="usage-value"
-            id="requestsRemaining"
-          >
-            —
-          </span>
-
-        </div>
-
-      </div>
-
 
       <div class="system">
 
@@ -1911,12 +1825,6 @@ const installButton =
 const errorBox =
   document.getElementById("error");
 
-const tokensRemaining =
-  document.getElementById("tokensRemaining");
-
-const requestsRemaining =
-  document.getElementById("requestsRemaining");
-
 
 /* =====================================================
    GRID
@@ -1972,6 +1880,31 @@ let lastInformation =
   null;
 
 let messages = [];
+
+
+/* =====================================================
+   PWA SERVICE WORKER & CACHE INVALIDATION
+===================================================== */
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        if (newWorker) {
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    } catch (e) {
+      // Offline fallback support
+    }
+  });
+}
 
 
 /* =====================================================
@@ -2301,10 +2234,10 @@ function startListening() {
 
 
   try {
-
+    recognitionRunning = true;
     recognition.start();
 
-  } catch {
+  } catch (err) {
     recognitionRunning =
       false;
   }
@@ -2333,7 +2266,8 @@ function restartListening() {
   if (
     !keepListening ||
     speaking ||
-    processing
+    processing ||
+    recognitionRunning
   ) {
     return;
   }
@@ -3913,9 +3847,9 @@ Do not use "As you wish, Sir" for ordinary questions or commands.
 
 Keep responses natural and concise.
 
-Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, camera, microphone, files, or other private services unless the application has explicitly provided the required data.
+You have a built-in camera and vision capability. If the user asks to open, use, or access the camera, or asks what you see, acknowledge that you can access the camera and that the application will activate the vision interface.
 
-If the user asks about capabilities that require permission, explain what permission or integration is needed.`
+Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, or other unintegrated private services unless explicitly provided.`
 
               },
 
@@ -3961,16 +3895,6 @@ If the user asks about capabilities that require permission, explain what permis
       reply;
 
 
-    /*
-     * Display usage if the backend
-     * supplies it.
-     */
-
-    updateUsage(
-      data
-    );
-
-
     speak(
       reply
     );
@@ -3993,65 +3917,6 @@ If the user asks about capabilities that require permission, explain what permis
 
     restartListening();
   }
-}
-
-
-/* =====================================================
-   USAGE
-===================================================== */
-
-function updateUsage(
-  data
-) {
-
-  const usage =
-    data.usage ||
-    data.metadata ||
-    {};
-
-
-  const tokens =
-    usage.remainingTokens ??
-    data.remainingTokens ??
-    data.tokensRemaining;
-
-
-  const requests =
-    usage.remainingRequests ??
-    data.remainingRequests ??
-    data.requestsRemaining;
-
-
-  if (
-    tokens !== undefined &&
-    tokens !== null
-  ) {
-
-    tokensRemaining.textContent =
-      formatNumber(tokens);
-  }
-
-
-  if (
-    requests !== undefined &&
-    requests !== null
-  ) {
-
-    requestsRemaining.textContent =
-      formatNumber(requests);
-  }
-}
-
-
-function formatNumber(
-  number
-) {
-
-  return Number(
-    number
-  ).toLocaleString(
-    "en-GB"
-  );
 }
 
 
@@ -4151,7 +4016,7 @@ if (
 
 
 /* =====================================================
-   THIRD-PARTY TTS + FALLBACK
+   ELEVENLABS TTS + FALLBACK
 ===================================================== */
 
 async function speak(
@@ -4180,19 +4045,12 @@ async function speak(
 
   /*
    * First attempt the server-side
-   * third-party TTS endpoint.
+   * ElevenLabs TTS endpoint.
    *
-   * The API key stays on Vercel.
+   * The API key stays securely on the server side.
    */
 
   try {
-
-    /*
-     * Cap how long we'll wait on the third-party voice.
-     * If it hasn't responded in time, abort and drop
-     * straight to the instant browser voice below instead
-     * of leaving Kora silent while it keeps waiting.
-     */
 
     const controller =
       new AbortController();
@@ -4200,7 +4058,7 @@ async function speak(
     const timeout =
       setTimeout(
         () => controller.abort(),
-        2500
+        3500
       );
 
 
@@ -4291,7 +4149,7 @@ async function speak(
   } catch {
     /*
      * Fall through to browser
-     * speech automatically.
+     * speech automatically without crash.
      */
   }
 
