@@ -38,7 +38,9 @@ export default async function handler(req, res) {
         if (!response.ok) {
             const errBody = await response.text();
             console.error(`ElevenLabs upstream error (${response.status}):`, errBody);
-            return res.status(response.status).json({ error: `ElevenLabs error: ${errBody}` });
+            // This will send the exact reason back to your browser console
+            return res.status(response.status).json({ error: `ElevenLabs says: ${errBody}` });
+            
         }
 
         const audioBuffer = await response.arrayBuffer();
