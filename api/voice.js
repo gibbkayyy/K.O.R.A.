@@ -8,8 +8,8 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Text required for speech generation.' });
     }
 
-    const apiKey = process.env.CUSTOM_ELEVEN_KEY;
-    const ELEVENLABS_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL';
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    const voiceId = process.env.ELEVENLABS_VOICE_ID || '6rOxfAnZpbM3VIEhFaeV';
 
     if (!apiKey) {
         console.error("Server error: ELEVENLABS_API_KEY environment variable is missing.");
@@ -21,14 +21,16 @@ export default async function handler(req, res) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'xi-api-key': apiKey.trim() // .trim() prevents accidental trailing spaces from copy-pasting
+                'xi-api-key': apiKey.trim()
             },
             body: JSON.stringify({
                 text: text,
-                model_id: 'eleven_monolingual_v1',
+                model_id: 'eleven_multilingual_v2',
                 voice_settings: {
-                    stability: 0.5,
-                    similarity_boost: 0.75
+                    stability: 0.35,
+                    similarity_boost: 0.75,
+                    style: 0.20,
+                    use_speaker_boost: true
                 }
             })
         });
