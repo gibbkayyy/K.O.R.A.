@@ -4019,7 +4019,7 @@ if (
    ELEVENLABS TTS + FALLBACK
 ===================================================== */
 
-async function speakWithElevenLabs(text) {
+async function speak(text) {
     try {
         const response = await fetch('/api/voice', {
             method: 'POST',
@@ -4027,20 +4027,13 @@ async function speakWithElevenLabs(text) {
             body: JSON.stringify({ text })
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to generate speech from server.');
-        }
+        if (!response.ok) throw new Error('Voice generation failed');
 
-        // Receive the mp3 audio stream as a blob
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        
-        // Play the ElevenLabs audio
+        const blob = await response.blob();
+        const audio = new Audio(URL.createObjectURL(blob));
         await audio.play();
     } catch (err) {
-        console.error('ElevenLabs playback error, falling back to browser speech:', err);
-        // Optional fallback to browser speech if server fails
+        console.warn('ElevenLabs speech error, falling back to browser synthesis:', err);
         const utterance = new SpeechSynthesisUtterance(text);
         window.speechSynthesis.speak(utterance);
     }
