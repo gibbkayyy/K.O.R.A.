@@ -1,8 +1,5 @@
 {
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/camera-shell.html"
-    }
+    { "source": "/api/(.*)", "destination": "/src/server.js" }
   ]
 }
