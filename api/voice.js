@@ -8,11 +8,11 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Text required for speech generation.' });
     }
 
-    const apiKey = process.env.ELEVENLABS_API_KEY;
+    const apiKey = process.env.CUSTOM_ELEVEN_KEY;
     const ELEVENLABS_VOICE_ID = '6rOxfAnZpbM3VIEhFaeV';
 
     if (!apiKey) {
-        console.error("Server error: ELEVENLABS_API_KEY environment variable is missing.");
+        console.error("Server error: CUSTOM_ELEVEN_KEY environment variable is missing.");
         return res.status(503).json({ error: 'ElevenLabs API key not configured on server.' });
     }
 
