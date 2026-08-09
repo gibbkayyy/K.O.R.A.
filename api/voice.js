@@ -8,7 +8,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Text required for speech generation.' });
     }
 
-    const apiKey = process.env.ELEVENLABS_API_KEY;
+    const apiKey = process.env.CUSTOM_ELEVEN_KEY;
     const voiceId = process.env.ELEVENLABS_VOICE_ID || '8tsLeAV5vPVuzCCvqbbU';
 
     if (!apiKey) {
