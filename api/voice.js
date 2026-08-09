@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     }
 
     const apiKey = process.env.CUSTOM_ELEVEN_KEY;
-    const ELEVENLABS_ID = '6rOxfAnZpbM3VIEhFaeV';
+    const ELEVENLABS_ID = 'EXAVITQu4vr4xnSDxMaL';
 
     // DEBUG CHECK: This will show up in your Vercel Function Logs
     console.log("API Key exists:", !!apiKey);
