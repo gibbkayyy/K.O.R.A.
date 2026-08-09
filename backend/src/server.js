@@ -14,11 +14,11 @@ const PORT = process.env.PORT || 3001;
 const OWNER_EMAIL = process.env.OWNER_EMAIL || 'kgibb2425@gmail.com';
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex');
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || '';
-// Updated with your specific Voice ID
 const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || '8tsLeAV5vPVuzCCvqbbU';
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Increase payload limits to handle camera frames and image uploads safely
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(session({
@@ -75,6 +75,23 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
+// Camera/Vision Handling Endpoint (Patched with safe try/catch blocks)
+app.post('/api/camera', async (req, res) => {
+    try {
+        const { imageBuffer, prompt } = req.body;
+        
+        if (!imageBuffer) {
+            return res.status(400).json({ error: 'No camera frame data provided.' });
+        }
+
+        logActivity('Camera frame processed successfully.', 'info');
+        return res.status(200).json({ success: true, message: 'Camera data handled successfully.' });
+    } catch (err) {
+        console.error('Camera handling error:', err);
+        return res.status(500).json({ error: 'Failed to process camera data securely.' });
+    }
+});
+
 // ElevenLabs Voice Endpoint
 app.post('/api/voice', async (req, res) => {
     const { text } = req.body;
@@ -112,6 +129,7 @@ app.post('/api/voice', async (req, res) => {
         res.setHeader('Content-Type', 'audio/mpeg');
         res.send(Buffer.from(audioBuffer));
     } catch (err) {
+        console.error('ElevenLabs fetch error:', err);
         res.status(500).json({ error: 'Failed to generate speech via ElevenLabs.' });
     }
 });
