@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     }
 
     const apiKey = process.env.ELEVENLABS_API_KEY;
-    const voiceId = process.env.ELEVENLABS_VOICE_ID || '6rOxfAnZpbM3VIEhFaeV';
+    model_id: 'eleven_monolingual_v1'
 
     if (!apiKey) {
         console.error("Server error: ELEVENLABS_API_KEY environment variable is missing.");
