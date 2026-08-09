@@ -9,11 +9,7 @@ export default async function handler(req, res) {
     }
 
     const apiKey = process.env.CUSTOM_ELEVEN_KEY;
-    const ELEVENLABS_ID = 'EXAVITQu4vr4xnSDxMaL';
-
-    // DEBUG CHECK: This will show up in your Vercel Function Logs
-    console.log("API Key exists:", !!apiKey);
-    console.log("API Key length:", apiKey ? apiKey.length : 0);
+    const ELEVENLABS_ID = '6rOxfAnZpbM3VIEhFaeV';
 
     if (!apiKey) {
         console.error("Server error: CUSTOM_ELEVEN_KEY environment variable is missing.");
@@ -29,7 +25,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 text: text,
-                model_id: 'eleven_monolingual_v1',
+                model_id: 'eleven_turbo_v2_5', // Updated to modern model to prevent 403 errors
                 voice_settings: {
                     stability: 0.35,
                     similarity_boost: 0.75,
