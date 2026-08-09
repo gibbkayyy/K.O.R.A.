@@ -7,7 +7,7 @@
  * ------------------------------------------------------------------
  */
 
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
 
 const KORA_SYSTEM_PROMPT =
   "You are Kora, a fast, clean, reliable AI assistant. " +
@@ -16,20 +16,30 @@ const KORA_SYSTEM_PROMPT =
   "Avoid sci-fi assistant cliches (At once sir, Booting up, etc). Just be Kora.";
 
 export async function askKora(messages) {
-  return callGroqWithRetry(messages, 1);
+  return callGeminiWithRetry(messages, 1);
 }
 
-async function callGroqWithRetry(messages, attempt) {
-  const response = await fetch(GROQ_URL, {
+async function callGeminiWithRetry(messages, attempt) {
+  const apiKey = process.env.GEMINI_API_KEY || "";
+
+  const formattedContents = messages.map(msg => ({
+    role: msg.role === "assistant" ? "model" : "user",
+    parts: [{ text: msg.content }]
+  }));
+
+  const payload = {
+    contents: formattedContents,
+    systemInstruction: {
+      parts: [{ text: KORA_SYSTEM_PROMPT }]
+    }
+  };
+
+  const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + process.env.GROQ_API_KEY
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
-      messages: [{ role: "system", content: KORA_SYSTEM_PROMPT }].concat(messages)
-    })
+    body: JSON.stringify(payload)
   });
 
   if (response.status === 429) {
@@ -37,7 +47,7 @@ async function callGroqWithRetry(messages, attempt) {
 
     if (attempt === 1) {
       await sleep(retryAfter * 1000);
-      return callGroqWithRetry(messages, attempt + 1);
+      return callGeminiWithRetry(messages, attempt + 1);
     }
 
     const err = new Error("Kora's hit its request limit for the moment. Try again shortly.");
@@ -48,13 +58,19 @@ async function callGroqWithRetry(messages, attempt) {
 
   if (!response.ok) {
     const body = await response.text();
-    const err = new Error("Groq API error (" + response.status + "): " + body);
+    const err = new Error("Gemini API error (" + response.status + "): " + body);
     err.type = "PROVIDER_ERROR";
     throw err;
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!replyText) {
+    throw new Error("Received an empty response from Gemini.");
+  }
+
+  return replyText;
 }
 
 function sleep(ms) {
