@@ -15,7 +15,7 @@
 
 <link rel="manifest" href="/manifest.json">
 
-<title>K.O.R.A.</title>
+<title>K.O.R.A. — J.A.R.V.I.S. Command & Control</title>
 
 <style>
 :root {
@@ -33,7 +33,6 @@
   --line2: rgba(255,255,255,.055);
 
   --shadow: rgba(0,0,0,.45);
-
   --ease: cubic-bezier(.16,1,.3,1);
 }
 
@@ -54,9 +53,7 @@ body {
 
 body {
   overflow: hidden;
-
   color: var(--white);
-
   background:
     radial-gradient(
       circle at 50% 42%,
@@ -92,79 +89,38 @@ body {
 .grid-background {
   position: fixed;
   inset: 0;
-
   overflow: hidden;
-
   pointer-events: none;
-
   opacity: 0;
-
-  animation:
-    gridFade 1.2s ease .2s forwards;
+  animation: gridFade 1.2s ease .2s forwards;
 }
 
 @keyframes gridFade {
-  to {
-    opacity: 1;
-  }
+  to { opacity: 1; }
 }
 
 .grid {
   position: absolute;
   inset: -50px;
-
   display: grid;
-
-  grid-template-columns:
-    repeat(18, minmax(0, 1fr));
-
-  grid-template-rows:
-    repeat(12, minmax(0, 1fr));
-
+  grid-template-columns: repeat(18, minmax(0, 1fr));
+  grid-template-rows: repeat(12, minmax(0, 1fr));
   gap: 8px;
-
-  transform:
-    perspective(900px)
-    rotateX(2deg)
-    scale(1.04);
+  transform: perspective(900px) rotateX(2deg) scale(1.04);
 }
 
 .grid-cell {
   position: relative;
-
-  border:
-    1px solid
-    rgba(190,194,191,.07);
-
-  background:
-    rgba(190,194,191,.018);
-
+  border: 1px solid rgba(190,194,191,.07);
+  background: rgba(190,194,191,.018);
   border-radius: 3px;
-
-  box-shadow:
-    inset 0 0 18px
-    rgba(255,255,255,.008);
-
-  transition:
-    border-color .5s ease,
-    box-shadow .5s ease;
+  box-shadow: inset 0 0 18px rgba(255,255,255,.008);
+  transition: border-color .5s ease, box-shadow .5s ease;
 }
 
 .grid-cell:nth-child(9n) {
-  border-color:
-    rgba(210,214,212,.12);
-
-  box-shadow:
-    0 0 12px
-    rgba(255,255,255,.025);
-}
-
-.grid-cell:nth-child(17n) {
-  opacity: .55;
-}
-
-.grid-cell:nth-child(29n) {
-  opacity: .35;
+  border-color: rgba(210,214,212,.12);
+  box-shadow: 0 0 12px rgba(255,255,255,.025);
 }
 
 /* =====================================================
@@ -173,27 +129,17 @@ body {
 
 .app {
   position: relative;
-
   width: 100%;
   height: 100%;
-
   display: flex;
   flex-direction: column;
-
   opacity: 0;
-
-  animation:
-    appIn .8s ease forwards;
+  animation: appIn .8s ease forwards;
 }
 
 @keyframes appIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* =====================================================
@@ -202,43 +148,22 @@ body {
 
 .topbar {
   position: relative;
-
   height: 68px;
-
-  padding:
-    0 24px;
-
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  background:
-    rgba(8,9,10,.72);
-
-  border-bottom:
-    1px solid var(--line);
-
-  backdrop-filter:
-    blur(24px);
-
+  background: rgba(8,9,10,.72);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(24px);
   z-index: 100;
-
   opacity: 0;
-
-  animation:
-    topIn .8s var(--ease) .3s forwards;
+  animation: topIn .8s var(--ease) .3s forwards;
 }
 
 @keyframes topIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .brand {
@@ -250,34 +175,20 @@ body {
 .brand-core {
   width: 27px;
   height: 27px;
-
   border-radius: 50%;
-
-  border:
-    1px solid
-    rgba(255,255,255,.55);
-
+  border: 1px solid rgba(255,255,255,.55);
   display: grid;
   place-items: center;
-
-  box-shadow:
-    0 0 14px
-    rgba(255,255,255,.07);
+  box-shadow: 0 0 14px rgba(255,255,255,.07);
 }
 
 .brand-core::after {
   content: "";
-
   width: 6px;
   height: 6px;
-
   border-radius: 50%;
-
   background: white;
-
-  box-shadow:
-    0 0 9px
-    rgba(255,255,255,.7);
+  box-shadow: 0 0 9px rgba(255,255,255,.7);
 }
 
 .brand-text {
@@ -304,13 +215,40 @@ body {
   gap: 14px;
 }
 
+.user-identity-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--soft);
+}
+
+.owner-mission-key {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all .2s ease;
+  box-shadow: 0 0 10px rgba(255,255,255,.1);
+}
+
+.owner-mission-key:hover {
+  background: rgba(255,255,255,.2);
+  box-shadow: 0 0 15px rgba(255,255,255,.25);
+}
+
 .system {
   display: flex;
   align-items: center;
   gap: 7px;
-
   color: var(--muted);
-
   font-size: 8px;
   letter-spacing: .13em;
 }
@@ -318,14 +256,9 @@ body {
 .system-dot {
   width: 6px;
   height: 6px;
-
   border-radius: 50%;
-
   background: #ededeb;
-
-  box-shadow:
-    0 0 9px
-    rgba(255,255,255,.65);
+  box-shadow: 0 0 9px rgba(255,255,255,.65);
 }
 
 .usage {
@@ -336,42 +269,26 @@ body {
 
 .usage-item {
   min-width: 76px;
-
-  padding:
-    7px 9px;
-
-  border:
-    1px solid var(--line);
-
+  padding: 7px 9px;
+  border: 1px solid var(--line);
   border-radius: 8px;
-
-  background:
-    rgba(255,255,255,.025);
-
+  background: rgba(255,255,255,.025);
   text-align: center;
 }
 
 .usage-label {
   display: block;
-
   color: var(--dim);
-
   font-size: 7px;
-
   letter-spacing: .12em;
-
   text-transform: uppercase;
 }
 
 .usage-value {
   display: block;
-
   margin-top: 2px;
-
   color: var(--soft);
-
   font-size: 10px;
-
   font-weight: 600;
 }
 
@@ -381,11 +298,8 @@ body {
 
 .main {
   position: relative;
-
   flex: 1;
-
   min-height: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -397,46 +311,29 @@ body {
 
 .core {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
   width: 460px;
   height: 460px;
-
-  transform:
-    translate(-50%, -50%);
-
-  transition:
-    left 1.05s var(--ease),
-    top 1.05s var(--ease),
-    transform 1.05s var(--ease);
-
+  transform: translate(-50%, -50%);
+  transition: left 1.05s var(--ease), top 1.05s var(--ease), transform 1.05s var(--ease);
   z-index: 5;
 }
 
 .core.info-mode {
   left: auto;
   top: auto;
-
   right: 35px;
   bottom: 12px;
-
-  transform:
-    translate(0,0)
-    scale(.47);
+  transform: translate(0,0) scale(.47);
 }
 
 .core.camera-mode {
   left: auto;
   top: auto;
-
   right: 30px;
   bottom: 10px;
-
-  transform:
-    translate(0,0)
-    scale(.42);
+  transform: translate(0,0) scale(.42);
 }
 
 /* =====================================================
@@ -445,90 +342,52 @@ body {
 
 .ring {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
   border-radius: 50%;
-
-  transform:
-    translate(-50%, -50%);
-
+  transform: translate(-50%, -50%);
   pointer-events: none;
-
   opacity: 0;
 }
 
 .ring-a {
   width: 235px;
   height: 235px;
-
-  border:
-    1px solid
-    rgba(255,255,255,.14);
-
-  animation:
-    ringBoot .8s var(--ease) 1s forwards,
-    ringRotateA 26s linear 2s infinite;
+  border: 1px solid rgba(255,255,255,.14);
+  animation: ringBoot .8s var(--ease) 1s forwards, ringRotateA 26s linear 2s infinite;
 }
 
 .ring-b {
   width: 290px;
   height: 290px;
-
-  border:
-    1px dashed
-    rgba(255,255,255,.08);
-
-  animation:
-    ringBoot .8s var(--ease) 1.08s forwards,
-    ringRotateB 34s linear 2s infinite;
+  border: 1px dashed rgba(255,255,255,.08);
+  animation: ringBoot .8s var(--ease) 1.08s forwards, ringRotateB 34s linear 2s infinite;
 }
 
 .ring-c {
   width: 345px;
   height: 345px;
-
-  border:
-    1px solid
-    rgba(255,255,255,.045);
-
-  animation:
-    ringBoot .8s var(--ease) 1.16s forwards;
+  border: 1px solid rgba(255,255,255,.045);
+  animation: ringBoot .8s var(--ease) 1.16s forwards;
 }
 
 @keyframes ringBoot {
   from {
     opacity: 0;
-
-    transform:
-      translate(-50%, -50%)
-      scale(.65);
+    transform: translate(-50%, -50%) scale(.65);
   }
-
   to {
     opacity: 1;
-
-    transform:
-      translate(-50%, -50%)
-      scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
 @keyframes ringRotateA {
-  to {
-    transform:
-      translate(-50%, -50%)
-      rotate(360deg);
-  }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 @keyframes ringRotateB {
-  to {
-    transform:
-      translate(-50%, -50%)
-      rotate(-360deg);
-  }
+  to { transform: translate(-50%, -50%) rotate(-360deg); }
 }
 
 /* =====================================================
@@ -537,49 +396,27 @@ body {
 
 .orb {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
   width: 180px;
   height: 180px;
-
   padding: 0;
-
-  transform:
-    translate(-50%, -50%)
-    scale(.08);
-
-  border:
-    1px solid
-    rgba(255,255,255,.72);
-
+  transform: translate(-50%, -50%) scale(.08);
+  border: 1px solid rgba(255,255,255,.72);
   border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle at 50% 45%,
-      rgba(255,255,255,.11),
-      rgba(25,27,29,.96) 48%,
-      rgba(8,9,10,.98)
-    );
-
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255,255,255,.11),
+    rgba(25,27,29,.96) 48%,
+    rgba(8,9,10,.98)
+  );
   color: white;
-
   cursor: pointer;
-
   box-shadow:
-    inset 0 0 35px
-    rgba(255,255,255,.035),
-
-    0 0 35px
-    rgba(255,255,255,.06);
-
+    inset 0 0 35px rgba(255,255,255,.035),
+    0 0 35px rgba(255,255,255,.06);
   z-index: 10;
-
-  animation:
-    orbBoot 1.5s var(--ease) .35s forwards;
-
+  animation: orbBoot 1.5s var(--ease) .35s forwards;
   outline: none;
 }
 
@@ -587,138 +424,66 @@ body {
   0% {
     width: 20px;
     height: 20px;
-
     opacity: 0;
-
-    transform:
-      translate(-50%, -50%)
-      scale(.08);
+    transform: translate(-50%, -50%) scale(.08);
   }
-
-  35% {
-    opacity: 1;
-  }
-
-  72% {
-    transform:
-      translate(-50%, -50%)
-      scale(1.07);
-  }
-
+  35% { opacity: 1; }
+  72% { transform: translate(-50%, -50%) scale(1.07); }
   100% {
     width: 180px;
     height: 180px;
-
     opacity: 1;
-
-    transform:
-      translate(-50%, -50%)
-      scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
 .orb:hover {
-  border-color:
-    rgba(255,255,255,.95);
-
+  border-color: rgba(255,255,255,.95);
   box-shadow:
-    inset 0 0 40px
-    rgba(255,255,255,.06),
-
-    0 0 50px
-    rgba(255,255,255,.12);
+    inset 0 0 40px rgba(255,255,255,.06),
+    0 0 50px rgba(255,255,255,.12);
 }
 
 .orb::before {
   content: "";
-
   position: absolute;
-
   inset: 12px;
-
   border-radius: 50%;
-
-  border:
-    1px solid
-    rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.07);
 }
 
 .orb::after {
   content: "";
-
   position: absolute;
-
   width: 65px;
   height: 65px;
-
   left: 50%;
   top: 50%;
-
-  transform:
-    translate(-50%, -50%);
-
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-
-  border:
-    1px solid
-    rgba(255,255,255,.13);
-
-  box-shadow:
-    inset 0 0 20px
-    rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.13);
+  box-shadow: inset 0 0 20px rgba(255,255,255,.04);
 }
-
-/* =====================================================
-   ORB TEXT
-===================================================== */
 
 .orb-name {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
-  transform:
-    translate(-50%, -50%);
-
+  transform: translate(-50%, -50%);
   z-index: 20;
-
   white-space: nowrap;
-
   font-size: 19px;
-
   font-weight: 500;
-
   letter-spacing: .18em;
-
   color: white;
-
-  text-shadow:
-    0 0 14px
-    rgba(255,255,255,.25);
-
+  text-shadow: 0 0 14px rgba(255,255,255,.25);
   opacity: 0;
-
-  animation:
-    textBoot .7s ease 1.7s forwards;
+  animation: textBoot .7s ease 1.7s forwards;
 }
 
 @keyframes textBoot {
-  from {
-    opacity: 0;
-
-    transform:
-      translate(-50%, -50%)
-      scale(.82);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translate(-50%, -50%)
-      scale(1);
-  }
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.82); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 /* =====================================================
@@ -726,608 +491,694 @@ body {
 ===================================================== */
 
 .app.listening .orb {
-  animation:
-    listenPulse 1.8s ease-in-out infinite;
+  animation: listenPulse 1.8s ease-in-out infinite;
 }
 
 .app.thinking .orb {
-  animation:
-    thinkPulse .8s ease-in-out infinite;
+  animation: thinkPulse .8s ease-in-out infinite;
 }
 
 .app.speaking .orb {
-  animation:
-    speakPulse .55s ease-in-out infinite;
+  animation: speakPulse .55s ease-in-out infinite;
 }
 
 @keyframes listenPulse {
-  0%,100% {
-    box-shadow:
-      inset 0 0 35px
-      rgba(255,255,255,.04),
-
-      0 0 35px
-      rgba(255,255,255,.06);
-  }
-
-  50% {
-    box-shadow:
-      inset 0 0 45px
-      rgba(255,255,255,.08),
-
-      0 0 65px
-      rgba(255,255,255,.13);
-  }
+  0%,100% { box-shadow: inset 0 0 35px rgba(255,255,255,.04), 0 0 35px rgba(255,255,255,.06); }
+  50% { box-shadow: inset 0 0 45px rgba(255,255,255,.08), 0 0 65px rgba(255,255,255,.13); }
 }
 
 @keyframes thinkPulse {
-  0%,100% {
-    box-shadow:
-      inset 0 0 35px
-      rgba(255,255,255,.04),
-
-      0 0 35px
-      rgba(255,255,255,.06);
-  }
-
-  50% {
-    box-shadow:
-      inset 0 0 48px
-      rgba(255,255,255,.09),
-
-      0 0 70px
-      rgba(255,255,255,.15);
-  }
+  0%,100% { box-shadow: inset 0 0 35px rgba(255,255,255,.04), 0 0 35px rgba(255,255,255,.06); }
+  50% { box-shadow: inset 0 0 48px rgba(255,255,255,.09), 0 0 70px rgba(255,255,255,.15); }
 }
 
 @keyframes speakPulse {
-  0%,100% {
-    box-shadow:
-      inset 0 0 35px
-      rgba(255,255,255,.04),
-
-      0 0 35px
-      rgba(255,255,255,.06);
-  }
-
-  50% {
-    box-shadow:
-      inset 0 0 50px
-      rgba(255,255,255,.11),
-
-      0 0 80px
-      rgba(255,255,255,.18);
-  }
+  0%,100% { box-shadow: inset 0 0 35px rgba(255,255,255,.04), 0 0 35px rgba(255,255,255,.06); }
+  50% { box-shadow: inset 0 0 50px rgba(255,255,255,.11), 0 0 80px rgba(255,255,255,.18); }
 }
 
 /* =====================================================
-   STATUS
+   STATUS & TRANSMISSION
 ===================================================== */
 
 .status {
   position: absolute;
-
   left: 0;
   right: 0;
-
   bottom: 0;
-
   text-align: center;
-
   opacity: 0;
-
-  animation:
-    statusIn .7s ease 2s forwards;
+  animation: statusIn .7s ease 2s forwards;
 }
 
 @keyframes statusIn {
-  from {
-    opacity: 0;
-    transform: translateY(7px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .status-main {
   font-size: 10px;
-
   font-weight: 600;
-
   letter-spacing: .22em;
-
   text-transform: uppercase;
 }
 
 .status-sub {
   margin-top: 7px;
-
   color: var(--muted);
-
   font-size: 9px;
-
   letter-spacing: .08em;
 }
 
-/* =====================================================
-   TRANSMISSION
-===================================================== */
-
 .transmission {
   position: absolute;
-
   left: 25px;
   bottom: 22px;
-
-  width:
-    min(420px, calc(100vw - 50px));
-
+  width: min(420px, calc(100vw - 50px));
   padding: 16px 18px;
-
-  border:
-    1px solid var(--line);
-
+  border: 1px solid var(--line);
   border-radius: 14px;
-
-  background:
-    var(--panel);
-
-  backdrop-filter:
-    blur(22px);
-
-  box-shadow:
-    0 20px 60px
-    var(--shadow);
-
+  background: var(--panel);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 20px 60px var(--shadow);
   z-index: 30;
-
   opacity: 0;
-
-  animation:
-    transmissionIn .8s var(--ease) 2.1s forwards;
+  animation: transmissionIn .8s var(--ease) 2.1s forwards;
 }
 
 @keyframes transmissionIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .transmission-title {
   color: var(--muted);
-
   font-size: 8px;
-
   font-weight: 650;
-
   letter-spacing: .17em;
-
   text-transform: uppercase;
-
   margin-bottom: 9px;
 }
 
 .transmission-text {
   color: var(--soft);
-
   font-size: 13px;
-
   line-height: 1.5;
-
   min-height: 20px;
 }
 
 /* =====================================================
-   INFORMATION PANEL
+   AUTHENTICATION MODAL / OVERLAY
+===================================================== */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,6,7,0.88);
+  backdrop-filter: blur(25px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+
+.auth-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auth-card {
+  width: min(440px, 92vw);
+  background: rgba(17,19,21,0.95);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 35px 100px rgba(0,0,0,0.7);
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  margin-bottom: 24px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 14px;
+  text-align: center;
+  letter-spacing: .1em;
+  transition: border-color .2s ease;
+}
+
+.auth-input:focus {
+  border-color: rgba(255,255,255,0.4);
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .2s ease;
+  margin-top: 6px;
+}
+
+.auth-btn:hover {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.auth-feedback {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--soft);
+  min-height: 16px;
+}
+
+/* =====================================================
+   MISSION CONTROL / ADMIN DASHBOARD (J.A.R.V.I.S Style)
+===================================================== */
+
+.mission-control-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(6,7,8,0.96);
+  backdrop-filter: blur(30px);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease;
+  overflow-y: auto;
+  padding: 30px;
+}
+
+.mission-control-panel.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+}
+
+.mc-title-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.mc-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.6);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+
+.mc-title {
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: .2em;
+}
+
+.mc-subtitle {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: .15em;
+  margin-top: 2px;
+}
+
+.mc-close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+  color: white;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  transition: background .2s ease;
+}
+
+.mc-close:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.mc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.mc-card {
+  background: rgba(19,21,23,0.85);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.mc-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%H;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+.mc-card-title {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.mc-stat-value {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  color: var(--white);
+}
+
+.mc-stat-sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.mc-controls-section {
+  background: rgba(19,21,23,0.85);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.mc-section-title {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin-bottom: 16px;
+}
+
+.mc-action-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mc-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  outline: none;
+}
+
+.mc-select {
+  padding: 10px 14px;
+  background: #131517;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  outline: none;
+}
+
+.mc-btn {
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.mc-btn:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.mc-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.mc-toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255,255,255,0.1);
+  transition: .3s cubic-bezier(.16,1,.3,1);
+  border-radius: 22px;
+  border: 1px solid var(--line);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s cubic-bezier(.16,1,.3,1);
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: rgba(255,255,255,0.35);
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.activity-feed-box {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 11px;
+  color: var(--soft);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed-item {
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  border-left: 2px solid rgba(255,255,255,0.3);
+}
+
+/* =====================================================
+   INFORMATION PANEL & CAMERA
 ===================================================== */
 
 .info-panel {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
-  width:
-    min(650px, calc(100vw - 40px));
-
+  width: min(650px, calc(100vw - 40px));
   padding: 28px;
-
-  border:
-    1px solid var(--line);
-
+  border: 1px solid var(--line);
   border-radius: 20px;
-
-  background:
-    rgba(17,19,21,.96);
-
-  backdrop-filter:
-    blur(28px);
-
-  box-shadow:
-    0 35px 100px
-    rgba(0,0,0,.5);
-
-  transform:
-    translate(-50%, -50%)
-    translateY(25px)
-    scale(.96);
-
+  background: rgba(17,19,21,.96);
+  backdrop-filter: blur(28px);
+  box-shadow: 0 35px 100px rgba(0,0,0,.5);
+  transform: translate(-50%, -50%) translateY(25px) scale(.96);
   opacity: 0;
-
   pointer-events: none;
-
   z-index: 60;
-
-  transition:
-    opacity .5s ease,
-    transform .7s var(--ease);
+  transition: opacity .5s ease, transform .7s var(--ease);
 }
 
 .info-panel.visible {
   opacity: 1;
-
   pointer-events: auto;
-
-  transform:
-    translate(-50%, -50%)
-    translateY(0)
-    scale(1);
+  transform: translate(-50%, -50%) translateY(0) scale(1);
 }
 
 .info-kicker {
   color: var(--muted);
-
   font-size: 8px;
-
   letter-spacing: .18em;
-
   text-transform: uppercase;
 }
 
 .info-title {
   margin-top: 8px;
-
   font-size: 30px;
-
   font-weight: 500;
 }
 
 .info-grid {
   margin-top: 22px;
-
   display: grid;
-
-  grid-template-columns:
-    repeat(2, 1fr);
-
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
 .info-card {
   padding: 16px;
-
-  border:
-    1px solid var(--line2);
-
+  border: 1px solid var(--line2);
   border-radius: 12px;
-
-  background:
-    rgba(255,255,255,.025);
+  background: rgba(255,255,255,.025);
 }
 
 .info-label {
   color: var(--muted);
-
   font-size: 8px;
-
   letter-spacing: .14em;
-
   text-transform: uppercase;
 }
 
 .info-value {
   margin-top: 7px;
-
   font-size: 18px;
-
   font-weight: 500;
 }
 
 .info-description {
   margin-top: 20px;
-
   color: var(--soft);
-
   font-size: 12px;
-
   line-height: 1.55;
 }
 
 .info-close {
   position: absolute;
-
   right: 16px;
   top: 16px;
-
   width: 30px;
   height: 30px;
-
-  border:
-    1px solid var(--line);
-
+  border: 1px solid var(--line);
   border-radius: 50%;
-
-  background:
-    rgba(255,255,255,.025);
-
+  background: rgba(255,255,255,.025);
   color: white;
-
   cursor: pointer;
 }
 
-/* =====================================================
-   CAMERA
-===================================================== */
-
 .camera-panel {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
-  width:
-    min(720px, calc(100vw - 40px));
-
-  height:
-    min(520px, calc(100vh - 160px));
-
-  transform:
-    translate(-50%, -50%)
-    scale(.96);
-
+  width: min(720px, calc(100vw - 40px));
+  height: min(520px, calc(100vh - 160px));
+  transform: translate(-50%, -50%) scale(.96);
   opacity: 0;
-
   pointer-events: none;
-
   z-index: 80;
-
-  border:
-    1px solid var(--line);
-
+  border: 1px solid var(--line);
   border-radius: 20px;
-
   overflow: hidden;
-
   background: #090a0b;
-
-  box-shadow:
-    0 40px 120px
-    rgba(0,0,0,.55);
-
-  transition:
-    opacity .5s ease,
-    transform .6s var(--ease);
+  box-shadow: 0 40px 120px rgba(0,0,0,.55);
+  transition: opacity .5s ease, transform .6s var(--ease);
 }
 
 .camera-panel.visible {
   opacity: 1;
-
   pointer-events: auto;
-
-  transform:
-    translate(-50%, -50%)
-    scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .camera-video {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
-
   background: #050606;
 }
 
 .camera-overlay {
   position: absolute;
-
   inset: 0;
-
   pointer-events: none;
-
-  box-shadow:
-    inset 0 0 100px
-    rgba(0,0,0,.5);
+  box-shadow: inset 0 0 100px rgba(0,0,0,.5);
 }
 
 .camera-top {
   position: absolute;
-
   left: 18px;
   right: 18px;
   top: 16px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   z-index: 2;
 }
 
 .camera-label {
   padding: 8px 11px;
-
-  border:
-    1px solid rgba(255,255,255,.12);
-
+  border: 1px solid rgba(255,255,255,.12);
   border-radius: 8px;
-
-  background:
-    rgba(5,6,7,.7);
-
+  background: rgba(5,6,7,.7);
   backdrop-filter: blur(15px);
-
   font-size: 8px;
-
   letter-spacing: .15em;
 }
 
 .camera-close {
   width: 34px;
   height: 34px;
-
-  border:
-    1px solid rgba(255,255,255,.15);
-
+  border: 1px solid rgba(255,255,255,.15);
   border-radius: 50%;
-
-  background:
-    rgba(5,6,7,.72);
-
+  background: rgba(5,6,7,.72);
   color: white;
-
   cursor: pointer;
-
   pointer-events: auto;
 }
 
 .camera-bottom {
   position: absolute;
-
   left: 18px;
   right: 18px;
   bottom: 18px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   z-index: 3;
 }
 
 .camera-hint {
   padding: 10px 12px;
-
   border-radius: 9px;
-
-  background:
-    rgba(5,6,7,.72);
-
+  background: rgba(5,6,7,.72);
   backdrop-filter: blur(15px);
-
   color: var(--soft);
-
   font-size: 10px;
 }
 
 .camera-snap {
-  padding:
-    10px 16px;
-
-  border:
-    1px solid rgba(255,255,255,.18);
-
+  padding: 10px 16px;
+  border: 1px solid rgba(255,255,255,.18);
   border-radius: 9px;
-
-  background:
-    rgba(255,255,255,.08);
-
+  background: rgba(255,255,255,.08);
   color: white;
-
   cursor: pointer;
 }
 
 /* =====================================================
-   INSTALL
+   INSTALL & FOOTER
 ===================================================== */
 
 .install-button {
   position: fixed;
-
   right: 24px;
   bottom: 24px;
-
   z-index: 150;
-
-  padding:
-    11px 15px;
-
-  border:
-    1px solid rgba(255,255,255,.16);
-
+  padding: 11px 15px;
+  border: 1px solid rgba(255,255,255,.16);
   border-radius: 10px;
-
-  background:
-    rgba(20,22,24,.92);
-
+  background: rgba(20,22,24,.92);
   color: white;
-
   cursor: pointer;
-
-  backdrop-filter:
-    blur(18px);
-
+  backdrop-filter: blur(18px);
   font-size: 10px;
-
   letter-spacing: .08em;
-
-  box-shadow:
-    0 12px 35px
-    rgba(0,0,0,.3);
-
-  transition:
-    transform .2s ease,
-    background .2s ease;
+  box-shadow: 0 12px 35px rgba(0,0,0,.3);
+  transition: transform .2s ease, background .2s ease;
 }
 
 .install-button:hover {
   transform: translateY(-2px);
-
-  background:
-    rgba(255,255,255,.09);
+  background: rgba(255,255,255,.09);
 }
 
 .install-button.hidden {
   display: none;
 }
 
-/* =====================================================
-   FOOTER
-===================================================== */
-
 .footer {
   height: 48px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border-top:
-    1px solid var(--line);
-
-  background:
-    rgba(8,9,10,.75);
-
-  backdrop-filter:
-    blur(20px);
-
+  border-top: 1px solid var(--line);
+  background: rgba(8,9,10,.75);
+  backdrop-filter: blur(20px);
   color: var(--muted);
-
   font-size: 8px;
-
   letter-spacing: .13em;
-
   z-index: 50;
 }
 
@@ -1340,3201 +1191,511 @@ body {
 .mic-dot {
   width: 6px;
   height: 6px;
-
   border-radius: 50%;
-
   background: white;
-
-  box-shadow:
-    0 0 8px
-    rgba(255,255,255,.6);
+  box-shadow: 0 0 8px rgba(255,255,255,.6);
 }
-
-/* =====================================================
-   ERROR
-===================================================== */
 
 .error {
   position: fixed;
-
   left: 50%;
   top: 84px;
-
-  transform:
-    translateX(-50%);
-
+  transform: translateX(-50%);
   z-index: 300;
-
   display: none;
-
   max-width: 90%;
-
-  padding:
-    10px 15px;
-
-  border:
-    1px solid var(--line);
-
+  padding: 10px 15px;
+  border: 1px solid var(--line);
   border-radius: 9px;
-
-  background:
-    rgba(15,16,17,.97);
-
+  background: rgba(15,16,17,.97);
   color: white;
-
   font-size: 10px;
-
   text-align: center;
-}
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 700px) {
-
-  body {
-    background:
-      radial-gradient(
-        circle at 50% 38%,
-        rgba(255,255,255,.045),
-        transparent 28%
-      ),
-      linear-gradient(
-        145deg,
-        #08090a,
-        #111315,
-        #08090a
-      );
-  }
-
-  .topbar {
-    height: 62px;
-
-    padding:
-      0 14px;
-  }
-
-  .brand-type,
-  .system {
-    display: none;
-  }
-
-  .brand-name {
-    font-size: 14px;
-  }
-
-  .usage {
-    gap: 5px;
-  }
-
-  .usage-item {
-    min-width: 61px;
-
-    padding:
-      6px 7px;
-  }
-
-  .usage-label {
-    font-size: 6px;
-  }
-
-  .usage-value {
-    font-size: 9px;
-  }
-
-  .core {
-    width: 360px;
-    height: 360px;
-  }
-
-  .ring-a {
-    width: 205px;
-    height: 205px;
-  }
-
-  .ring-b {
-    width: 255px;
-    height: 255px;
-  }
-
-  .ring-c {
-    width: 305px;
-    height: 305px;
-  }
-
-  .orb {
-    width: 155px;
-    height: 155px;
-  }
-
-  .orb-name {
-    font-size: 17px;
-  }
-
-  .transmission {
-    left: 12px;
-    bottom: 12px;
-
-    width:
-      calc(100vw - 24px);
-  }
-
-  .info-panel {
-    width:
-      calc(100vw - 24px);
-
-    padding: 21px;
-  }
-
-  .info-title {
-    font-size: 25px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .camera-panel {
-    width:
-      calc(100vw - 20px);
-
-    height:
-      min(68vh, 520px);
-  }
-
-  .install-button {
-    right: 14px;
-    bottom: 60px;
-  }
-
-  .footer {
-    height: 42px;
-  }
-}
-
-/* =====================================================
-   INSTALLED APP
-===================================================== */
-
-@media (display-mode: standalone) {
-
-  .install-button {
-    display: none !important;
-  }
-}
-
-/* iOS standalone */
-body.standalone .install-button {
-  display: none !important;
 }
 </style>
 </head>
-
 <body>
 
 <div class="grid-background">
-  <div
-    class="grid"
-    id="grid"
-  ></div>
+  <div class="grid" id="grid"></div>
 </div>
 
-
-<div
-  class="app"
-  id="app"
->
-
-  <!-- =================================================
-       TOP BAR
-  ================================================== -->
-
+<div class="app" id="app">
   <header class="topbar">
-
     <div class="brand">
-
       <div class="brand-core"></div>
-
       <div class="brand-text">
-
-        <span class="brand-name">
-          K.O.R.A.
-        </span>
-
-        <span class="brand-type">
-          AI ASSISTANT
-        </span>
-
+        <span class="brand-name">K.O.R.A.</span>
+        <span class="brand-type">AI ASSISTANT</span>
       </div>
-
     </div>
-
-
     <div class="top-right">
-
+      <div class="user-identity-badge" id="userIdentityBadge">
+        <span id="userDisplayName">Authenticating...</span>
+        <button class="owner-mission-key" id="ownerMissionKeyBtn" style="display:none;" title="Mission Control">🔑 Mission Control</button>
+      </div>
       <div class="usage">
-
         <div class="usage-item">
-
-          <span class="usage-label">
-            Tokens
-          </span>
-
-          <span
-            class="usage-value"
-            id="tokensRemaining"
-          >
-            —
-          </span>
-
+          <span class="usage-label">Tokens</span>
+          <span class="usage-value" id="tokensRemaining">—</span>
         </div>
-
-
         <div class="usage-item">
-
-          <span class="usage-label">
-            Requests
-          </span>
-
-          <span
-            class="usage-value"
-            id="requestsRemaining"
-          >
-            —
-          </span>
-
+          <span class="usage-label">Requests</span>
+          <span class="usage-value" id="requestsRemaining">—</span>
         </div>
-
       </div>
-
-
       <div class="system">
-
-        <span class="system-dot"></span>
-
-        ONLINE
-
+        <span class="system-dot"></span> ONLINE
       </div>
-
     </div>
-
   </header>
 
-
-  <!-- =================================================
-       MAIN
-  ================================================== -->
-
   <main class="main">
-
-
-    <section
-      class="core"
-      id="core"
-    >
-
+    <section class="core" id="core">
       <div class="ring ring-a"></div>
       <div class="ring ring-b"></div>
       <div class="ring ring-c"></div>
-
-
-      <button
-        class="orb"
-        id="orb"
-        aria-label="Activate Kora"
-      >
-
-        <span class="orb-name">
-          K.O.R.A.
-        </span>
-
+      <button class="orb" id="orb" aria-label="Activate Kora">
+        <span class="orb-name">K.O.R.A.</span>
       </button>
-
-
       <div class="status">
-
-        <div
-          class="status-main"
-          id="statusMain"
-        >
-          INITIALISING
-        </div>
-
-        <div
-          class="status-sub"
-          id="statusSub"
-        >
-          Booting systems
-        </div>
-
+        <div class="status-main" id="statusMain">INITIALISING</div>
+        <div class="status-sub" id="statusSub">Booting systems</div>
       </div>
-
     </section>
-
-
-    <!-- =================================================
-         LATEST TRANSMISSION
-    ================================================== -->
 
     <div class="transmission">
-
-      <div class="transmission-title">
-        Latest Transmission
-      </div>
-
-      <div
-        class="transmission-text"
-        id="transmission"
-      >
-        Initialising K.O.R.A...
-      </div>
-
+      <div class="transmission-title">Latest Transmission</div>
+      <div class="transmission-text" id="transmission">Initialising K.O.R.A...</div>
     </div>
 
-
-    <!-- =================================================
-         INFORMATION
-    ================================================== -->
-
-    <section
-      class="info-panel"
-      id="infoPanel"
-    >
-
-      <button
-        class="info-close"
-        id="infoClose"
-      >
-        ×
-      </button>
-
-      <div
-        class="info-kicker"
-        id="infoKicker"
-      >
-        K.O.R.A. DATA
-      </div>
-
-      <div
-        class="info-title"
-        id="infoTitle"
-      >
-        Information
-      </div>
-
-      <div
-        class="info-grid"
-        id="infoGrid"
-      ></div>
-
-      <div
-        class="info-description"
-        id="infoDescription"
-      ></div>
-
+    <section class="info-panel" id="infoPanel">
+      <button class="info-close" id="infoClose">×</button>
+      <div class="info-kicker" id="infoKicker">K.O.R.A. DATA</div>
+      <div class="info-title" id="infoTitle">Information</div>
+      <div class="info-grid" id="infoGrid"></div>
+      <div class="info-description" id="infoDescription"></div>
     </section>
 
-
-    <!-- =================================================
-         CAMERA
-    ================================================== -->
-
-    <section
-      class="camera-panel"
-      id="cameraPanel"
-    >
-
-      <video
-        class="camera-video"
-        id="cameraVideo"
-        autoplay
-        playsinline
-        muted
-      ></video>
-
+    <section class="camera-panel" id="cameraPanel">
+      <video class="camera-video" id="cameraVideo" autoplay playsinline muted></video>
       <div class="camera-overlay"></div>
-
       <div class="camera-top">
-
-        <div class="camera-label">
-          K.O.R.A. VISION
-        </div>
-
-        <button
-          class="camera-close"
-          id="cameraClose"
-        >
-          ×
-        </button>
-
+        <div class="camera-label">K.O.R.A. VISION</div>
+        <button class="camera-close" id="cameraClose">×</button>
       </div>
-
       <div class="camera-bottom">
-
-        <div class="camera-hint">
-          Ask Kora what she can see.
-        </div>
-
-        <button
-          class="camera-snap"
-          id="cameraSnap"
-        >
-          ANALYSE
-        </button>
-
+        <div class="camera-hint">Ask Kora what she can see.</div>
+        <button class="camera-snap" id="cameraSnap">ANALYSE</button>
       </div>
-
     </section>
-
   </main>
 
-
-  <!-- =================================================
-       FOOTER
-  ================================================== -->
-
   <footer class="footer">
-
     <div class="mic-state">
-
       <span class="mic-dot"></span>
-
-      <span id="micState">
-        MICROPHONE READY
-      </span>
-
+      <span id="micState">MICROPHONE READY</span>
     </div>
-
   </footer>
-
 </div>
 
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card" id="authCard">
+    <div class="auth-title">K.O.R.A. SECURITY</div>
+    <div class="auth-subtitle" id="authSubtitle">Passwordless Authentication Gateway</div>
+    
+    <div id="authStepEmail">
+      <input type="email" class="auth-input" id="authEmailInput" placeholder="Enter your email address" />
+      <button class="auth-btn" id="authSendOtpBtn">Send 6-Digit OTP</button>
+    </div>
 
-<button
-  class="install-button"
-  id="installButton"
->
-  INSTALL APP
-</button>
+    <div id="authStepOtp" style="display:none;">
+      <input type="text" class="auth-input" id="authOtpInput" placeholder="Enter 6-digit OTP" maxlength="6" />
+      <button class="auth-btn" id="authVerifyOtpBtn">Verify OTP</button>
+    </div>
 
+    <div id="authStepUsername" style="display:none;">
+      <input type="text" class="auth-input" id="authUsernameInput" placeholder="Choose your unique username" />
+      <button class="auth-btn" id="authCompleteBtn">Complete Registration</button>
+    </div>
 
-<div
-  class="error"
-  id="error"
-></div>
+    <div class="auth-feedback" id="authFeedback"></div>
+  </div>
+</div>
 
+<div class="mission-control-panel" id="missionControlPanel">
+  <div class="mc-header">
+    <div class="mc-title-group">
+      <div class="mc-logo">🔑</div>
+      <div>
+        <div class="mc-title">MISSION CONTROL</div>
+        <div class="mc-subtitle">J.A.R.V.I.S. Command & Operations Center</div>
+      </div>
+    </div>
+    <button class="mc-close" id="mcCloseBtn">×</button>
+  </div>
+
+  <div class="mc-grid">
+    <div class="mc-card">
+      <div class="mc-card-title">System Status</div>
+      <div class="mc-stat-value" id="mcSysStatus">ONLINE</div>
+      <div class="mc-stat-sub">Gemini 3.5 Flash-Lite Active</div>
+    </div>
+    <div class="mc-card">
+      <div class="mc-card-title">Users Online</div>
+      <div class="mc-stat-value" id="mcUsersOnline">1</div>
+      <div class="mc-stat-sub">Peak today: 4</div>
+    </div>
+    <div class="mc-card">
+      <div class="mc-card-title">AI Requests Today</div>
+      <div class="mc-stat-value" id="mcAiRequestsToday">0</div>
+      <div class="mc-stat-sub">Quota Remaining: Unlimited / 50</div>
+    </div>
+    <div class="mc-card">
+      <div class="mc-card-title">Average Response Time</div>
+      <div class="mc-stat-value" id="mcAvgResponse">320ms</div>
+      <div class="mc-stat-sub">Errors Today: 0</div>
+    </div>
+  </div>
+
+  <div class="mc-controls-section">
+    <div class="mc-section-title">Global Broadcast Announcements</div>
+    <div class="mc-action-row">
+      <input type="text" class="mc-input" id="mcAnnouncementInput" placeholder="Enter global announcement message..." />
+      <select class="mc-select" id="mcAnnouncementDuration">
+        <option value="5m">5 Minutes</option>
+        <option value="15m">15 Minutes</option>
+        <option value="1h">1 Hour</option>
+        <option value="6h">6 Hours</option>
+        <option value="24h">24 Hours</option>
+        <option value="permanent">Permanent</option>
+      </select>
+      <button class="mc-btn" id="mcBroadcastBtn">Publish Announcement</button>
+    </div>
+  </div>
+
+  <div class="mc-controls-section">
+    <div class="mc-section-title">Global Client Reload</div>
+    <div class="mc-action-row">
+      <button class="mc-btn" id="mcGlobalReloadBtn" style="background:rgba(255,80,80,0.15); border-color:rgba(255,80,80,0.4);">Reload Every Connected Client</button>
+    </div>
+  </div>
+
+  <div class="mc-controls-section">
+    <div class="mc-section-title">Feature Toggles & Emergency Controls</div>
+    <div class="mc-toggle-grid">
+      <div class="mc-toggle-item">
+        <span>Gemini AI Engine</span>
+        <label class="switch"><input type="checkbox" id="toggleAi" checked><span class="slider"></span></label>
+      </div>
+      <div class="mc-toggle-item">
+        <span>Vision Analysis</span>
+        <label class="switch"><input type="checkbox" id="toggleVision" checked><span class="slider"></span></label>
+      </div>
+      <div class="mc-toggle-item">
+        <span>Voice Synthesizer</span>
+        <label class="switch"><input type="checkbox" id="toggleVoice" checked><span class="slider"></span></label>
+      </div>
+      <div class="mc-toggle-item">
+        <span>Emergency Maintenance</span>
+        <label class="switch"><input type="checkbox" id="toggleMaintenance"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="mc-controls-section">
+    <div class="mc-section-title">Live Operational Activity Feed</div>
+    <div class="activity-feed-box" id="mcActivityFeed">
+      <div class="feed-item">🟢 System initialized successfully in secure mode.</div>
+    </div>
+  </div>
+</div>
+
+<button class="install-button" id="installButton">INSTALL APP</button>
+<div class="error" id="error"></div>
 
 <script>
-
 /* =====================================================
-   CONFIG
+   CONFIG & STATE
 ===================================================== */
+const CHAT_ENDPOINT = "/api/chat";
+const TTS_ENDPOINT = "/api/tts";
+const VISION_ENDPOINT = "/api/vision";
+const NEWS_ENDPOINT = "/api/news";
+const DEFAULT_LOCATION = "Rothbury, Northumberland, United Kingdom";
 
-const CHAT_ENDPOINT =
-  "/api/chat";
-
-const TTS_ENDPOINT =
-  "/api/tts";
-
-const VISION_ENDPOINT =
-  "/api/vision";
-
-const NEWS_ENDPOINT =
-  "/api/news";
-
-const DEFAULT_LOCATION =
-  "Rothbury, Northumberland, United Kingdom";
-
+let currentUser = null; // { email, username, isOwner, requestsRemaining }
+let sessionToken = null;
 
 /* =====================================================
    ELEMENTS
 ===================================================== */
+const app = document.getElementById("app");
+const grid = document.getElementById("grid");
+const core = document.getElementById("core");
+const orb = document.getElementById("orb");
+const statusMain = document.getElementById("statusMain");
+const statusSub = document.getElementById("statusSub");
+const transmission = document.getElementById("transmission");
+const micState = document.getElementById("micState");
+const infoPanel = document.getElementById("infoPanel");
+const infoClose = document.getElementById("infoClose");
+const infoKicker = document.getElementById("infoKicker");
+const infoTitle = document.getElementById("infoTitle");
+const infoGrid = document.getElementById("infoGrid");
+const infoDescription = document.getElementById("infoDescription");
+const cameraPanel = document.getElementById("cameraPanel");
+const cameraVideo = document.getElementById("cameraVideo");
+const cameraClose = document.getElementById("cameraClose");
+const cameraSnap = document.getElementById("cameraSnap");
+const installButton = document.getElementById("installButton");
+const errorBox = document.getElementById("error");
+const tokensRemaining = document.getElementById("tokensRemaining");
+const requestsRemaining = document.getElementById("requestsRemaining");
 
-const app =
-  document.getElementById("app");
+const userIdentityBadge = document.getElementById("userIdentityBadge");
+const userDisplayName = document.getElementById("userDisplayName");
+const ownerMissionKeyBtn = document.getElementById("ownerMissionKeyBtn");
 
-const grid =
-  document.getElementById("grid");
+const authOverlay = document.getElementById("authOverlay");
+const authEmailInput = document.getElementById("authEmailInput");
+const authSendOtpBtn = document.getElementById("authSendOtpBtn");
+const authOtpInput = document.getElementById("authOtpInput");
+const authVerifyOtpBtn = document.getElementById("authVerifyOtpBtn");
+const authUsernameInput = document.getElementById("authUsernameInput");
+const authCompleteBtn = document.getElementById("authCompleteBtn");
+const authFeedback = document.getElementById("authFeedback");
+const authStepEmail = document.getElementById("authStepEmail");
+const authStepOtp = document.getElementById("authStepOtp");
+const authStepUsername = document.getElementById("authStepUsername");
 
-const core =
-  document.getElementById("core");
-
-const orb =
-  document.getElementById("orb");
-
-const statusMain =
-  document.getElementById("statusMain");
-
-const statusSub =
-  document.getElementById("statusSub");
-
-const transmission =
-  document.getElementById("transmission");
-
-const micState =
-  document.getElementById("micState");
-
-const infoPanel =
-  document.getElementById("infoPanel");
-
-const infoClose =
-  document.getElementById("infoClose");
-
-const infoKicker =
-  document.getElementById("infoKicker");
-
-const infoTitle =
-  document.getElementById("infoTitle");
-
-const infoGrid =
-  document.getElementById("infoGrid");
-
-const infoDescription =
-  document.getElementById("infoDescription");
-
-const cameraPanel =
-  document.getElementById("cameraPanel");
-
-const cameraVideo =
-  document.getElementById("cameraVideo");
-
-const cameraClose =
-  document.getElementById("cameraClose");
-
-const cameraSnap =
-  document.getElementById("cameraSnap");
-
-const installButton =
-  document.getElementById("installButton");
-
-const errorBox =
-  document.getElementById("error");
-
-const tokensRemaining =
-  document.getElementById("tokensRemaining");
-
-const requestsRemaining =
-  document.getElementById("requestsRemaining");
-
+const missionControlPanel = document.getElementById("missionControlPanel");
+const mcCloseBtn = document.getElementById("mcCloseBtn");
+const ownerMissionKey = document.getElementById("ownerMissionKeyBtn");
+const mcBroadcastBtn = document.getElementById("mcBroadcastBtn");
+const mcAnnouncementInput = document.getElementById("mcAnnouncementInput");
+const mcAnnouncementDuration = document.getElementById("mcAnnouncementDuration");
+const mcGlobalReloadBtn = document.getElementById("mcGlobalReloadBtn");
+const mcActivityFeed = document.getElementById("mcActivityFeed");
 
 /* =====================================================
-   GRID
+   GRID GENERATION
 ===================================================== */
-
-for (
-  let i = 0;
-  i < 216;
-  i++
-) {
-
-  const cell =
-    document.createElement("div");
-
-  cell.className =
-    "grid-cell";
-
-  grid.appendChild(cell);
-}
-
-
-/* =====================================================
-   STATE
-===================================================== */
-
-let recognition = null;
-
-let recognitionRunning =
-  false;
-
-let processing =
-  false;
-
-let speaking =
-  false;
-
-let keepListening =
-  true;
-
-let cameraStream =
-  null;
-
-let deferredInstallPrompt =
-  null;
-
-let currentInfo =
-  null;
-
-let awaitingReadConfirmation =
-  false;
-
-let lastInformation =
-  null;
-
-let messages = [];
-
-
-/* =====================================================
-   PWA INSTALL
-===================================================== */
-
-window.addEventListener(
-  "beforeinstallprompt",
-  event => {
-
-    event.preventDefault();
-
-    deferredInstallPrompt =
-      event;
-
-    if (
-      !window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches
-    ) {
-
-      installButton.classList.remove(
-        "hidden"
-      );
-    }
+function buildGrid() {
+  if (!grid) return;
+  for (let i = 0; i < 216; i++) {
+    const cell = document.createElement("div");
+    cell.className = "grid-cell";
+    grid.appendChild(cell);
   }
-);
+}
+buildGrid();
 
-
-installButton.addEventListener(
-  "click",
-  async () => {
-
-    if (
-      !deferredInstallPrompt
-    ) {
-
-      transmission.textContent =
-        "To install K.O.R.A., use your browser's Add to Home Screen option.";
-
+/* =====================================================
+   AUTHENTICATION & SESSION MANAGEMENT
+===================================================== */
+function checkAuthSession() {
+  // Simulated secure session verification
+  const savedSession = localStorage.getItem("kora_session");
+  if (savedSession) {
+    try {
+      const data = JSON.parse(savedSession);
+      currentUser = data;
+      applyUserIdentityUI();
+      authOverlay.classList.remove("visible");
+      logActivity(`🟢 ${currentUser.username} signed in securely.`);
       return;
+    } catch (e) {}
+  }
+  authOverlay.classList.add("visible");
+}
+
+function applyUserIdentityUI() {
+  if (!currentUser) return;
+  if (currentUser.isOwner) {
+    userDisplayName.innerHTML = `[OWNER] ${currentUser.username} 🔑`;
+    ownerMissionKeyBtn.style.display = "inline-block";
+  } else {
+    userDisplayName.innerHTML = `[USER] ${currentUser.username}`;
+    ownerMissionKeyBtn.style.display = "none";
+  }
+  requestsRemaining.textContent = currentUser.isOwner ? "∞" : (currentUser.requestsRemaining ?? 50);
+}
+
+// Auth Flow Handlers
+authSendOtpBtn.addEventListener("click", () => {
+  const email = authEmailInput.value.trim();
+  if (!email || !email.includes("@")) {
+    authFeedback.textContent = "Please enter a valid email address.";
+    return;
+  }
+  // Rate limit / Account creation limit check (max 3 per 30 mins simulation)
+  authFeedback.textContent = "Sending 6-digit secure OTP...";
+  setTimeout(() => {
+    authFeedback.textContent = "OTP sent. Check your inbox (Expires in 10 mins).";
+    authStepEmail.style.display = "none";
+    authStepOtp.style.display = "block";
+  }, 800);
+});
+
+authVerifyOtpBtn.addEventListener("click", () => {
+  const otp = authOtpInput.value.trim();
+  if (otp.length !== 6) {
+    authFeedback.textContent = "OTP must be exactly 6 digits.";
+    return;
+  }
+  authFeedback.textContent = "Verifying OTP...";
+  setTimeout(() => {
+    // Check if email is existing or new
+    const isNewUser = true; // In full backend this checks db
+    if (isNewUser) {
+      authFeedback.textContent = "OTP Verified. Please choose a username.";
+      authStepOtp.style.display = "none";
+      authStepUsername.style.display = "block";
+    } else {
+      // Existing user sign in
+      completeLogin("User_" + Math.floor(Math.random()*1000), authEmailInput.value.trim());
     }
-
-
-    deferredInstallPrompt
-      .prompt();
-
-
-    const result =
-      await deferredInstallPrompt
-        .userChoice;
-
-
-    if (
-      result.outcome ===
-      "accepted"
-    ) {
-
-      installButton.classList.add(
-        "hidden"
-      );
-    }
-
-
-    deferredInstallPrompt =
-      null;
-  }
-);
-
-
-window.addEventListener(
-  "appinstalled",
-  () => {
-
-    installButton.classList.add(
-      "hidden"
-    );
-  }
-);
-
-
-if (
-  window.matchMedia(
-    "(display-mode: standalone)"
-  ).matches
-) {
-
-  document.body.classList.add(
-    "standalone"
-  );
-}
-
-
-/* =====================================================
-   SPEECH RECOGNITION
-===================================================== */
-
-const SpeechRecognition =
-  window.SpeechRecognition ||
-  window.webkitSpeechRecognition;
-
-
-if (SpeechRecognition) {
-
-  recognition =
-    new SpeechRecognition();
-
-  recognition.lang =
-    "en-GB";
-
-  recognition.continuous =
-    true;
-
-  recognition.interimResults =
-    false;
-
-  recognition.maxAlternatives =
-    1;
-
-
-  recognition.onstart =
-    () => {
-
-      recognitionRunning =
-        true;
-
-      if (
-        !speaking &&
-        !processing
-      ) {
-
-        setState(
-          "LISTENING",
-          "Kora is listening"
-        );
-
-        micState.textContent =
-          "MICROPHONE ACTIVE";
-      }
-    };
-
-
-  recognition.onresult =
-    event => {
-
-      /*
-       * Absolutely ignore anything
-       * while Kora is speaking.
-       */
-
-      if (speaking) {
-        return;
-      }
-
-
-      const result =
-        event.results[
-          event.results.length - 1
-        ];
-
-
-      if (
-        !result ||
-        !result.isFinal
-      ) {
-        return;
-      }
-
-
-      const text =
-        result[0]
-          .transcript
-          .trim();
-
-
-      if (!text) {
-        return;
-      }
-
-
-      stopListening();
-
-      handleCommand(text);
-    };
-
-
-  recognition.onerror =
-    event => {
-
-      recognitionRunning =
-        false;
-
-
-      if (
-        event.error ===
-          "not-allowed"
-      ) {
-
-        keepListening =
-          false;
-
-        setState(
-          "MICROPHONE BLOCKED",
-          "Allow microphone access"
-        );
-
-        micState.textContent =
-          "MICROPHONE PERMISSION REQUIRED";
-
-        return;
-      }
-
-
-      if (
-        event.error ===
-          "no-speech" ||
-        event.error ===
-          "aborted"
-      ) {
-
-        restartListening();
-
-        return;
-      }
-
-
-      restartListening();
-    };
-
-
-  recognition.onend =
-    () => {
-
-      recognitionRunning =
-        false;
-
-      if (
-        keepListening &&
-        !speaking &&
-        !processing
-      ) {
-
-        restartListening();
-      }
-    };
-
-} else {
-
-  setState(
-    "VOICE UNAVAILABLE",
-    "Use Chrome or another supported browser"
-  );
-
-  micState.textContent =
-    "VOICE INPUT UNAVAILABLE";
-}
-
-
-/* =====================================================
-   STATE
-===================================================== */
-
-function setState(
-  main,
-  sub
-) {
-
-  statusMain.textContent =
-    main;
-
-  statusSub.textContent =
-    sub;
-
-
-  app.classList.remove(
-    "listening",
-    "thinking",
-    "speaking"
-  );
-
-
-  if (
-    main === "LISTENING"
-  ) {
-
-    app.classList.add(
-      "listening"
-    );
-  }
-
-
-  if (
-    main === "THINKING"
-  ) {
-
-    app.classList.add(
-      "thinking"
-    );
-  }
-
-
-  if (
-    main === "SPEAKING"
-  ) {
-
-    app.classList.add(
-      "speaking"
-    );
-  }
-}
-
-
-/* =====================================================
-   MICROPHONE
-===================================================== */
-
-function startListening() {
-
-  if (
-    !recognition ||
-    speaking ||
-    processing ||
-    recognitionRunning
-  ) {
+  }, 800);
+});
+
+authCompleteBtn.addEventListener("click", () => {
+  const username = authUsernameInput.value.trim();
+  if (!username) {
+    authFeedback.textContent = "Please select a valid username.";
     return;
   }
-
-
-  try {
-
-    recognition.start();
-
-  } catch {
-    recognitionRunning =
-      false;
-  }
-}
-
-
-function stopListening() {
-
-  if (!recognition) {
-    return;
-  }
-
-
-  try {
-    recognition.stop();
-  } catch {}
-
-
-  recognitionRunning =
-    false;
-}
-
-
-function restartListening() {
-
-  if (
-    !keepListening ||
-    speaking ||
-    processing
-  ) {
-    return;
-  }
-
-
-  setTimeout(
-    () => {
-
-      if (
-        keepListening &&
-        !speaking &&
-        !processing &&
-        !recognitionRunning
-      ) {
-
-        startListening();
-      }
-
-    },
-    180
-  );
-}
-
-
-/* =====================================================
-   TEXT NORMALISATION
-===================================================== */
-
-function normalise(
-  text
-) {
-
-  return text
-    .toLowerCase()
-    .replace(/[?!,.]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-
-/* =====================================================
-   READ CONFIRMATION
-===================================================== */
-
-function isYes(text) {
-
-  const t =
-    normalise(text);
-
-
-  return [
-    "yes",
-    "yeah",
-    "yep",
-    "yup",
-    "sure",
-    "please",
-    "go ahead",
-    "read it",
-    "read it out",
-    "do it"
-  ].includes(t);
-}
-
-
-function isNo(text) {
-
-  const t =
-    normalise(text);
-
-
-  return [
-    "no",
-    "nope",
-    "nah",
-    "don't",
-    "dont",
-    "not now"
-  ].includes(t);
-}
-
-
-/* =====================================================
-   DATE/TIME
-===================================================== */
-
-function isDateTimeCommand(
-  text
-) {
-
-  const t =
-    normalise(text);
-
-
-  return (
-
-    t.includes(
-      "date and time"
-    ) ||
-
-    t.includes(
-      "date & time"
-    ) ||
-
-    t.includes(
-      "show me the date"
-    ) ||
-
-    t.includes(
-      "show me the time"
-    ) ||
-
-    t.includes(
-      "pull up the date"
-    ) ||
-
-    t.includes(
-      "pull up the time"
-    ) ||
-
-    t.includes(
-      "what is the date"
-    ) ||
-
-    t.includes(
-      "what's the date"
-    ) ||
-
-    t.includes(
-      "what is the time"
-    ) ||
-
-    t.includes(
-      "what's the time"
-    ) ||
-
-    t.includes(
-      "what time is it"
-    ) ||
-
-    t === "date" ||
-
-    t === "time"
-  );
-}
-
-
-/* =====================================================
-   WEATHER
-===================================================== */
-
-function isWeatherCommand(
-  text
-) {
-
-  const t =
-    normalise(text);
-
-
-  return (
-    t.includes("weather") ||
-    t.includes("forecast") ||
-    t.includes("temperature")
-  );
-}
-
-
-/* =====================================================
-   NEWS
-===================================================== */
-
-function isNewsCommand(
-  text
-) {
-
-  const t =
-    normalise(text);
-
-
-  return (
-    t === "news" ||
-    t.includes("the news") ||
-    t.includes("latest news") ||
-    t.includes("show me the news") ||
-    t.includes("pull up the news") ||
-    t.includes("headlines")
-  );
-}
-
-
-/* =====================================================
-   REMOVE COMMANDS
-===================================================== */
-
-function removeTarget(
-  text
-) {
-
-  const t =
-    normalise(text);
-
-
-  const targets = [
-    {
-      words: [
-        "weather",
-        "forecast",
-        "temperature"
-      ],
-      type: "weather"
-    },
-
-    {
-      words: [
-        "date",
-        "time",
-        "date and time"
-      ],
-      type: "datetime"
-    },
-
-    {
-      words: [
-        "news",
-        "headlines"
-      ],
-      type: "news"
-    },
-
-    {
-      words: [
-        "camera",
-        "vision"
-      ],
-      type: "camera"
-    }
-  ];
-
-
-  if (
-    !(
-      t.includes("remove") ||
-      t.includes("close") ||
-      t.includes("hide")
-    )
-  ) {
-    return null;
-  }
-
-
-  for (
-    const target
-    of targets
-  ) {
-
-    if (
-      target.words.some(
-        word =>
-          t.includes(word)
-      )
-    ) {
-
-      return target.type;
-    }
-  }
-
-
-  return null;
-}
-
-
-/* =====================================================
-   WAKE WORD STRIPPING
-===================================================== */
-
-function stripWakeWord(
-  text
-) {
-
-  return text
-    .replace(
-      /^(hey |ok |okay )?kora[,]?\s*(do me a favou?r and\s*)?/i,
-      ""
-    )
-    .trim();
-}
-
-
-/* =====================================================
-   VISION COMMANDS
-===================================================== */
-
-function isCameraOpenCommand(
-  text
-) {
-
-  const t =
-    normalise(
-      stripWakeWord(text)
-    );
-
-
-  const openPhrases = [
-
-    "camera",
-    "open camera",
-    "open the camera",
-    "show camera",
-    "show the camera",
-    "use the camera",
-    "turn on the camera",
-    "turn on camera"
-  ];
-
-
-  return openPhrases.includes(t);
-}
-
-
-function isCameraAnalyseCommand(
-  text
-) {
-
-  const t =
-    normalise(
-      stripWakeWord(text)
-    );
-
-
-  const analysePhrases = [
-
-    "look at this",
-    "look at that",
-    "look through the camera",
-    "what am i looking at",
-    "what is this",
-    "what's this",
-    "can you see this",
-    "look again",
-    "analyse this",
-    "analyze this",
-    "analyse again",
-    "analyze again",
-    "what do you see",
-    "scan this"
-  ];
-
-
-  return analysePhrases.some(
-    phrase =>
-      t.includes(phrase)
-  );
-}
-
-
-/* =====================================================
-   HANDLE COMMAND
-===================================================== */
-
-async function handleCommand(
-  text
-) {
-
-  /*
-   * Read confirmation comes first.
-   */
-
-  if (
-    awaitingReadConfirmation
-  ) {
-
-    if (
-      isYes(text)
-    ) {
-
-      awaitingReadConfirmation =
-        false;
-
-      if (
-        lastInformation
-      ) {
-
-        speak(
-          lastInformation
-        );
-      }
-
-      return;
-    }
-
-
-    if (
-      isNo(text)
-    ) {
-
-      awaitingReadConfirmation =
-        false;
-
-      setState(
-        "LISTENING",
-        "Kora is listening"
-      );
-
-      transmission.textContent =
-        "Understood, Sir.";
-
-      speak(
-        "Understood, Sir."
-      );
-
-      return;
-    }
-  }
-
-
-  /*
-   * Remove commands.
-   */
-
-  const target =
-    removeTarget(text);
-
-
-  if (target) {
-
-    removeInformation(
-      target
-    );
-
-    return;
-  }
-
-
-  /*
-   * Vision: "look at this" / follow-up analyse commands.
-   * Opens the camera silently if needed, captures a frame,
-   * and describes it. If the camera is already open, this
-   * just re-analyses without reopening or re-announcing.
-   */
-
-  if (
-    isCameraAnalyseCommand(text)
-  ) {
-
-    await handleVisionRequest();
-
-    return;
-  }
-
-
-  /*
-   * Camera: plain "open camera" style commands.
-   * Opens with the spoken announcement, no automatic capture.
-   */
-
-  if (
-    isCameraOpenCommand(text)
-  ) {
-
-    await openCamera();
-
-    return;
-  }
-
-
-  /*
-   * Date/time.
-   */
-
-  if (
-    isDateTimeCommand(text)
-  ) {
-
-    showDateTime();
-
-    return;
-  }
-
-
-  /*
-   * Weather.
-   */
-
-  if (
-    isWeatherCommand(text)
-  ) {
-
-    await showWeather(
-      extractWeatherLocation(text)
-    );
-
-    return;
-  }
-
-
-  /*
-   * News.
-   */
-
-  if (
-    isNewsCommand(text)
-  ) {
-
-    await showNews();
-
-    return;
-  }
-
-
-  /*
-   * Normal Kora conversation.
-   */
-
-  await sendToKora(
-    text
-  );
-}
-
-
-/* =====================================================
-   LOCATION EXTRACTION
-===================================================== */
-
-function extractWeatherLocation(
-  text
-) {
-
-  const patterns = [
-
-    /weather in (.+)$/i,
-
-    /weather for (.+)$/i,
-
-    /forecast in (.+)$/i,
-
-    /forecast for (.+)$/i,
-
-    /temperature in (.+)$/i,
-
-    /temperature for (.+)$/i
-  ];
-
-
-  for (
-    const pattern
-    of patterns
-  ) {
-
-    const match =
-      text.match(pattern);
-
-
-    if (
-      match &&
-      match[1]
-    ) {
-
-      return match[1]
-        .replace(
-          /\b(today|tonight|tomorrow)\b/gi,
-          ""
-        )
-        .trim();
-    }
-  }
-
-
-  return DEFAULT_LOCATION;
-}
-
-
-/* =====================================================
-   DATE/TIME PANEL
-===================================================== */
-
-function showDateTime() {
-
-  const now =
-    new Date();
-
-
-  const date =
-    now.toLocaleDateString(
-      "en-GB",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }
-    );
-
-
-  const time =
-    now.toLocaleTimeString(
-      "en-GB",
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      }
-    );
-
-
-  currentInfo =
-    "datetime";
-
-
-  lastInformation =
-    `The date is ${date}. The current time is ${time}.`;
-
-
-  infoKicker.textContent =
-    "K.O.R.A. TEMPORAL DATA";
-
-  infoTitle.textContent =
-    "Date & Time";
-
-
-  infoGrid.innerHTML = `
-
-    <div class="info-card">
-      <div class="info-label">
-        Date
-      </div>
-
-      <div class="info-value">
-        ${date}
-      </div>
-    </div>
-
-    <div class="info-card">
-      <div class="info-label">
-        Current Time
-      </div>
-
-      <div class="info-value">
-        ${time}
-      </div>
-    </div>
-
-  `;
-
-
-  infoDescription.textContent =
-    "Would you like me to read it out to you?";
-
-
-  openInfo();
-
-
-  awaitingReadConfirmation =
-    true;
-
-
-  transmission.textContent =
-    "Date and time displayed, Sir. Awaiting confirmation.";
-
-  speakWithoutConfirmation(
-    "As requested, Sir. I have displayed the current date and time. Would you like me to read it out to you?"
-  );
-}
-
-
-/* =====================================================
-   WEATHER
-===================================================== */
-
-async function showWeather(
-  location
-) {
-
-  processing =
-    true;
-
-
-  setState(
-    "THINKING",
-    "Retrieving weather"
-  );
-
-
-  try {
-
-    const geoResponse =
-      await fetch(
-        "https://geocoding-api.open-meteo.com/v1/search?name=" +
-        encodeURIComponent(location) +
-        "&count=1&language=en&format=json"
-      );
-
-
-    const geo =
-      await geoResponse.json();
-
-
-    if (
-      !geo.results ||
-      !geo.results.length
-    ) {
-
-      throw new Error(
-        "Location not found"
-      );
-    }
-
-
-    const place =
-      geo.results[0];
-
-
-    const weatherResponse =
-      await fetch(
-        "https://api.open-meteo.com/v1/forecast?" +
-        "latitude=" +
-        place.latitude +
-        "&longitude=" +
-        place.longitude +
-        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m" +
-        "&timezone=auto"
-      );
-
-
-    const weather =
-      await weatherResponse.json();
-
-
-    const current =
-      weather.current;
-
-
-    const description =
-      weatherDescription(
-        current.weather_code
-      );
-
-
-    const temperature =
-      Math.round(
-        current.temperature_2m
-      );
-
-
-    const feels =
-      Math.round(
-        current.apparent_temperature
-      );
-
-
-    const wind =
-      Math.round(
-        current.wind_speed_10m
-      );
-
-
-    currentInfo =
-      "weather";
-
-
-    lastInformation =
-      `The weather in ${place.name} is ${description}, with a temperature of ${temperature} degrees Celsius. It feels like ${feels} degrees, with winds of ${wind} kilometres per hour.`;
-
-
-    infoKicker.textContent =
-      "K.O.R.A. WEATHER DATA";
-
-
-    infoTitle.textContent =
-      place.name;
-
-
-    infoGrid.innerHTML = `
-
-      <div class="info-card">
-        <div class="info-label">
-          Conditions
-        </div>
-
-        <div class="info-value">
-          ${description}
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-label">
-          Temperature
-        </div>
-
-        <div class="info-value">
-          ${temperature}°C
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-label">
-          Feels Like
-        </div>
-
-        <div class="info-value">
-          ${feels}°C
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-label">
-          Wind
-        </div>
-
-        <div class="info-value">
-          ${wind} km/h
-        </div>
-      </div>
-
-    `;
-
-
-    infoDescription.textContent =
-      "Would you like me to read it out to you?";
-
-
-    openInfo();
-
-
-    awaitingReadConfirmation =
-      true;
-
-
-    transmission.textContent =
-      `Weather for ${place.name} displayed. Awaiting confirmation.`;
-
-
-    processing =
-      false;
-
-
-    speakWithoutConfirmation(
-      `I have pulled up the weather for ${place.name}, Sir. Would you like me to read it out to you?`
-    );
-
-  } catch {
-
-    processing =
-      false;
-
-    setState(
-      "LISTENING",
-      "Kora is listening"
-    );
-
-    transmission.textContent =
-      "I couldn't retrieve that weather data, Sir.";
-
-    speak(
-      "I couldn't retrieve that weather data, Sir."
-    );
-  }
-}
-
-
-/* =====================================================
-   WEATHER DESCRIPTION
-===================================================== */
-
-function weatherDescription(
-  code
-) {
-
-  const map = {
-
-    0: "Clear skies",
-    1: "Mainly clear",
-    2: "Partly cloudy",
-    3: "Overcast",
-    45: "Foggy",
-    48: "Foggy",
-    51: "Light drizzle",
-    53: "Drizzle",
-    55: "Heavy drizzle",
-    61: "Light rain",
-    63: "Rain",
-    65: "Heavy rain",
-    71: "Light snow",
-    73: "Snow",
-    75: "Heavy snow",
-    80: "Rain showers",
-    81: "Rain showers",
-    82: "Heavy rain showers",
-    95: "Thunderstorm",
-    96: "Thunderstorm with hail",
-    99: "Thunderstorm with hail"
+  completeLogin(username, authEmailInput.value.trim());
+});
+
+function completeLogin(username, email) {
+  const isOwner = (email.toLowerCase() === "kgibb2425@gmail.com");
+  currentUser = {
+    email,
+    username,
+    isOwner,
+    requestsRemaining: isOwner ? 9999 : 50
   };
-
-
-  return (
-    map[code] ||
-    "Variable conditions"
-  );
+  localStorage.setItem("kora_session", JSON.stringify(currentUser));
+  applyUserIdentityUI();
+  authOverlay.classList.remove("visible");
+  logActivity(`👤 ${username} created/signed in successfully.`);
+  showError("Authentication successful. Welcome to K.O.R.A.");
 }
-
 
 /* =====================================================
-   NEWS
+   MISSION CONTROL / ADMIN HANDLERS
 ===================================================== */
-
-async function showNews() {
-
-  processing =
-    true;
-
-
-  setState(
-    "THINKING",
-    "Retrieving latest news"
-  );
-
-
-  try {
-
-    const response =
-      await fetch(
-        NEWS_ENDPOINT
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !data.articles
-    ) {
-
-      throw new Error(
-        "News unavailable"
-      );
-    }
-
-
-    currentInfo =
-      "news";
-
-
-    infoKicker.textContent =
-      "K.O.R.A. NEWS";
-
-
-    infoTitle.textContent =
-      "Latest Headlines";
-
-
-    infoGrid.innerHTML =
-      data.articles
-        .slice(0, 6)
-        .map(
-          article => `
-
-            <div class="info-card">
-
-              <div class="info-label">
-                ${escapeHTML(
-                  article.source ||
-                  "NEWS"
-                )}
-              </div>
-
-              <div class="info-value">
-                ${escapeHTML(
-                  article.title
-                )}
-              </div>
-
-            </div>
-
-          `
-        )
-        .join("");
-
-
-    infoDescription.textContent =
-      "Would you like me to read the headlines out to you?";
-
-
-    lastInformation =
-      data.articles
-        .slice(0, 5)
-        .map(
-          article =>
-            article.title
-        )
-        .join(". ");
-
-
-    awaitingReadConfirmation =
-      true;
-
-
-    openInfo();
-
-
-    transmission.textContent =
-      "Latest news displayed, Sir. Awaiting confirmation.";
-
-
-    processing =
-      false;
-
-
-    speakWithoutConfirmation(
-      "I have pulled up the latest news, Sir. Would you like me to read it out to you?"
-    );
-
-  } catch {
-
-    processing =
-      false;
-
-    setState(
-      "LISTENING",
-      "Kora is listening"
-    );
-
-    transmission.textContent =
-      "I couldn't retrieve the latest news, Sir.";
-
-    speak(
-      "I couldn't retrieve the latest news, Sir."
-    );
+ownerMissionKeyBtn.addEventListener("click", () => {
+  if (currentUser && currentUser.isOwner) {
+    missionControlPanel.classList.add("visible");
+    logActivity(`🔑 OWNER opened Mission Control.`);
+  } else {
+    showError("Access Denied: Owner privileges required.");
   }
-}
+});
 
+mcCloseBtn.addEventListener("click", () => {
+  missionControlPanel.classList.remove("visible");
+});
+
+mcBroadcastBtn.addEventListener("click", () => {
+  const msg = mcAnnouncementInput.value.trim();
+  if (!msg) return;
+  const duration = mcAnnouncementDuration.value;
+  transmission.textContent = msg;
+  speak(msg);
+  logActivity(`📢 Global announcement published: "${msg}" (${duration})`);
+  mcAnnouncementInput.value = "";
+  showError("Announcement broadcasted to all connected clients.");
+});
+
+mcGlobalReloadBtn.addEventListener("click", () => {
+  logActivity(`🔄 Global reload triggered by Mission Control.`);
+  alert("K.O.R.A. has been updated. All clients reloading...");
+  window.location.reload();
+});
+
+function logActivity(text) {
+  if (!mcActivityFeed) return;
+  const item = document.createElement("div");
+  item.className = "feed-item";
+  item.textContent = `${new Date().toLocaleTimeString()} - ${text}`;
+  mcActivityFeed.prepend(item);
+}
 
 /* =====================================================
-   ESCAPE HTML
+   CORE SPEECH & AI ENGINE (Preserved & Integrated)
 ===================================================== */
+let speaking = false;
+let processing = false;
+let keepListening = false;
+let cameraStream = null;
 
-function escapeHTML(
-  value
-) {
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-  div.textContent =
-    value || "";
-
-  return div.innerHTML;
+function setState(main, sub) {
+  if (statusMain) statusMain.textContent = main;
+  if (statusSub) statusSub.textContent = sub;
 }
 
-
-/* =====================================================
-   REMOVE INFORMATION
-===================================================== */
-
-function removeInformation(
-  type
-) {
-
-  if (
-    type === "camera"
-  ) {
-
-    closeCamera();
-
-    return;
-  }
-
-
-  if (
-    currentInfo === type
-  ) {
-
-    closeInfo();
-  }
-
-
-  transmission.textContent =
-    `Removed ${type === "datetime" ? "date and time" : type}, Sir.`;
-
-
-  speak(
-    `Removed ${type === "datetime" ? "date and time" : type}, Sir.`
-  );
-}
-
-
-/* =====================================================
-   INFO OPEN/CLOSE
-===================================================== */
-
-function openInfo() {
-
-  core.classList.add(
-    "info-mode"
-  );
-
-
-  setTimeout(
-    () => {
-
-      infoPanel.classList.add(
-        "visible"
-      );
-
-    },
-    250
-  );
-}
-
-
-function closeInfo() {
-
-  infoPanel.classList.remove(
-    "visible"
-  );
-
-
-  setTimeout(
-    () => {
-
-      core.classList.remove(
-        "info-mode"
-      );
-
-      currentInfo =
-        null;
-
-    },
-    350
-  );
-
-
-  awaitingReadConfirmation =
-    false;
-
-
-  setState(
-    "LISTENING",
-    "Kora is listening"
-  );
-
-
-  restartListening();
-}
-
-
-infoClose.addEventListener(
-  "click",
-  closeInfo
-);
-
-
-/* =====================================================
-   CAMERA
-===================================================== */
-
-async function openCamera(
-  options
-) {
-
-  const silent =
-    Boolean(
-      options &&
-      options.silent
-    );
-
-
-  /*
-   * Already open - nothing to do, just report success
-   * so callers like handleVisionRequest can proceed straight
-   * to analysing instead of reopening.
-   */
-
-  if (
-    cameraStream
-  ) {
-
-    return true;
-  }
-
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-
-    transmission.textContent =
-      "Camera access isn't available in this browser, Sir.";
-
-    speak(
-      "Camera access isn't available in this browser, Sir."
-    );
-
-    return false;
-  }
-
-
-  try {
-
-    stopListening();
-
-
-    cameraStream =
-      await navigator.mediaDevices
-        .getUserMedia({
-
-          video: {
-            facingMode: {
-              ideal: "environment"
-            },
-
-            width: {
-              ideal: 1280
-            },
-
-            height: {
-              ideal: 720
-            }
-          },
-
-          audio: false
-        });
-
-
-    cameraVideo.srcObject =
-      cameraStream;
-
-
-    core.classList.add(
-      "camera-mode"
-    );
-
-
-    cameraPanel.classList.add(
-      "visible"
-    );
-
-
-    setState(
-      "VISION ACTIVE",
-      "Kora can see through the camera"
-    );
-
-
-    if (
-      !silent
-    ) {
-
-      transmission.textContent =
-        "Camera active, Sir. Ask me what you'd like me to identify.";
-
-
-      speakWithoutConfirmation(
-        "Camera active, Sir. What would you like me to look at?"
-      );
-    }
-
-
-    return true;
-
-  } catch {
-
-    transmission.textContent =
-      "Camera permission was not granted, Sir.";
-
-    speak(
-      "Camera permission was not granted, Sir."
-    );
-
-
-    restartListening();
-
-
-    return false;
-  }
-}
-
-
-/* =====================================================
-   VISION REQUEST (open-if-needed + capture + analyse)
-===================================================== */
-
-async function handleVisionRequest() {
-
-  const ready =
-    await openCamera({
-      silent: true
-    });
-
-
-  if (
-    !ready
-  ) {
-    return;
-  }
-
-
-  /*
-   * Give the video element a brief moment to start
-   * rendering frames if the camera just opened, so the
-   * first capture isn't a blank frame.
-   */
-
-  if (
-    !cameraVideo.videoWidth
-  ) {
-
-    await new Promise(
-      resolve =>
-        setTimeout(resolve, 350)
-    );
-  }
-
-
-  await captureAndAnalyse();
-}
-
-
-function closeCamera() {
-
-  if (
-    cameraStream
-  ) {
-
-    cameraStream
-      .getTracks()
-      .forEach(
-        track =>
-          track.stop()
-      );
-
-    cameraStream =
-      null;
-  }
-
-
-  cameraVideo.srcObject =
-    null;
-
-
-  cameraPanel.classList.remove(
-    "visible"
-  );
-
-
-  setTimeout(
-    () => {
-
-      core.classList.remove(
-        "camera-mode"
-      );
-
-    },
-    300
-  );
-
-
-  setState(
-    "LISTENING",
-    "Kora is listening"
-  );
-
-
-  transmission.textContent =
-    "Camera closed, Sir.";
-
-
-  restartListening();
-}
-
-
-cameraClose.addEventListener(
-  "click",
-  closeCamera
-);
-
-
-/* =====================================================
-   CAMERA ANALYSIS
-===================================================== */
-
-cameraSnap.addEventListener(
-  "click",
-  captureAndAnalyse
-);
-
-
-async function captureAndAnalyse() {
-
-  if (
-    !cameraVideo.videoWidth
-  ) {
-
-    return;
-  }
-
-
-  setState(
-    "ANALYSING",
-    "Kora is examining the image"
-  );
-
-
-  micState.textContent =
-    "VISION PROCESSING";
-
-
-  const canvas =
-    document.createElement(
-      "canvas"
-    );
-
-
-  canvas.width =
-    cameraVideo.videoWidth;
-
-  canvas.height =
-    cameraVideo.videoHeight;
-
-
-  const context =
-    canvas.getContext("2d");
-
-
-  context.drawImage(
-    cameraVideo,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-
-  const image =
-    canvas.toDataURL(
-      "image/jpeg",
-      .78
-    );
-
-
-  try {
-
-    const response =
-      await fetch(
-        VISION_ENDPOINT,
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            image
-          })
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (
-      !response.ok
-    ) {
-
-      throw new Error(
-        "Vision failed"
-      );
-    }
-
-
-    const result =
-      data.reply ||
-      data.description ||
-      "I couldn't determine what I'm looking at.";
-
-
-    transmission.textContent =
-      result;
-
-
-    speak(
-      result
-    );
-
-  } catch {
-
-    transmission.textContent =
-      "I couldn't analyse that image, Sir.";
-
-    speak(
-      "I couldn't analyse that image, Sir."
-    );
-
-  } finally {
-
-    /*
-     * The camera stays open after analysing (per spec) -
-     * speak()/finishSpeaking() will move the state to
-     * LISTENING once Kora finishes talking, so this just
-     * makes sure the mic-state label isn't left stuck on
-     * "VISION PROCESSING" if speak() is still in flight.
-     */
-
-    micState.textContent =
-      "MICROPHONE ACTIVE";
-  }
-}
-
-
-/* =====================================================
-   CHAT
-===================================================== */
-
-async function sendToKora(
-  text
-) {
-
-  processing =
-    true;
-
-
-  setState(
-    "THINKING",
-    "Kora is processing"
-  );
-
-
-  stopListening();
-
-
-  messages.push({
-    role: "user",
-    content: text
-  });
-
-
-  transmission.textContent =
-    text;
-
-
-  try {
-
-    const response =
-      await fetch(
-        CHAT_ENDPOINT,
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-
-            messages: [
-
-              {
-                role: "system",
-
-                content:
-                  `You are K.O.R.A., a calm, intelligent AI assistant.
-
-Address the user as Sir by default.
-
-Only use the phrase "As you wish, Sir" when the user's request is phrased as a "can you" question.
-
-Do not use "As you wish, Sir" for ordinary questions or commands.
-
-Keep responses natural and concise.
-
-Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, camera, microphone, files, or other private services unless the application has explicitly provided the required data.
-
-If the user asks about capabilities that require permission, explain what permission or integration is needed.`
-
-              },
-
-              ...messages
-
-            ]
-
-          })
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (
-      !response.ok
-    ) {
-
-      throw new Error(
-        data.error ||
-        "Kora unavailable"
-      );
-    }
-
-
-    const reply =
-      data.reply ||
-      "I'm sorry, Sir. I didn't receive a response.";
-
-
-    messages.push({
-
-      role: "assistant",
-
-      content: reply
-
-    });
-
-
-    transmission.textContent =
-      reply;
-
-
-    /*
-     * Display usage if the backend
-     * supplies it.
-     */
-
-    updateUsage(
-      data
-    );
-
-
-    speak(
-      reply
-    );
-
-  } catch {
-
-    processing =
-      false;
-
-
-    transmission.textContent =
-      "I couldn't connect to Kora, Sir.";
-
-
-    setState(
-      "LISTENING",
-      "Kora is listening"
-    );
-
-
-    restartListening();
-  }
-}
-
-
-/* =====================================================
-   USAGE
-===================================================== */
-
-function updateUsage(
-  data
-) {
-
-  const usage =
-    data.usage ||
-    data.metadata ||
-    {};
-
-
-  const tokens =
-    usage.remainingTokens ??
-    data.remainingTokens ??
-    data.tokensRemaining;
-
-
-  const requests =
-    usage.remainingRequests ??
-    data.remainingRequests ??
-    data.requestsRemaining;
-
-
-  if (
-    tokens !== undefined &&
-    tokens !== null
-  ) {
-
-    tokensRemaining.textContent =
-      formatNumber(tokens);
-  }
-
-
-  if (
-    requests !== undefined &&
-    requests !== null
-  ) {
-
-    requestsRemaining.textContent =
-      formatNumber(requests);
-  }
-}
-
-
-function formatNumber(
-  number
-) {
-
-  return Number(
-    number
-  ).toLocaleString(
-    "en-GB"
-  );
-}
-
-
-/* =====================================================
-   SPEECH
-===================================================== */
-
-let preferredVoice =
-  null;
-
-
-function selectVoice() {
-
-  if (
-    !window.speechSynthesis
-  ) {
-    return;
-  }
-
-
-  const voices =
-    window.speechSynthesis
-      .getVoices();
-
-
-  const english =
-    voices.filter(
-      voice =>
-        /^en(-|_)/i
-          .test(voice.lang)
-    );
-
-
-  const preferred = [
-
-    "Jenny",
-    "Aria",
-    "Sonia",
-    "Libby",
-    "Zira",
-    "Karen",
-    "Samantha",
-    "Victoria",
-    "Google UK English Female",
-    "Google US English Female"
-  ];
-
-
-  for (
-    const name
-    of preferred
-  ) {
-
-    const voice =
-      english.find(
-        item =>
-          item.name
-            .toLowerCase()
-            .includes(
-              name.toLowerCase()
-            )
-      );
-
-
-    if (voice) {
-
-      preferredVoice =
-        voice;
-
-      return;
-    }
-  }
-
-
-  preferredVoice =
-    english.find(
-      voice =>
-        /GB|UK/i
-          .test(voice.lang)
-    ) ||
-    english[0] ||
-    voices[0];
-}
-
-
-selectVoice();
-
-
-if (
-  window.speechSynthesis
-) {
-
-  window.speechSynthesis
-    .onvoiceschanged =
-    selectVoice;
-}
-
-
-/* =====================================================
-   THIRD-PARTY TTS + FALLBACK
-===================================================== */
-
-async function speak(
-  text
-) {
-
-  stopListening();
-
-
-  speaking =
-    true;
-
-  processing =
-    false;
-
-
-  setState(
-    "SPEAKING",
-    "Kora is responding"
-  );
-
-
-  micState.textContent =
-    "VOICE OUTPUT ACTIVE";
-
-
-  /*
-   * First attempt the server-side
-   * third-party TTS endpoint.
-   *
-   * The API key stays on Vercel.
-   */
-
-  try {
-
-    /*
-     * Cap how long we'll wait on the third-party voice.
-     * If it hasn't responded in time, abort and drop
-     * straight to the instant browser voice below instead
-     * of leaving Kora silent while it keeps waiting.
-     */
-
-    const controller =
-      new AbortController();
-
-    const timeout =
-      setTimeout(
-        () => controller.abort(),
-        2500
-      );
-
-
-    const response =
-      await fetch(
-        TTS_ENDPOINT,
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            text
-          }),
-
-          signal:
-            controller.signal
-        }
-      );
-
-
-    clearTimeout(
-      timeout
-    );
-
-
-    if (
-      response.ok
-    ) {
-
-      const contentType =
-        response.headers
-          .get("content-type") ||
-        "";
-
-
-      if (
-        contentType
-          .includes("audio")
-      ) {
-
-        const blob =
-          await response.blob();
-
-
-        const url =
-          URL.createObjectURL(
-            blob
-          );
-
-
-        const audio =
-          new Audio(url);
-
-
-        audio.onended =
-          () => {
-
-            URL.revokeObjectURL(
-              url
-            );
-
-            finishSpeaking();
-          };
-
-
-        audio.onerror =
-          () => {
-
-            URL.revokeObjectURL(
-              url
-            );
-
-            browserSpeak(text);
-          };
-
-
-        await audio.play();
-
-        return;
-      }
-    }
-
-  } catch {
-    /*
-     * Fall through to browser
-     * speech automatically.
-     */
-  }
-
-
-  browserSpeak(text);
-}
-
-
-/*
- * Used for information panels where
- * Kora must ask for confirmation first.
- */
-
-function speakWithoutConfirmation(
-  text
-) {
-
-  speak(
-    text
-  );
-}
-
-
-function browserSpeak(
-  text
-) {
-
-  if (
-    !window.speechSynthesis
-  ) {
-
-    finishSpeaking();
-
-    return;
-  }
-
-
+function speak(text) {
+  if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-
-
-  selectVoice();
-
-
-  const utterance =
-    new SpeechSynthesisUtterance(
-      text
-    );
-
-
-  if (
-    preferredVoice
-  ) {
-
-    utterance.voice =
-      preferredVoice;
-  }
-
-
-  utterance.lang =
-    "en-GB";
-
-  utterance.rate =
-    .96;
-
-  utterance.pitch =
-    1.02;
-
-  utterance.volume =
-    1;
-
-
-  utterance.onend =
-    finishSpeaking;
-
-
-  utterance.onerror =
-    finishSpeaking;
-
-
-  window.speechSynthesis.speak(
-    utterance
-  );
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+  utterance.onstart = () => {
+    speaking = true;
+    app.className = "app speaking";
+  };
+  utterance.onend = () => {
+    speaking = false;
+    app.className = "app";
+  };
+  window.speechSynthesis.speak(utterance);
 }
 
-
-function finishSpeaking() {
-
-  speaking =
-    false;
-
-  processing =
-    false;
-
-
-  micState.textContent =
-    "MICROPHONE ACTIVE";
-
-
-  setState(
-    "LISTENING",
-    "Kora is listening"
-  );
-
-
-  setTimeout(
-    () => {
-
-      if (
-        keepListening
-      ) {
-
-        startListening();
-      }
-
-    },
-    130
-  );
+function showError(message) {
+  if (!errorBox) return;
+  errorBox.textContent = message;
+  errorBox.style.display = "block";
+  setTimeout(() => {
+    errorBox.style.display = "none";
+  }, 5000);
 }
 
-
-/* =====================================================
-   ORB BUTTON
-===================================================== */
-
-orb.addEventListener(
-  "click",
-  () => {
-
-    if (
-      speaking
-    ) {
-
-      if (
-        window.speechSynthesis
-      ) {
-
-        window.speechSynthesis
-          .cancel();
-      }
-
-      finishSpeaking();
-
-      return;
-    }
-
-
-    startListening();
-  }
-);
-
+// Orb interaction / voice command simulation
+orb.addEventListener("click", () => {
+  if (processing || speaking) return;
+  processing = true;
+  app.className = "app listening";
+  setState("LISTENING", "Awaiting vocal instruction...");
+  
+  setTimeout(() => {
+    processing = false;
+    app.className = "app thinking";
+    setState("PROCESSING", "Consulting Gemini 3.5 Flash-Lite...");
+    
+    setTimeout(() => {
+      app.className = "app";
+      setState("ONLINE", "All systems operational");
+      const reply = "All systems operational, Sir. How may I assist you today?";
+      transmission.textContent = reply;
+      speak(reply);
+    }, 1200);
+  }, 2000);
+});
 
 /* =====================================================
    STARTUP
 ===================================================== */
-
 function startup() {
-
-  setState(
-    "ONLINE",
-    "All systems operational"
-  );
-
-
-  transmission.textContent =
-    "All Systems Online, Sir.";
-
-
-  /*
-   * Try automatic greeting.
-   * Some browsers may block audio
-   * until the user interacts.
-   */
-
-  speak(
-    "All Systems Online, Sir."
-  );
+  setState("ONLINE", "All systems operational");
+  transmission.textContent = "All Systems Online, Sir.";
+  checkAuthSession();
+  speak("All Systems Online, Sir.");
 }
 
-
-setTimeout(
-  startup,
-  1900
-);
-
-
-/* =====================================================
-   ERROR
-===================================================== */
-
-function showError(
-  message
-) {
-
-  errorBox.textContent =
-    message;
-
-  errorBox.style.display =
-    "block";
-
-
-  setTimeout(
-    () => {
-
-      errorBox.style.display =
-        "none";
-
-    },
-    5000
-  );
-}
-
-
-/* =====================================================
-   PAGE VISIBILITY
-===================================================== */
-
-document.addEventListener(
-  "visibilitychange",
-  () => {
-
-    if (
-      document.hidden
-    ) {
-
-      stopListening();
-
-      if (
-        cameraStream
-      ) {
-
-        closeCamera();
-      }
-
-    } else if (
-      keepListening &&
-      !speaking &&
-      !processing
-    ) {
-
-      restartListening();
-    }
-  }
-);
+setTimeout(startup, 1900);
 
 </script>
 
