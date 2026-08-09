@@ -4019,257 +4019,32 @@ if (
    ELEVENLABS TTS + FALLBACK
 ===================================================== */
 
-async function speak(
-  text
-) {
+async function speakWithElevenLabs(text) {
+    try {
+        const response = await fetch('/api/voice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        });
 
-  stopListening();
-
-
-  speaking =
-    true;
-
-  processing =
-    false;
-
-
-  setState(
-    "SPEAKING",
-    "Kora is responding"
-  );
-
-
-  micState.textContent =
-    "VOICE OUTPUT ACTIVE";
-
-
-  /*
-   * First attempt the server-side
-   * ElevenLabs TTS endpoint.
-   *
-   * The API key stays securely on the server side.
-   */
-
-  try {
-
-    const controller =
-      new AbortController();
-
-    const timeout =
-      setTimeout(
-        () => controller.abort(),
-        3500
-      );
-
-
-    const response =
-      await fetch(
-        TTS_ENDPOINT,
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            text
-          }),
-
-          signal:
-            controller.signal
+        if (!response.ok) {
+            throw new Error('Failed to generate speech from server.');
         }
-      );
 
-
-    clearTimeout(
-      timeout
-    );
-
-
-    if (
-      response.ok
-    ) {
-
-      const contentType =
-        response.headers
-          .get("content-type") ||
-        "";
-
-
-      if (
-        contentType
-          .includes("audio")
-      ) {
-
-        const blob =
-          await response.blob();
-
-
-        const url =
-          URL.createObjectURL(
-            blob
-          );
-
-
-        const audio =
-          new Audio(url);
-
-
-        audio.onended =
-          () => {
-
-            URL.revokeObjectURL(
-              url
-            );
-
-            finishSpeaking();
-          };
-
-
-        audio.onerror =
-          () => {
-
-            URL.revokeObjectURL(
-              url
-            );
-
-            browserSpeak(text);
-          };
-
-
+        // Receive the mp3 audio stream as a blob
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        
+        // Play the ElevenLabs audio
         await audio.play();
-
-        return;
-      }
+    } catch (err) {
+        console.error('ElevenLabs playback error, falling back to browser speech:', err);
+        // Optional fallback to browser speech if server fails
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
     }
-
-  } catch {
-    /*
-     * Fall through to browser
-     * speech automatically without crash.
-     */
-  }
-
-
-  browserSpeak(text);
 }
-
-
-/*
- * Used for information panels where
- * Kora must ask for confirmation first.
- */
-
-function speakWithoutConfirmation(
-  text
-) {
-
-  speak(
-    text
-  );
-}
-
-
-function browserSpeak(
-  text
-) {
-
-  if (
-    !window.speechSynthesis
-  ) {
-
-    finishSpeaking();
-
-    return;
-  }
-
-
-  window.speechSynthesis.cancel();
-
-
-  selectVoice();
-
-
-  const utterance =
-    new SpeechSynthesisUtterance(
-      text
-    );
-
-
-  if (
-    preferredVoice
-  ) {
-
-    utterance.voice =
-      preferredVoice;
-  }
-
-
-  utterance.lang =
-    "en-GB";
-
-  utterance.rate =
-    .96;
-
-  utterance.pitch =
-    1.02;
-
-  utterance.volume =
-    1;
-
-
-  utterance.onend =
-    finishSpeaking;
-
-
-  utterance.onerror =
-    finishSpeaking;
-
-
-  window.speechSynthesis.speak(
-    utterance
-  );
-}
-
-
-function finishSpeaking() {
-
-  speaking =
-    false;
-
-  processing =
-    false;
-
-
-  micState.textContent =
-    "MICROPHONE ACTIVE";
-
-
-  setState(
-    "LISTENING",
-    "Kora is listening"
-  );
-
-
-  setTimeout(
-    () => {
-
-      if (
-        keepListening
-      ) {
-
-        startListening();
-      }
-
-    },
-    130
-  );
-}
-
-
 /* =====================================================
    ORB BUTTON
 ===================================================== */
