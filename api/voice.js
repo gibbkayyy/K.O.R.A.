@@ -11,9 +11,9 @@ export default async function handler(req, res) {
     const apiKey = process.env.CUSTOM_ELEVEN_KEY;
     const ELEVENLABS_ID = '6rOxfAnZpbM3VIEhFaeV';
 
-    if (!apiKey) {
-        console.error("Server error: CUSTOM_ELEVEN_KEY environment variable is missing.");
-        return res.status(503).json({ error: 'ElevenLabs API key not configured on server.' });
+    if (!apiKey || apiKey.trim() === '') {
+        console.error("CRITICAL: CUSTOM_ELEVEN_KEY is missing or empty in Vercel.");
+        return res.status(503).json({ error: 'ElevenLabs API key is missing on the server.' });
     }
 
     try {
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 text: text,
-                model_id: 'eleven_turbo_v2_5', // Updated to modern model to prevent 403 errors
+                model_id: 'eleven_turbo_v2_5',
                 voice_settings: {
                     stability: 0.35,
                     similarity_boost: 0.75,
