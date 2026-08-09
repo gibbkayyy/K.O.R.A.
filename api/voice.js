@@ -8,16 +8,17 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Text required for speech generation.' });
     }
 
+    // Pulling the key and the voice ID directly from your Vercel Environment Variables
     const apiKey = process.env.CUSTOM_ELEVEN_KEY;
-    const ELEVENLABS_ID = '6rOxfAnZpbM3VIEhFaeV';
+    const ELEVENLABS_ID = process.env.ELEVENLABS_ID;
 
-    if (!apiKey) {
-        console.error("Server error: CUSTOM_ELEVEN_KEY environment variable is missing.");
-        return res.status(503).json({ error: 'ElevenLabs API key not configured on server.' });
+    if (!apiKey || !ELEVENLABS_ID) {
+        console.error("Server error: Missing CUSTOM_ELEVEN_KEY or ELEVENLABS_ID environment variables.");
+        return res.status(503).json({ error: 'ElevenLabs configuration missing on server.' });
     }
 
     try {
-        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_ID}?output_format=mp3_44105_128`, {
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_ID.trim()}?output_format=mp3_44105_128`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
