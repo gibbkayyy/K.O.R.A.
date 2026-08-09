@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44105_128`, {
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}?output_format=mp3_44105_128`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 text: text,
-                model_id: 'eleven_multilingual_v2',
+                model_id: 'eleven_monolingual_v1',
                 voice_settings: {
                     stability: 0.35,
                     similarity_boost: 0.75,
