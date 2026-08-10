@@ -13,7 +13,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Chat API Route
+// Chat API Route with strict JSON error catching
 app.post('/api/chat', async (req, res) => {
     try {
         const { messages } = req.body;
@@ -21,9 +21,10 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: 'Messages array required.' });
         }
         const reply = await askKora(messages);
-        res.json({ reply });
+        return res.json({ reply });
     } catch (err) {
-        res.status(500).json({ error: err.message || 'AI request failed.' });
+        console.error('Chat endpoint error:', err);
+        return res.status(500).json({ error: err.message || 'AI request failed.' });
     }
 });
 
@@ -39,26 +40,27 @@ app.post('/api/vision', async (req, res) => {
             { role: 'user', content: 'Describe what you see in this image concisely as Kora.' }
         ]);
         
-        res.json({ reply });
+        return res.json({ reply });
     } catch (err) {
-        res.status(500).json({ error: 'Vision processing failed.' });
+        console.error('Vision endpoint error:', err);
+        return res.status(500).json({ error: 'Vision processing failed.' });
     }
 });
 
 // News API Route stub
 app.get('/api/news', async (req, res) => {
     try {
-        res.json({
+        return res.json({
             articles: [
                 { source: 'System', title: 'All systems operating normally across local grid.' }
             ]
         });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch news.' });
+        return res.status(500).json({ error: 'Failed to fetch news.' });
     }
 });
 
-// Fallback for SPA routing if needed
+// Fallback for SPA routing
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
