@@ -1,0 +1,4045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+/>
+
+<meta name="theme-color" content="#0b0c0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="K.O.R.A.">
+
+<!-- Include ResponsiveVoice script with free key fallback parameter -->
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=free"></script>
+
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23070809' stroke='%23f4f5f3' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffffff' filter='drop-shadow(0 0 8px rgba(255,255,255,0.8))'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23070809' stroke='%23f4f5f3' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffffff' filter='drop-shadow(0 0 8px rgba(255,255,255,0.8))'/%3E%3C/svg%3E">
+
+<title>K.O.R.A.</title>
+
+<style>
+:root {
+  --bg: #08090a;
+  --bg2: #101214;
+  --panel: rgba(19,21,23,.94);
+  --panel2: rgba(27,29,31,.82);
+
+  --white: #f4f5f3;
+  --soft: #d7dad8;
+  --muted: #969b98;
+  --dim: #666b68;
+
+  --line: rgba(255,255,255,.105);
+  --line2: rgba(255,255,255,.055);
+
+  --shadow: rgba(0,0,0,.45);
+
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+
+  color: var(--white);
+
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(255,255,255,.055),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255,255,255,.025),
+      transparent 52%
+    ),
+    linear-gradient(
+      135deg,
+      #070809,
+      #151719,
+      #08090a
+    );
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.grid-background {
+  position: fixed;
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  animation:
+    gridFade 1.2s ease .2s forwards;
+}
+
+@keyframes gridFade {
+  to {
+    opacity: 1;
+  }
+}
+
+.grid {
+  position: absolute;
+  inset: -50px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(18, minmax(0, 1fr));
+
+  grid-template-rows:
+    repeat(12, minmax(0, 1fr));
+
+  gap: 8px;
+
+  transform:
+    perspective(900px)
+    rotateX(2deg)
+    scale(1.04);
+}
+
+.grid-cell {
+  position: relative;
+
+  border:
+    1px solid
+    rgba(190,194,191,.07);
+
+  background:
+    rgba(190,194,191,.018);
+
+  border-radius: 3px;
+
+  box-shadow:
+    inset 0 0 18px
+    rgba(255,255,255,.008);
+
+  transition:
+    border-color .5s ease,
+    box-shadow .5s ease;
+}
+
+.grid-cell:nth-child(9n) {
+  border-color:
+    rgba(210,214,212,.12);
+
+  box-shadow:
+    0 0 12px
+    rgba(255,255,255,.025);
+}
+
+.grid-cell:nth-child(17n) {
+  opacity: .55;
+}
+
+.grid-cell:nth-child(29n) {
+  opacity: .35;
+}
+
+/* =====================================================
+   APP
+===================================================== */
+
+.app {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  opacity: 0;
+
+  animation:
+    appIn .8s ease forwards;
+}
+
+@keyframes appIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.topbar {
+  position: relative;
+
+  height: 68px;
+
+  padding:
+    0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background:
+    rgba(8,9,10,.72);
+
+  border-bottom:
+    1px solid var(--line);
+
+  backdrop-filter:
+    blur(24px);
+
+  z-index: 100;
+
+  opacity: 0;
+
+  animation:
+    topIn .8s var(--ease) .3s forwards;
+}
+
+@keyframes topIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.brand-core {
+  width: 27px;
+  height: 27px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(255,255,255,.55);
+
+  display: grid;
+  place-items: center;
+
+  background: radial-gradient(circle at 50% 45%, rgba(255,255,255,.15), rgba(15,17,19,.95));
+  box-shadow:
+    0 0 14px
+    rgba(255,255,255,.07);
+}
+
+.brand-core::after {
+  content: "";
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow:
+    0 0 10px
+    rgba(255,255,255,.8);
+}
+
+.brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: .18em;
+}
+
+.brand-type {
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: .14em;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.system {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: var(--muted);
+
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+
+.system-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #ededeb;
+
+  box-shadow:
+    0 0 9px
+    rgba(255,255,255,.65);
+}
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main {
+  position: relative;
+
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =====================================================
+   CORE
+===================================================== */
+
+.core {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 460px;
+  height: 460px;
+
+  transform:
+    translate(-50%, -50%);
+
+  transition:
+    left 1.05s var(--ease),
+    top 1.05s var(--ease),
+    transform 1.05s var(--ease);
+
+  z-index: 5;
+}
+
+.core.info-mode {
+  left: auto;
+  top: auto;
+
+  right: 35px;
+  bottom: 12px;
+
+  transform:
+    translate(0,0)
+    scale(.47);
+}
+
+.core.camera-mode {
+  left: auto;
+  top: auto;
+
+  right: 30px;
+  bottom: 10px;
+
+  transform:
+    translate(0,0)
+    scale(.42);
+}
+
+/* =====================================================
+   ORBIT RINGS
+===================================================== */
+
+.ring {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  border-radius: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  pointer-events: none;
+
+  opacity: 0;
+}
+
+.ring-a {
+  width: 235px;
+  height: 235px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.14);
+
+  animation:
+    ringBoot .8s var(--ease) 1s forwards,
+    ringRotateA 26s linear 2s infinite;
+}
+
+.ring-b {
+  width: 290px;
+  height: 290px;
+
+  border:
+    1px dashed
+    rgba(255,255,255,.08);
+
+  animation:
+    ringBoot .8s var(--ease) 1.08s forwards,
+    ringRotateB 34s linear 2s infinite;
+}
+
+.ring-c {
+  width: 345px;
+  height: 345px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.045);
+
+  animation:
+    ringBoot .8s var(--ease) 1.16s forwards;
+}
+
+@keyframes ringBoot {
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.65);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+@keyframes ringRotateA {
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(360deg);
+  }
+}
+
+@keyframes ringRotateB {
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(-360deg);
+  }
+}
+
+/* =====================================================
+   ORB (TEASER LOGO DESIGN)
+===================================================== */
+
+.orb {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 180px;
+  height: 180px;
+
+  padding: 0;
+
+  transform:
+    translate(-50%, -50%)
+    scale(.08);
+
+  border:
+    2px solid
+    rgba(255,255,255,.85);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(255,255,255,.16),
+      rgba(15,17,19,.97) 50%,
+      rgba(7,8,9,.99)
+    );
+
+  color: white;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 0 40px
+    rgba(255,255,255,.05),
+
+    0 0 40px
+    rgba(255,255,255,.1);
+
+  z-index: 10;
+
+  animation:
+    orbBoot 1.5s var(--ease) .35s forwards,
+    logoGlow 4s ease-in-out infinite alternate;
+
+  outline: none;
+}
+
+@keyframes orbBoot {
+  0% {
+    width: 20px;
+    height: 20px;
+
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.08);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  72% {
+    transform:
+      translate(-50%, -50%)
+      scale(1.07);
+  }
+
+  100% {
+    width: 180px;
+    height: 180px;
+
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+@keyframes logoGlow {
+  0% {
+    border-color: rgba(255,255,255,.7);
+    box-shadow: inset 0 0 35px rgba(255,255,255,.04), 0 0 35px rgba(255,255,255,.08);
+  }
+  100% {
+    border-color: rgba(255,255,255,.98);
+    box-shadow: inset 0 0 55px rgba(255,255,255,.12), 0 0 65px rgba(255,255,255,.22);
+  }
+}
+
+.orb:hover {
+  border-color:
+    rgba(255,255,255,1);
+
+  box-shadow:
+    inset 0 0 50px
+    rgba(255,255,255,.1),
+
+    0 0 70px
+    rgba(255,255,255,.2);
+}
+
+.orb::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 16px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+}
+
+.orb::after {
+  content: "";
+
+  position: absolute;
+
+  width: 50px;
+  height: 50px;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,.2) 70%, transparent 100%);
+
+  box-shadow:
+    0 0 22px
+    rgba(255,255,255,.75);
+}
+
+/* =====================================================
+   ORB TEXT
+===================================================== */
+
+.orb-name {
+  position: absolute;
+
+  left: 50%;
+  top: 72%;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 20;
+
+  white-space: nowrap;
+
+  font-size: 14px;
+
+  font-weight: 550;
+
+  letter-spacing: .25em;
+
+  color: var(--soft);
+
+  text-shadow:
+    0 0 10px
+    rgba(255,255,255,.2);
+
+  opacity: 0;
+
+  animation:
+    textBoot .7s ease 1.7s forwards;
+}
+
+@keyframes textBoot {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      scale(.82);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      scale(1);
+  }
+}
+
+/* =====================================================
+   STATES
+===================================================== */
+
+.app.listening .orb {
+  animation:
+    logoGlow 4s ease-in-out infinite alternate,
+    listenPulse 1.8s ease-in-out infinite;
+}
+
+.app.thinking .orb {
+  animation:
+    logoGlow 4s ease-in-out infinite alternate,
+    thinkPulse .8s ease-in-out infinite;
+}
+
+.app.speaking .orb {
+  animation:
+    logoGlow 4s ease-in-out infinite alternate,
+    speakPulse .55s ease-in-out infinite;
+}
+
+@keyframes listenPulse {
+  0%,100% {
+    box-shadow:
+      inset 0 0 40px
+      rgba(255,255,255,.05),
+
+      0 0 40px
+      rgba(255,255,255,.1);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 0 55px
+      rgba(255,255,255,.12),
+
+      0 0 75px
+      rgba(255,255,255,.2);
+  }
+}
+
+@keyframes thinkPulse {
+  0%,100% {
+    box-shadow:
+      inset 0 0 40px
+      rgba(255,255,255,.05),
+
+      0 0 40px
+      rgba(255,255,255,.1);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 0 60px
+      rgba(255,255,255,.15),
+
+      0 0 85px
+      rgba(255,255,255,.25);
+  }
+}
+
+@keyframes speakPulse {
+  0%,100% {
+    box-shadow:
+      inset 0 0 40px
+      rgba(255,255,255,.05),
+
+      0 0 40px
+      rgba(255,255,255,.1);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 0 65px
+      rgba(255,255,255,.18),
+
+      0 0 95px
+      rgba(255,255,255,.3);
+  }
+}
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 0;
+
+  text-align: center;
+
+  opacity: 0;
+
+  animation:
+    statusIn .7s ease 2s forwards;
+}
+
+@keyframes statusIn {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-main {
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: .22em;
+
+  text-transform: uppercase;
+}
+
+.status-sub {
+  margin-top: 7px;
+
+  color: var(--muted);
+
+  font-size: 9px;
+
+  letter-spacing: .08em;
+}
+
+/* =====================================================
+   TRANSMISSION
+===================================================== */
+
+.transmission {
+  position: absolute;
+
+  left: 25px;
+  bottom: 22px;
+
+  width:
+    min(420px, calc(100vw - 50px));
+
+  padding: 16px 18px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 14px;
+
+  background:
+    var(--panel);
+
+  backdrop-filter:
+    blur(22px);
+
+  box-shadow:
+    0 20px 60px
+    var(--shadow);
+
+  z-index: 30;
+
+  opacity: 0;
+
+  animation:
+    transmissionIn .8s var(--ease) 2.1s forwards;
+}
+
+@keyframes transmissionIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transmission-title {
+  color: var(--muted);
+
+  font-size: 8px;
+
+  font-weight: 650;
+
+  letter-spacing: .17em;
+
+  text-transform: uppercase;
+
+  margin-bottom: 9px;
+}
+
+.transmission-text {
+  color: var(--soft);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  min-height: 20px;
+}
+
+/* =====================================================
+   INFORMATION PANEL
+===================================================== */
+
+.info-panel {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width:
+    min(650px, calc(100vw - 40px));
+
+  padding: 28px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 20px;
+
+  background:
+    rgba(17,19,21,.96);
+
+  backdrop-filter:
+    blur(28px);
+
+  box-shadow:
+    0 35px 100px
+    rgba(0,0,0,.5);
+
+  transform:
+    translate(-50%, -50%)
+    translateY(25px)
+    scale(.96);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  z-index: 60;
+
+  transition:
+    opacity .5s ease,
+    transform .7s var(--ease);
+}
+
+.info-panel.visible {
+  opacity: 1;
+
+  pointer-events: auto;
+
+  transform:
+    translate(-50%, -50%)
+    translateY(0)
+    scale(1);
+}
+
+.info-kicker {
+  color: var(--muted);
+
+  font-size: 8px;
+
+  letter-spacing: .18em;
+
+  text-transform: uppercase;
+}
+
+.info-title {
+  margin-top: 8px;
+
+  font-size: 30px;
+
+  font-weight: 500;
+}
+
+.info-grid {
+  margin-top: 22px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 10px;
+}
+
+.info-card {
+  padding: 16px;
+
+  border:
+    1px solid var(--line2);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255,255,255,.025);
+}
+
+.info-label {
+  color: var(--muted);
+
+  font-size: 8px;
+
+  letter-spacing: .14em;
+
+  text-transform: uppercase;
+}
+
+.info-value {
+  margin-top: 7px;
+
+  font-size: 18px;
+
+  font-weight: 500;
+}
+
+.info-description {
+  margin-top: 20px;
+
+  color: var(--soft);
+
+  font-size: 12px;
+
+  line-height: 1.55;
+}
+
+.info-close {
+  position: absolute;
+
+  right: 16px;
+  top: 16px;
+
+  width: 30px;
+  height: 30px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.025);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+.camera-panel {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width:
+    min(720px, calc(100vw - 40px));
+
+  height:
+    min(520px, calc(100vh - 160px));
+
+  transform:
+    translate(-50%, -50%)
+    scale(.96);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  z-index: 80;
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  background: #090a0b;
+
+  box-shadow:
+    0 40px 120px
+    rgba(0,0,0,.55);
+
+  transition:
+    opacity .5s ease,
+    transform .6s var(--ease);
+}
+
+.camera-panel.visible {
+  opacity: 1;
+
+  pointer-events: auto;
+
+  transform:
+    translate(-50%, -50%)
+    scale(1);
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  background: #050606;
+}
+
+.camera-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  box-shadow:
+    inset 0 0 100px
+    rgba(0,0,0,.5);
+}
+
+.camera-top {
+  position: absolute;
+
+  left: 18px;
+  right: 18px;
+  top: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  z-index: 2;
+}
+
+.camera-label {
+  padding: 8px 11px;
+
+  border:
+    1px solid rgba(255,255,255,.12);
+
+  border-radius: 8px;
+
+  background:
+    rgba(5,6,7,.7);
+
+  backdrop-filter: blur(15px);
+
+  font-size: 8px;
+
+  letter-spacing: .15em;
+}
+
+.camera-close {
+  width: 34px;
+  height: 34px;
+
+  border:
+    1px solid rgba(255,255,255,.15);
+
+  border-radius: 50%;
+
+  background:
+    rgba(5,6,7,.72);
+
+  color: white;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+}
+
+.camera-bottom {
+  position: absolute;
+
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  z-index: 3;
+}
+
+.camera-hint {
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  background:
+    rgba(5,6,7,.72);
+
+  backdrop-filter: blur(15px);
+
+  color: var(--soft);
+
+  font-size: 10px;
+}
+
+.camera-snap {
+  padding:
+    10px 16px;
+
+  border:
+    1px solid rgba(255,255,255,.18);
+
+  border-radius: 9px;
+
+  background:
+    rgba(255,255,255,.08);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   INSTALL
+===================================================== */
+
+.install-button {
+  position: fixed;
+
+  right: 24px;
+  bottom: 24px;
+
+  z-index: 150;
+
+  padding:
+    11px 15px;
+
+  border:
+    1px solid rgba(255,255,255,.16);
+
+  border-radius: 10px;
+
+  background:
+    rgba(20,22,24,.92);
+
+  color: white;
+
+  cursor: pointer;
+
+  backdrop-filter:
+    blur(18px);
+
+  font-size: 10px;
+
+  letter-spacing: .08em;
+
+  box-shadow:
+    0 12px 35px
+    rgba(0,0,0,.3);
+
+  transition:
+    transform .2s ease,
+    background .2s ease;
+}
+
+.install-button:hover {
+  transform: translateY(-2px);
+
+  background:
+    rgba(255,255,255,.09);
+}
+
+.install-button.hidden {
+  display: none;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-top:
+    1px solid var(--line);
+
+  background:
+    rgba(8,9,10,.75);
+
+  backdrop-filter:
+    blur(20px);
+
+  color: var(--muted);
+
+  font-size: 8px;
+
+  letter-spacing: .13em;
+
+  z-index: 50;
+}
+
+.mic-state {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mic-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow:
+    0 0 8px
+    rgba(255,255,255,.6);
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error {
+  position: fixed;
+
+  left: 50%;
+  top: 84px;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 300;
+
+  display: none;
+
+  max-width: 90%;
+
+  padding:
+    10px 15px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 9px;
+
+  background:
+    rgba(15,16,17,.97);
+
+  color: white;
+
+  font-size: 10px;
+
+  text-align: center;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  body {
+    background:
+      radial-gradient(
+        circle at 50% 38%,
+        rgba(255,255,255,.045),
+        transparent 28%
+      ),
+      linear-gradient(
+        145deg,
+        #08090a,
+        #111315,
+        #08090a
+      );
+  }
+
+  .topbar {
+    height: 62px;
+
+    padding:
+      0 14px;
+  }
+
+  .brand-type,
+  .system {
+    display: none;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .core {
+    width: 360px;
+    height: 360px;
+  }
+
+  .ring-a {
+    width: 205px;
+    height: 205px;
+  }
+
+  .ring-b {
+    width: 255px;
+    height: 255px;
+  }
+
+  .ring-c {
+    width: 305px;
+    height: 305px;
+  }
+
+  .orb {
+    width: 155px;
+    height: 155px;
+  }
+
+  .orb-name {
+    font-size: 13px;
+  }
+
+  .transmission {
+    left: 12px;
+    bottom: 12px;
+
+    width:
+      calc(100vw - 24px);
+  }
+
+  .info-panel {
+    width:
+      calc(100vw - 24px);
+
+    padding: 21px;
+  }
+
+  .info-title {
+    font-size: 25px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-panel {
+    width:
+      calc(100vw - 20px);
+
+    height:
+      min(68vh, 520px);
+  }
+
+  .install-button {
+    right: 14px;
+    bottom: 60px;
+  }
+
+  .footer {
+    height: 42px;
+  }
+}
+
+/* =====================================================
+   INSTALLED APP
+===================================================== */
+
+@media (display-mode: standalone) {
+
+  .install-button {
+    display: none !important;
+  }
+}
+
+/* iOS standalone */
+body.standalone .install-button {
+  display: none !important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="grid-background">
+  <div
+    class="grid"
+    id="grid"
+  ></div>
+</div>
+
+
+<div
+  class="app"
+  id="app"
+>
+
+  <!-- =================================================
+       TOP BAR
+  ================================================== -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand-core"></div>
+
+      <div class="brand-text">
+
+        <span class="brand-name">
+          K.O.R.A.
+        </span>
+
+        <span class="brand-type">
+          AI ASSISTANT
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="top-right">
+
+      <div class="system">
+
+        <span class="system-dot"></span>
+
+        ONLINE
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =================================================
+       MAIN
+  ================================================== -->
+
+  <main class="main">
+
+
+    <section
+      class="core"
+      id="core"
+    >
+
+      <div class="ring ring-a"></div>
+      <div class="ring ring-b"></div>
+      <div class="ring ring-c"></div>
+
+
+      <button
+        class="orb"
+        id="orb"
+        aria-label="Activate Kora"
+      >
+
+        <span class="orb-name">
+          K.O.R.A.
+        </span>
+
+      </button>
+
+
+      <div class="status">
+
+        <div
+          class="status-main"
+          id="statusMain"
+        >
+          INITIALISING
+        </div>
+
+        <div
+          class="status-sub"
+          id="statusSub"
+        >
+          Booting systems
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+         LATEST TRANSMISSION
+    ================================================== -->
+
+    <div class="transmission">
+
+      <div class="transmission-title">
+        Latest Transmission
+      </div>
+
+      <div
+        class="transmission-text"
+        id="transmission"
+      >
+        Initialising K.O.R.A...
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         INFORMATION
+    ================================================== -->
+
+    <section
+      class="info-panel"
+      id="infoPanel"
+    >
+
+      <button
+        class="info-close"
+        id="infoClose"
+      >
+        ×
+      </button>
+
+      <div
+        class="info-kicker"
+        id="infoKicker"
+      >
+        K.O.R.A. DATA
+      </div>
+
+      <div
+        class="info-title"
+        id="infoTitle"
+      >
+        Information
+      </div>
+
+      <div
+        class="info-grid"
+        id="infoGrid"
+      ></div>
+
+      <div
+        class="info-description"
+        id="infoDescription"
+      ></div>
+
+    </section>
+
+
+    <!-- =================================================
+         CAMERA
+    ================================================== -->
+
+    <section
+      class="camera-panel"
+      id="cameraPanel"
+    >
+
+      <video
+        class="camera-video"
+        id="cameraVideo"
+        autoplay
+        playsinline
+        muted
+      ></video>
+
+      <div class="camera-overlay"></div>
+
+      <div class="camera-top">
+
+        <div class="camera-label">
+          K.O.R.A. VISION
+        </div>
+
+        <button
+          class="camera-close"
+          id="cameraClose"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div class="camera-bottom">
+
+        <div class="camera-hint">
+          Ask Kora what she can see.
+        </div>
+
+        <button
+          class="camera-snap"
+          id="cameraSnap"
+        >
+          ANALYSE
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =================================================
+       FOOTER
+  ================================================== -->
+
+  <footer class="footer">
+
+    <div class="mic-state">
+
+      <span class="mic-dot"></span>
+
+      <span id="micState">
+        MICROPHONE READY
+      </span>
+
+    </div>
+
+  </footer>
+
+</div>
+
+
+<button
+  class="install-button"
+  id="installButton"
+>
+  INSTALL APP
+</button>
+
+
+<div
+  class="error"
+  id="error"
+></div>
+
+
+<script>
+
+/* =====================================================
+   CONFIG
+===================================================== */
+
+const CHAT_ENDPOINT =
+  "/api/chat";
+
+const VISION_ENDPOINT =
+  "/api/vision";
+
+const NEWS_ENDPOINT =
+  "/api/news";
+
+const DEFAULT_LOCATION =
+  "Rothbury, Northumberland, United Kingdom";
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const app =
+  document.getElementById("app");
+
+const grid =
+  document.getElementById("grid");
+
+const core =
+  document.getElementById("core");
+
+const orb =
+  document.getElementById("orb");
+
+const statusMain =
+  document.getElementById("statusMain");
+
+const statusSub =
+  document.getElementById("statusSub");
+
+const transmission =
+  document.getElementById("transmission");
+
+const micState =
+  document.getElementById("micState");
+
+const infoPanel =
+  document.getElementById("infoPanel");
+
+const infoClose =
+  document.getElementById("infoClose");
+
+const infoKicker =
+  document.getElementById("infoKicker");
+
+const infoTitle =
+  document.getElementById("infoTitle");
+
+const infoGrid =
+  document.getElementById("infoGrid");
+
+const infoDescription =
+  document.getElementById("infoDescription");
+
+const cameraPanel =
+  document.getElementById("cameraPanel");
+
+const cameraVideo =
+  document.getElementById("cameraVideo");
+
+const cameraClose =
+  document.getElementById("cameraClose");
+
+const cameraSnap =
+  document.getElementById("cameraSnap");
+
+const installButton =
+  document.getElementById("installButton");
+
+const errorBox =
+  document.getElementById("error");
+
+
+/* =====================================================
+   GRID
+===================================================== */
+
+for (
+  let i = 0;
+  i < 216;
+  i++
+) {
+
+  const cell =
+    document.createElement("div");
+
+  cell.className =
+    "grid-cell";
+
+  grid.appendChild(cell);
+}
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let recognition = null;
+
+let recognitionRunning =
+  false;
+
+let processing =
+  false;
+
+let speaking =
+  false;
+
+let keepListening =
+  true;
+
+let cameraStream =
+  null;
+
+let deferredInstallPrompt =
+  null;
+
+let currentInfo =
+  null;
+
+let awaitingReadConfirmation =
+  false;
+
+let lastInformation =
+  null;
+
+let messages = [];
+
+
+/* =====================================================
+   PWA SERVICE WORKER & CACHE INVALIDATION
+===================================================== */
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        if (newWorker) {
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    } catch (e) {
+      // Offline fallback support
+    }
+  });
+}
+
+
+/* =====================================================
+   PWA INSTALL
+===================================================== */
+
+window.addEventListener(
+  "beforeinstallprompt",
+  event => {
+
+    event.preventDefault();
+
+    deferredInstallPrompt =
+      event;
+
+    if (
+      !window.matchMedia(
+        "(display-mode: standalone)"
+      ).matches
+    ) {
+
+      installButton.classList.remove(
+        "hidden"
+      );
+    }
+  }
+);
+
+
+installButton.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      !deferredInstallPrompt
+    ) {
+
+      transmission.textContent =
+        "To install K.O.R.A., use your browser's Add to Home Screen option.";
+
+      return;
+    }
+
+
+    deferredInstallPrompt
+      .prompt();
+
+
+    const result =
+      await deferredInstallPrompt
+        .userChoice;
+
+
+    if (
+      result.outcome ===
+      "accepted"
+    ) {
+
+      installButton.classList.add(
+        "hidden"
+      );
+    }
+
+
+    deferredInstallPrompt =
+      null;
+  }
+);
+
+
+window.addEventListener(
+  "appinstalled",
+  () => {
+
+    installButton.classList.add(
+      "hidden"
+    );
+  }
+);
+
+
+if (
+  window.matchMedia(
+    "(display-mode: standalone)"
+  ).matches
+) {
+
+  document.body.classList.add(
+    "standalone"
+  );
+}
+
+
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+
+if (SpeechRecognition) {
+
+  recognition =
+    new SpeechRecognition();
+
+  recognition.lang =
+    "en-GB";
+
+  recognition.continuous =
+    true;
+
+  recognition.interimResults =
+    false;
+
+  recognition.maxAlternatives =
+    1;
+
+
+  recognition.onstart =
+    () => {
+
+      recognitionRunning =
+        true;
+
+      if (
+        !speaking &&
+        !processing
+      ) {
+
+        setState(
+          "LISTENING",
+          "Kora is listening"
+        );
+
+        micState.textContent =
+          "MICROPHONE ACTIVE";
+      }
+    };
+
+
+  recognition.onresult =
+    event => {
+
+      if (speaking) {
+        return;
+      }
+
+
+      const result =
+        event.results[
+          event.results.length - 1
+        ];
+
+
+      if (
+        !result ||
+        !result.isFinal
+      ) {
+        return;
+      }
+
+
+      const text =
+        result[0]
+          .transcript
+          .trim();
+
+
+      if (!text) {
+        return;
+      }
+
+
+      stopListening();
+
+      handleCommand(text);
+    };
+
+
+  recognition.onerror =
+    event => {
+
+      recognitionRunning =
+        false;
+
+
+      if (
+        event.error ===
+          "not-allowed"
+      ) {
+
+        keepListening =
+          false;
+
+        setState(
+          "MICROPHONE BLOCKED",
+          "Allow microphone access"
+        );
+
+        micState.textContent =
+          "MICROPHONE PERMISSION REQUIRED";
+
+        return;
+      }
+
+
+      if (
+        event.error ===
+          "no-speech" ||
+        event.error ===
+          "aborted"
+      ) {
+
+        restartListening();
+
+        return;
+      }
+
+
+      restartListening();
+    };
+
+
+  recognition.onend =
+    () => {
+
+      recognitionRunning =
+        false;
+
+      if (
+        keepListening &&
+        !speaking &&
+        !processing
+      ) {
+
+        restartListening();
+      }
+    };
+
+} else {
+
+  setState(
+    "VOICE UNAVAILABLE",
+    "Use Chrome or another supported browser"
+  );
+
+  micState.textContent =
+    "VOICE INPUT UNAVAILABLE";
+}
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+function setState(
+  main,
+  sub
+) {
+
+  statusMain.textContent =
+    main;
+
+  statusSub.textContent =
+    sub;
+
+
+  app.classList.remove(
+    "listening",
+    "thinking",
+    "speaking"
+  );
+
+
+  if (
+    main === "LISTENING"
+  ) {
+
+    app.classList.add(
+      "listening"
+    );
+  }
+
+
+  if (
+    main === "THINKING"
+  ) {
+
+    app.classList.add(
+      "thinking"
+    );
+  }
+
+
+  if (
+    main === "SPEAKING"
+  ) {
+
+    app.classList.add(
+      "speaking"
+    );
+  }
+}
+
+
+/* =====================================================
+   MICROPHONE
+===================================================== */
+
+function startListening() {
+
+  if (
+    !recognition ||
+    speaking ||
+    processing ||
+    recognitionRunning
+  ) {
+    return;
+  }
+
+
+  try {
+    recognitionRunning = true;
+    recognition.start();
+
+  } catch (err) {
+    recognitionRunning =
+      false;
+  }
+}
+
+
+function stopListening() {
+
+  if (!recognition) {
+    return;
+  }
+
+
+  try {
+    recognition.stop();
+  } catch {}
+
+
+  recognitionRunning =
+    false;
+}
+
+
+function restartListening() {
+
+  if (
+    !keepListening ||
+    speaking ||
+    processing ||
+    recognitionRunning
+  ) {
+    return;
+  }
+
+
+  setTimeout(
+    () => {
+
+      if (
+        keepListening &&
+        !speaking &&
+        !processing &&
+        !recognitionRunning
+      ) {
+
+        startListening();
+      }
+
+    },
+    180
+  );
+}
+
+
+/* =====================================================
+   TEXT NORMALISATION
+===================================================== */
+
+function normalise(
+  text
+) {
+
+  return text
+    .toLowerCase()
+    .replace(/[?!,.]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+/* =====================================================
+   READ CONFIRMATION
+===================================================== */
+
+function isYes(text) {
+
+  const t =
+    normalise(text);
+
+
+  return [
+    "yes",
+    "yeah",
+    "yep",
+    "yup",
+    "sure",
+    "please",
+    "go ahead",
+    "read it",
+    "read it out",
+    "do it"
+  ].includes(t);
+}
+
+
+function isNo(text) {
+
+  const t =
+    normalise(text);
+
+
+  return [
+    "no",
+    "nope",
+    "nah",
+    "don't",
+    "dont",
+    "not now"
+  ].includes(t);
+}
+
+
+/* =====================================================
+   DATE/TIME
+===================================================== */
+
+function isDateTimeCommand(
+  text
+) {
+
+  const t =
+    normalise(text);
+
+
+  return (
+
+    t.includes(
+      "date and time"
+    ) ||
+
+    t.includes(
+      "date & time"
+    ) ||
+
+    t.includes(
+      "show me the date"
+    ) ||
+
+    t.includes(
+      "show me the time"
+    ) ||
+
+    t.includes(
+      "pull up the date"
+    ) ||
+
+    t.includes(
+      "pull up the time"
+    ) ||
+
+    t.includes(
+      "what is the date"
+    ) ||
+
+    t.includes(
+      "what's the date"
+    ) ||
+
+    t.includes(
+      "what is the time"
+    ) ||
+
+    t.includes(
+      "what's the time"
+    ) ||
+
+    t.includes(
+      "what time is it"
+    ) ||
+
+    t === "date" ||
+
+    t === "time"
+  );
+}
+
+
+/* =====================================================
+   WEATHER
+===================================================== */
+
+function isWeatherCommand(
+  text
+) {
+
+  const t =
+    normalise(text);
+
+
+  return (
+    t.includes("weather") ||
+    t.includes("forecast") ||
+    t.includes("temperature")
+  );
+}
+
+
+/* =====================================================
+   NEWS
+===================================================== */
+
+function isNewsCommand(
+  text
+) {
+
+  const t =
+    normalise(text);
+
+
+  return (
+    t === "news" ||
+    t.includes("the news") ||
+    t.includes("latest news") ||
+    t.includes("show me the news") ||
+    t.includes("pull up the news") ||
+    t.includes("headlines")
+  );
+}
+
+
+/* =====================================================
+   REMOVE COMMANDS
+===================================================== */
+
+function removeTarget(
+  text
+) {
+
+  const t =
+    normalise(text);
+
+
+  const targets = [
+    {
+      words: [
+        "weather",
+        "forecast",
+        "temperature"
+      ],
+      type: "weather"
+    },
+
+    {
+      words: [
+        "date",
+        "time",
+        "date and time"
+      ],
+      type: "datetime"
+    },
+
+    {
+      words: [
+        "news",
+        "headlines"
+      ],
+      type: "news"
+    },
+
+    {
+      words: [
+        "camera",
+        "vision"
+      ],
+      type: "camera"
+    }
+  ];
+
+
+  if (
+    !(
+      t.includes("remove") ||
+      t.includes("close") ||
+      t.includes("hide")
+    )
+  ) {
+    return null;
+  }
+
+
+  for (
+    const target
+    of targets
+  ) {
+
+    if (
+      target.words.some(
+        word =>
+          t.includes(word)
+      )
+    ) {
+
+      return target.type;
+    }
+  }
+
+
+  return null;
+}
+
+
+/* =====================================================
+   WAKE WORD STRIPPING
+===================================================== */
+
+function stripWakeWord(
+  text
+) {
+
+  return text
+    .replace(
+      /^(hey |ok |okay )?kora[,]?\s*(do me a favou?r and\s*)?/i,
+      ""
+    )
+    .trim();
+}
+
+
+/* =====================================================
+   VISION COMMANDS
+===================================================== */
+
+function isCameraOpenCommand(
+  text
+) {
+
+  const t =
+    normalise(
+      stripWakeWord(text)
+    );
+
+
+  const openPhrases = [
+
+    "camera",
+    "open camera",
+    "open the camera",
+    "show camera",
+    "show the camera",
+    "use the camera",
+    "turn on the camera",
+    "turn on camera"
+  ];
+
+
+  return openPhrases.includes(t);
+}
+
+
+function isCameraAnalyseCommand(
+  text
+) {
+
+  const t =
+    normalise(
+      stripWakeWord(text)
+    );
+
+
+  const analysePhrases = [
+
+    "look at this",
+    "look at that",
+    "look through the camera",
+    "what am i looking at",
+    "what is this",
+    "what's this",
+    "can you see this",
+    "look again",
+    "analyse this",
+    "analyze this",
+    "analyse again",
+    "analyze again",
+    "what do you see",
+    "scan this"
+  ];
+
+
+  return analysePhrases.some(
+    phrase =>
+      t.includes(phrase)
+  );
+}
+
+
+/* =====================================================
+   HANDLE COMMAND
+===================================================== */
+
+async function handleCommand(
+  text
+) {
+
+  if (
+    awaitingReadConfirmation
+  ) {
+
+    if (
+      isYes(text)
+    ) {
+
+      awaitingReadConfirmation =
+        false;
+
+      if (
+        lastInformation
+      ) {
+
+        speak(
+          lastInformation
+        );
+      }
+
+      return;
+    }
+
+
+    if (
+      isNo(text)
+    ) {
+
+      awaitingReadConfirmation =
+        false;
+
+      setState(
+        "LISTENING",
+        "Kora is listening"
+      );
+
+      transmission.textContent =
+        "Understood, Sir.";
+
+      speak(
+        "Understood, Sir."
+      );
+
+      return;
+    }
+  }
+
+
+  const target =
+    removeTarget(text);
+
+
+  if (target) {
+
+    removeInformation(
+      target
+    );
+
+    return;
+  }
+
+
+  if (
+    isCameraAnalyseCommand(text)
+  ) {
+
+    await handleVisionRequest();
+
+    return;
+  }
+
+
+  if (
+    isCameraOpenCommand(text)
+  ) {
+
+    await openCamera();
+
+    return;
+  }
+
+
+  if (
+    isDateTimeCommand(text)
+  ) {
+
+    showDateTime();
+
+    return;
+  }
+
+
+  if (
+    isWeatherCommand(text)
+  ) {
+
+    await showWeather(
+      extractWeatherLocation(text)
+    );
+
+    return;
+  }
+
+
+  if (
+    isNewsCommand(text)
+  ) {
+
+    await showNews();
+
+    return;
+  }
+
+
+  await sendToKora(
+    text
+  );
+}
+
+
+/* =====================================================
+   LOCATION EXTRACTION
+===================================================== */
+
+function extractWeatherLocation(
+  text
+) {
+
+  const patterns = [
+
+    /weather in (.+)$/i,
+
+    /weather for (.+)$/i,
+
+    /forecast in (.+)$/i,
+
+    /forecast for (.+)$/i,
+
+    /temperature in (.+)$/i,
+
+    /temperature for (.+)$/i
+  ];
+
+
+  for (
+    const pattern
+    of patterns
+  ) {
+
+    const match =
+      text.match(pattern);
+
+
+    if (
+      match &&
+      match[1]
+    ) {
+
+      return match[1]
+        .replace(
+          /\b(today|tonight|tomorrow)\b/gi,
+          ""
+        )
+        .trim();
+    }
+  }
+
+
+  return DEFAULT_LOCATION;
+}
+
+
+/* =====================================================
+   DATE/TIME PANEL
+===================================================== */
+
+function showDateTime() {
+
+  const now =
+    new Date();
+
+
+  const date =
+    now.toLocaleDateString(
+      "en-GB",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }
+    );
+
+
+  const time =
+    now.toLocaleTimeString(
+      "en-GB",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }
+    );
+
+
+  currentInfo =
+    "datetime";
+
+
+  lastInformation =
+    `The date is ${date}. The current time is ${time}.`;
+
+
+  infoKicker.textContent =
+    "K.O.R.A. TEMPORAL DATA";
+
+  infoTitle.textContent =
+    "Date & Time";
+
+
+  infoGrid.innerHTML = `
+
+    <div class="info-card">
+      <div class="info-label">
+        Date
+      </div>
+
+      <div class="info-value">
+        ${date}
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-label">
+        Current Time
+      </div>
+
+      <div class="info-value">
+        ${time}
+      </div>
+    </div>
+
+  `;
+
+
+  infoDescription.textContent =
+    "Would you like me to read it out to you?";
+
+
+  openInfo();
+
+
+  awaitingReadConfirmation =
+    true;
+
+
+  transmission.textContent =
+    "Date and time displayed, Sir. Awaiting confirmation.";
+
+  speakWithoutConfirmation(
+    "As requested, Sir. I have displayed the current date and time. Would you like me to read it out to you?"
+  );
+}
+
+
+/* =====================================================
+   WEATHER
+===================================================== */
+
+async function showWeather(
+  location
+) {
+
+  processing =
+    true;
+
+
+  setState(
+    "THINKING",
+    "Retrieving weather"
+  );
+
+
+  try {
+
+    const geoResponse =
+      await fetch(
+        "https://geocoding-api.open-meteo.com/v1/search?name=" +
+        encodeURIComponent(location) +
+        "&count=1&language=en&format=json"
+      );
+
+
+    const geo =
+      await geoResponse.json();
+
+
+    if (
+      !geo.results ||
+      !geo.results.length
+    ) {
+
+      throw new Error(
+        "Location not found"
+      );
+    }
+
+
+    const place =
+      geo.results[0];
+
+
+    const weatherResponse =
+      await fetch(
+        "https://api.open-meteo.com/v1/forecast?" +
+        "latitude=" +
+        place.latitude +
+        "&longitude=" +
+        place.longitude +
+        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m" +
+        "&timezone=auto"
+      );
+
+
+    const weather =
+      await weatherResponse.json();
+
+
+    const current =
+      weather.current;
+
+
+    const description =
+      weatherDescription(
+        current.weather_code
+      );
+
+
+    const temperature =
+      Math.round(
+        current.temperature_2m
+      );
+
+
+    const feels =
+      Math.round(
+        current.apparent_temperature
+      );
+
+
+    const wind =
+      Math.round(
+        current.wind_speed_10m
+      );
+
+
+    currentInfo =
+      "weather";
+
+
+    lastInformation =
+      `The weather in ${place.name} is ${description}, with a temperature of ${temperature} degrees Celsius. It feels like ${feels} degrees, with winds of ${wind} kilometres per hour.`;
+
+
+    infoKicker.textContent =
+      "K.O.R.A. WEATHER DATA";
+
+
+    infoTitle.textContent =
+      place.name;
+
+
+    infoGrid.innerHTML = `
+
+      <div class="info-card">
+        <div class="info-label">
+          Conditions
+        </div>
+
+        <div class="info-value">
+          ${description}
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">
+          Temperature
+        </div>
+
+        <div class="info-value">
+          ${temperature}°C
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">
+          Feels Like
+        </div>
+
+        <div class="info-value">
+          ${feels}°C
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-label">
+          Wind
+        </div>
+
+        <div class="info-value">
+          ${wind} km/h
+        </div>
+      </div>
+
+    `;
+
+
+    infoDescription.textContent =
+      "Would you like me to read it out to you?";
+
+
+    openInfo();
+
+
+    awaitingReadConfirmation =
+      true;
+
+
+    transmission.textContent =
+      `Weather for ${place.name} displayed. Awaiting confirmation.`;
+
+
+    processing =
+      false;
+
+
+    speakWithoutConfirmation(
+      `I have pulled up the weather for ${place.name}, Sir. Would you like me to read it out to you?`
+    );
+
+  } catch {
+
+    processing =
+      false;
+
+    setState(
+      "LISTENING",
+      "Kora is listening"
+    );
+
+    transmission.textContent =
+      "I couldn't retrieve that weather data, Sir.";
+
+    speak(
+      "I couldn't retrieve that weather data, Sir."
+    );
+  }
+}
+
+
+/* =====================================================
+   WEATHER DESCRIPTION
+===================================================== */
+
+function weatherDescription(
+  code
+) {
+
+  const map = {
+
+    0: "Clear skies",
+    1: "Mainly clear",
+    2: "Partly cloudy",
+    3: "Overcast",
+    45: "Foggy",
+    48: "Foggy",
+    51: "Light drizzle",
+    53: "Drizzle",
+    55: "Heavy drizzle",
+    61: "Light rain",
+    63: "Rain",
+    65: "Heavy rain",
+    71: "Light snow",
+    73: "Snow",
+    75: "Heavy snow",
+    80: "Rain showers",
+    81: "Rain showers",
+    82: "Heavy rain showers",
+    95: "Thunderstorm",
+    96: "Thunderstorm with hail",
+    99: "Thunderstorm with hail"
+  };
+
+
+  return (
+    map[code] ||
+    "Variable conditions"
+  );
+}
+
+
+/* =====================================================
+   NEWS
+===================================================== */
+
+async function showNews() {
+
+  processing =
+    true;
+
+
+  setState(
+    "THINKING",
+    "Retrieving latest news"
+  );
+
+
+  try {
+
+    const response =
+      await fetch(
+        NEWS_ENDPOINT
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !data.articles
+    ) {
+
+      throw new Error(
+        "News unavailable"
+      );
+    }
+
+
+    currentInfo =
+      "news";
+
+
+    infoKicker.textContent =
+      "K.O.R.A. NEWS";
+
+
+    infoTitle.textContent =
+      "Latest Headlines";
+
+
+    infoGrid.innerHTML =
+      data.articles
+        .slice(0, 6)
+        .map(
+          article => `
+
+            <div class="info-card">
+
+              <div class="info-label">
+                ${escapeHTML(
+                  article.source ||
+                  "NEWS"
+                )}
+              </div>
+
+              <div class="info-value">
+                ${escapeHTML(
+                  article.title
+                )}
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("");
+
+
+    infoDescription.textContent =
+      "Would you like me to read the headlines out to you?";
+
+
+    lastInformation =
+      data.articles
+        .slice(0, 5)
+        .map(
+          article =>
+            article.title
+        )
+        .join(". ");
+
+
+    awaitingReadConfirmation =
+      true;
+
+
+    openInfo();
+
+
+    transmission.textContent =
+      "Latest news displayed, Sir. Awaiting confirmation.";
+
+
+    processing =
+      false;
+
+
+    speakWithoutConfirmation(
+      "I have pulled up the latest news, Sir. Would you like me to read it out to you?"
+    );
+
+  } catch {
+
+    processing =
+      false;
+
+    setState(
+      "LISTENING",
+      "Kora is listening"
+    );
+
+    transmission.textContent =
+      "I couldn't retrieve the latest news, Sir.";
+
+    speak(
+      "I couldn't retrieve the latest news, Sir."
+    );
+  }
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(
+  value
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    value || "";
+
+  return div.innerHTML;
+}
+
+
+/* =====================================================
+   REMOVE INFORMATION
+===================================================== */
+
+function removeInformation(
+  type
+) {
+
+  if (
+    type === "camera"
+  ) {
+
+    closeCamera();
+
+    return;
+  }
+
+
+  if (
+    currentInfo === type
+  ) {
+
+    closeInfo();
+  }
+
+
+  transmission.textContent =
+    `Removed ${type === "datetime" ? "date and time" : type}, Sir.`;
+
+
+  speak(
+    `Removed ${type === "datetime" ? "date and time" : type}, Sir.`
+  );
+}
+
+
+/* =====================================================
+   INFO OPEN/CLOSE
+===================================================== */
+
+function openInfo() {
+
+  core.classList.add(
+    "info-mode"
+  );
+
+
+  setTimeout(
+    () => {
+
+      infoPanel.classList.add(
+        "visible"
+      );
+
+    },
+    250
+  );
+}
+
+
+function closeInfo() {
+
+  infoPanel.classList.remove(
+    "visible"
+  );
+
+
+  setTimeout(
+    () => {
+
+      core.classList.remove(
+        "info-mode"
+      );
+
+      currentInfo =
+        null;
+
+    },
+    350
+  );
+
+
+  awaitingReadConfirmation =
+    false;
+
+
+  setState(
+    "LISTENING",
+    "Kora is listening"
+  );
+
+
+  restartListening();
+}
+
+
+infoClose.addEventListener(
+  "click",
+  closeInfo
+);
+
+
+/* =====================================================
+   CAMERA
+===================================================== */
+
+async function openCamera(
+  options
+) {
+
+  const silent =
+    Boolean(
+      options &&
+      options.silent
+    );
+
+
+  if (
+    cameraStream
+  ) {
+
+    return true;
+  }
+
+
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+
+    transmission.textContent =
+      "Camera access isn't available in this browser, Sir.";
+
+    speak(
+      "Camera access isn't available in this browser, Sir."
+    );
+
+    return false;
+  }
+
+
+  try {
+
+    stopListening();
+
+
+    cameraStream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          video: {
+            facingMode: {
+              ideal: "environment"
+            },
+
+            width: {
+              ideal: 1280
+            },
+
+            height: {
+              ideal: 720
+            }
+          },
+
+          audio: false
+        });
+
+
+    cameraVideo.srcObject =
+      cameraStream;
+
+
+    core.classList.add(
+      "camera-mode"
+    );
+
+
+    cameraPanel.classList.add(
+      "visible"
+    );
+
+
+    setState(
+      "VISION ACTIVE",
+      "Kora can see through the camera"
+    );
+
+
+    if (
+      !silent
+    ) {
+
+      transmission.textContent =
+        "Camera active, Sir. Ask me what you'd like me to identify.";
+
+
+      speakWithoutConfirmation(
+        "Camera active, Sir. What would you like me to look at?"
+      );
+    }
+
+
+    return true;
+
+  } catch {
+
+    transmission.textContent =
+      "Camera permission was not granted, Sir.";
+
+    speak(
+      "Camera permission was not granted, Sir."
+    );
+
+
+    restartListening();
+
+
+    return false;
+  }
+}
+
+
+/* =====================================================
+   VISION REQUEST
+===================================================== */
+
+async function handleVisionRequest() {
+
+  const ready =
+    await openCamera({
+      silent: true
+    });
+
+
+  if (
+    !ready
+  ) {
+    return;
+  }
+
+
+  if (
+    !cameraVideo.videoWidth
+  ) {
+
+    await new Promise(
+      resolve =>
+        setTimeout(resolve, 350)
+    );
+  }
+
+
+  await captureAndAnalyse();
+}
+
+
+function closeCamera() {
+
+  if (
+    cameraStream
+  ) {
+
+    cameraStream
+      .getTracks()
+      .forEach(
+        track =>
+          track.stop()
+      );
+
+    cameraStream =
+      null;
+  }
+
+
+  cameraVideo.srcObject =
+    null;
+
+
+  cameraPanel.classList.remove(
+    "visible"
+  );
+
+
+  setTimeout(
+    () => {
+
+      core.classList.remove(
+        "camera-mode"
+      );
+
+    },
+    300
+  );
+
+
+  setState(
+    "LISTENING",
+    "Kora is listening"
+  );
+
+
+  transmission.textContent =
+    "Camera closed, Sir.";
+
+
+  restartListening();
+}
+
+
+cameraClose.addEventListener(
+  "click",
+  closeCamera
+);
+
+
+/* =====================================================
+   CAMERA ANALYSIS
+===================================================== */
+
+cameraSnap.addEventListener(
+  "click",
+  captureAndAnalyse
+);
+
+
+async function captureAndAnalyse() {
+
+  if (
+    !cameraVideo.videoWidth
+  ) {
+
+    return;
+  }
+
+
+  setState(
+    "ANALYSING",
+    "Kora is examining the image"
+  );
+
+
+  micState.textContent =
+    "VISION PROCESSING";
+
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+
+  canvas.width =
+    cameraVideo.videoWidth;
+
+  canvas.height =
+    cameraVideo.videoHeight;
+
+
+  const context =
+    canvas.getContext("2d");
+
+
+  context.drawImage(
+    cameraVideo,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  const image =
+    canvas.toDataURL(
+      "image/jpeg",
+      .78
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        VISION_ENDPOINT,
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            image
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+    ) {
+
+      throw new Error(
+        "Vision failed"
+      );
+    }
+
+
+    const result =
+      data.reply ||
+      data.description ||
+      "I couldn't determine what I'm looking at.";
+
+
+    transmission.textContent =
+      result;
+
+
+    speak(
+      result
+    );
+
+  } catch {
+
+    transmission.textContent =
+      "I couldn't analyse that image, Sir.";
+
+    speak(
+      "I couldn't analyse that image, Sir."
+    );
+
+  } finally {
+
+    micState.textContent =
+      "MICROPHONE ACTIVE";
+  }
+}
+
+
+/* =====================================================
+   CHAT
+===================================================== */
+
+async function sendToKora(
+  text
+) {
+
+  processing =
+    true;
+
+
+  setState(
+    "THINKING",
+    "Kora is processing"
+  );
+
+
+  stopListening();
+
+
+  messages.push({
+    role: "user",
+    content: text
+  });
+
+
+  transmission.textContent =
+    text;
+
+
+  try {
+
+    const response =
+      await fetch(
+        CHAT_ENDPOINT,
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            messages: [
+
+              {
+                role: "system",
+
+                content:
+                  `You are K.O.R.A., a calm, intelligent AI assistant.
+
+Address the user as Sir by default.
+
+Only use the phrase "As you wish, Sir" when the user's request is phrased as a "can you" question.
+
+Do not use "As you wish, Sir" for ordinary questions or commands.
+
+Keep responses natural and concise.
+
+You have a built-in camera and vision capability. If the user asks to open, use, or access the camera, or asks what you see, acknowledge that you can access the camera and that the application will activate the vision interface.
+
+Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, or other unintegrated private services unless explicitly provided.`
+
+              },
+
+              ...messages
+
+            ]
+
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+    ) {
+
+      throw new Error(
+        data.error ||
+        "Kora unavailable"
+      );
+    }
+
+
+    const reply =
+      data.reply ||
+      "I'm sorry, Sir. I didn't receive a response.";
+
+
+    messages.push({
+
+      role: "assistant",
+
+      content: reply
+
+    });
+
+
+    transmission.textContent =
+      reply;
+
+
+    speak(
+      reply
+    );
+
+  } catch (err) {
+
+    processing =
+      false;
+
+
+    transmission.textContent =
+      "I couldn't connect to Kora, Sir.";
+
+    console.error("Kora connection error:", err);
+
+
+    setState(
+      "LISTENING",
+      "Kora is listening"
+    );
+
+
+    speak("I couldn't connect to Kora, Sir.");
+    restartListening();
+  }
+}
+
+
+/* =====================================================
+   RESPONSIVEVOICE INTEGRATION
+===================================================== */
+
+function speak(text) {
+  speaking = true;
+  setState("SPEAKING", "Kora is speaking");
+  micState.textContent = "SPEAKER ACTIVE";
+
+  if (typeof responsiveVoice !== "undefined") {
+    responsiveVoice.speak(text, "UK English Female", {
+      pitch: 1,
+      rate: 1,
+      onstart: function() {
+        speaking = true;
+        setState("SPEAKING", "Kora is speaking");
+      },
+      onend: function() {
+        finishSpeaking();
+      },
+      onerror: function() {
+        finishSpeaking();
+      }
+    });
+  } else {
+    // Fallback to browser speech synthesis if ResponsiveVoice fails to load
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onstart = () => {
+        speaking = true;
+        setState("SPEAKING", "Kora is speaking");
+      };
+      utterance.onend = () => finishSpeaking();
+      utterance.onerror = () => finishSpeaking();
+      window.speechSynthesis.speak(utterance);
+    } else {
+      finishSpeaking();
+    }
+  }
+}
+
+function speakWithoutConfirmation(text) {
+  speak(text);
+}
+
+function finishSpeaking() {
+  speaking = false;
+  processing = false;
+  setState("LISTENING", "Kora is listening");
+  micState.textContent = "MICROPHONE ACTIVE";
+  restartListening();
+}
+
+
+/* =====================================================
+   ORB BUTTON
+===================================================== */
+
+orb.addEventListener(
+  "click",
+  () => {
+
+    if (
+      speaking
+    ) {
+
+      if (typeof responsiveVoice !== "undefined") {
+        responsiveVoice.cancel();
+      }
+
+      if (
+        window.speechSynthesis
+      ) {
+
+        window.speechSynthesis
+          .cancel();
+      }
+
+      finishSpeaking();
+
+      return;
+    }
+
+
+    startListening();
+  }
+);
+
+
+/* =====================================================
+   STARTUP
+===================================================== */
+
+function startup() {
+
+  setState(
+    "ONLINE",
+    "All systems operational"
+  );
+
+
+  transmission.textContent =
+    "All Systems Online, Sir.";
+
+
+  speak(
+    "All Systems Online, Sir."
+  );
+}
+
+
+setTimeout(
+  startup,
+  1900
+);
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(
+  message
+) {
+
+  errorBox.textContent =
+    message;
+
+  errorBox.style.display =
+    "block";
+
+
+  setTimeout(
+    () => {
+
+      errorBox.style.display =
+        "none";
+
+    },
+    5000
+  );
+}
+
+
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if (
+      document.hidden
+    ) {
+
+      stopListening();
+
+      if (
+        cameraStream
+      ) {
+
+        closeCamera();
+      }
+
+    } else if (
+      keepListening &&
+      !speaking &&
+      !processing
+    ) {
+
+      restartListening();
+    }
+  }
+);
+
+</script>
+
+</body>
+</html>
