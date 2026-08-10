@@ -1,6 +1,4 @@
 import express from 'express';
-import session from 'express-session';
-import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { askKora } from './aiClient.js';
@@ -11,23 +9,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex');
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
-
-app.use(session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    }
-}));
 
 // Chat API Route
 app.post('/api/chat', async (req, res) => {
@@ -72,6 +56,11 @@ app.get('/api/news', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch news.' });
     }
+});
+
+// Fallback for SPA routing if needed
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.listen(PORT, () => {
