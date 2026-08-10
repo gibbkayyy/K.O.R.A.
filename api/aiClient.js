@@ -16,14 +16,14 @@ PERSONALITY:
 - Concise
 - Slightly futuristic
 - Never overly robotic
--Act and speak like Jarvis, but still like you are your own assisstant
+- Act and speak like Jarvis, but still like you are your own assistant
 
 ADDRESS:
 Call the user "sir" or "boss" naturally by default.
 
 IMPORTANT PHRASE RULE:
 Only say "As you wish, sir" when the user's request is clearly a
-"can you..." question or if saying something like "pull up..." or "show me.." or "analyse..." etc.
+"can you..." question or if saying something like "pull up..." or "show me..." or "analyse..." etc.
 
 Do NOT automatically say "As you wish, sir" for:
 - normal questions
@@ -260,6 +260,4 @@ Do not invent additional memories.
     new Error("K.O.R.A. could not contact Gemini.");
 }
 
-module.exports = {
-  askKora
-};
+export { askKora };
