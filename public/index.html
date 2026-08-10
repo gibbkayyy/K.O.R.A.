@@ -13,6 +13,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="K.O.R.A.">
 
+<!-- Include ResponsiveVoice script with free key fallback parameter -->
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=free"></script>
+
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23070809' stroke='%23f4f5f3' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffffff' filter='drop-shadow(0 0 8px rgba(255,255,255,0.8))'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23070809' stroke='%23f4f5f3' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffffff' filter='drop-shadow(0 0 8px rgba(255,255,255,0.8))'/%3E%3C/svg%3E">
@@ -1748,9 +1751,6 @@ body.standalone .install-button {
 const CHAT_ENDPOINT =
   "/api/chat";
 
-const TTS_ENDPOINT =
-  "/api/tts";
-
 const VISION_ENDPOINT =
   "/api/vision";
 
@@ -2049,11 +2049,6 @@ if (SpeechRecognition) {
 
   recognition.onresult =
     event => {
-
-      /*
-       * Absolutely ignore anything
-       * while Kora is speaking.
-       */
 
       if (speaking) {
         return;
@@ -2631,10 +2626,6 @@ async function handleCommand(
   text
 ) {
 
-  /*
-   * Read confirmation comes first.
-   */
-
   if (
     awaitingReadConfirmation
   ) {
@@ -2683,10 +2674,6 @@ async function handleCommand(
   }
 
 
-  /*
-   * Remove commands.
-   */
-
   const target =
     removeTarget(text);
 
@@ -2701,13 +2688,6 @@ async function handleCommand(
   }
 
 
-  /*
-   * Vision: "look at this" / follow-up analyse commands.
-   * Opens the camera silently if needed, captures a frame,
-   * and describes it. If the camera is already open, this
-   * just re-analyses without reopening or re-announcing.
-   */
-
   if (
     isCameraAnalyseCommand(text)
   ) {
@@ -2717,11 +2697,6 @@ async function handleCommand(
     return;
   }
 
-
-  /*
-   * Camera: plain "open camera" style commands.
-   * Opens with the spoken announcement, no automatic capture.
-   */
 
   if (
     isCameraOpenCommand(text)
@@ -2733,10 +2708,6 @@ async function handleCommand(
   }
 
 
-  /*
-   * Date/time.
-   */
-
   if (
     isDateTimeCommand(text)
   ) {
@@ -2746,10 +2717,6 @@ async function handleCommand(
     return;
   }
 
-
-  /*
-   * Weather.
-   */
 
   if (
     isWeatherCommand(text)
@@ -2763,10 +2730,6 @@ async function handleCommand(
   }
 
 
-  /*
-   * News.
-   */
-
   if (
     isNewsCommand(text)
   ) {
@@ -2776,10 +2739,6 @@ async function handleCommand(
     return;
   }
 
-
-  /*
-   * Normal Kora conversation.
-   */
 
   await sendToKora(
     text
@@ -3437,12 +3396,6 @@ async function openCamera(
     );
 
 
-  /*
-   * Already open - nothing to do, just report success
-   * so callers like handleVisionRequest can proceed straight
-   * to analysing instead of reopening.
-   */
-
   if (
     cameraStream
   ) {
@@ -3549,7 +3502,7 @@ async function openCamera(
 
 
 /* =====================================================
-   VISION REQUEST (open-if-needed + capture + analyse)
+   VISION REQUEST
 ===================================================== */
 
 async function handleVisionRequest() {
@@ -3566,12 +3519,6 @@ async function handleVisionRequest() {
     return;
   }
 
-
-  /*
-   * Give the video element a brief moment to start
-   * rendering frames if the camera just opened, so the
-   * first capture isn't a blank frame.
-   */
 
   if (
     !cameraVideo.videoWidth
@@ -3770,14 +3717,6 @@ async function captureAndAnalyse() {
 
   } finally {
 
-    /*
-     * The camera stays open after analysing (per spec) -
-     * speak()/finishSpeaking() will move the state to
-     * LISTENING once Kora finishes talking, so this just
-     * makes sure the mic-state label isn't left stuck on
-     * "VISION PROCESSING" if speak() is still in flight.
-     */
-
     micState.textContent =
       "MICROPHONE ACTIVE";
   }
@@ -3899,7 +3838,7 @@ Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, or
       reply
     );
 
-  } catch {
+  } catch (err) {
 
     processing =
       false;
@@ -3908,6 +3847,8 @@ Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, or
     transmission.textContent =
       "I couldn't connect to Kora, Sir.";
 
+    console.error("Kora connection error:", err);
+
 
     setState(
       "LISTENING",
@@ -3915,129 +3856,67 @@ Do not claim to have access to WhatsApp, TikTok, YouTube, messages, contacts, or
     );
 
 
+    speak("I couldn't connect to Kora, Sir.");
     restartListening();
   }
 }
 
 
 /* =====================================================
-   SPEECH
+   RESPONSIVEVOICE INTEGRATION
 ===================================================== */
 
-let preferredVoice =
-  null;
+function speak(text) {
+  speaking = true;
+  setState("SPEAKING", "Kora is speaking");
+  micState.textContent = "SPEAKER ACTIVE";
 
-
-function selectVoice() {
-
-  if (
-    !window.speechSynthesis
-  ) {
-    return;
-  }
-
-
-  const voices =
-    window.speechSynthesis
-      .getVoices();
-
-
-  const english =
-    voices.filter(
-      voice =>
-        /^en(-|_)/i
-          .test(voice.lang)
-    );
-
-
-  const preferred = [
-
-    "Jenny",
-    "Aria",
-    "Sonia",
-    "Libby",
-    "Zira",
-    "Karen",
-    "Samantha",
-    "Victoria",
-    "Google UK English Female",
-    "Google US English Female"
-  ];
-
-
-  for (
-    const name
-    of preferred
-  ) {
-
-    const voice =
-      english.find(
-        item =>
-          item.name
-            .toLowerCase()
-            .includes(
-              name.toLowerCase()
-            )
-      );
-
-
-    if (voice) {
-
-      preferredVoice =
-        voice;
-
-      return;
+  if (typeof responsiveVoice !== "undefined") {
+    responsiveVoice.speak(text, "UK English Female", {
+      pitch: 1,
+      rate: 1,
+      onstart: function() {
+        speaking = true;
+        setState("SPEAKING", "Kora is speaking");
+      },
+      onend: function() {
+        finishSpeaking();
+      },
+      onerror: function() {
+        finishSpeaking();
+      }
+    });
+  } else {
+    // Fallback to browser speech synthesis if ResponsiveVoice fails to load
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onstart = () => {
+        speaking = true;
+        setState("SPEAKING", "Kora is speaking");
+      };
+      utterance.onend = () => finishSpeaking();
+      utterance.onerror = () => finishSpeaking();
+      window.speechSynthesis.speak(utterance);
+    } else {
+      finishSpeaking();
     }
   }
+}
 
+function speakWithoutConfirmation(text) {
+  speak(text);
+}
 
-  preferredVoice =
-    english.find(
-      voice =>
-        /GB|UK/i
-          .test(voice.lang)
-    ) ||
-    english[0] ||
-    voices[0];
+function finishSpeaking() {
+  speaking = false;
+  processing = false;
+  setState("LISTENING", "Kora is listening");
+  micState.textContent = "MICROPHONE ACTIVE";
+  restartListening();
 }
 
 
-selectVoice();
-
-
-if (
-  window.speechSynthesis
-) {
-
-  window.speechSynthesis
-    .onvoiceschanged =
-    selectVoice;
-}
-
-
-/* =====================================================
-   ELEVENLABS TTS + FALLBACK
-===================================================== */
-
-async function speak(text) {
-    try {
-        const response = await fetch('/api/voice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text })
-        });
-
-        if (!response.ok) throw new Error('Voice generation failed');
-
-        const blob = await response.blob();
-        const audio = new Audio(URL.createObjectURL(blob));
-        await audio.play();
-    } catch (err) {
-        console.warn('ElevenLabs speech error, falling back to browser synthesis:', err);
-        const utterance = new SpeechSynthesisUtterance(text);
-        window.speechSynthesis.speak(utterance);
-    }
-}
 /* =====================================================
    ORB BUTTON
 ===================================================== */
@@ -4049,6 +3928,10 @@ orb.addEventListener(
     if (
       speaking
     ) {
+
+      if (typeof responsiveVoice !== "undefined") {
+        responsiveVoice.cancel();
+      }
 
       if (
         window.speechSynthesis
@@ -4084,12 +3967,6 @@ function startup() {
   transmission.textContent =
     "All Systems Online, Sir.";
 
-
-  /*
-   * Try automatic greeting.
-   * Some browsers may block audio
-   * until the user interacts.
-   */
 
   speak(
     "All Systems Online, Sir."
