@@ -13,7 +13,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Chat API Route with strict JSON error catching
+// Chat API Route
 app.post('/api/chat', async (req, res) => {
     try {
         const { messages } = req.body;
@@ -65,6 +65,11 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`K.O.R.A. server running on port ${PORT}`);
-});
+// Export app for Vercel serverless execution while keeping local testing alive
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`K.O.R.A. server running on port ${PORT}`);
+    });
+}
+
+export default app;
